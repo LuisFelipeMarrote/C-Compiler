@@ -3,9 +3,9 @@
 #include <string.h> 
 #include <ctype.h> 
 
-enum {smais, smenos, smul};  
+enum tipos {smais, smenos, smul, snum, satribuicao, sdoispontos};  
 
 typedef struct{ 
-  int lexema; 
-  char simbolo; 
+  char lexema;          // ver ponteiro / string 
+  enum tipos simbolo; 
 }token; 
