@@ -11,7 +11,7 @@ mas vou colocar todos aqui por enquanto só para arrumar coisas como identação
 
 char caractere;
 
-void pega_token(token token_inst){ 
+void pega_token(token *token_inst){ 
     /*falta:  
         - confirmar caractere é dígito (tirar tabela ascii e 0 <= caractere <= 9) 
         - caractere é letra (se atentar a exceções como 'ç') 
@@ -44,7 +44,7 @@ void pega_token(token token_inst){
     }
 } 
 
-token trataDigito(token *token_inst){ 
+void trataDigito(token *token_inst){ 
     char num = caractere; 
     ler(); 
     while(caractere > 47 && caractere < 58){ 
@@ -53,4 +53,35 @@ token trataDigito(token *token_inst){
     } 
     token_inst->simbolo = "snum"; 
     token_inst->lexema = num; 
+} 
+
+void trata_atribuicao(){ 
+    /*falta:  
+        - confirmar como vamos fazer o token 
+        - ajustar partes comentadas baseado nisso ^^ 
+    */ 
+    ler(); 
+    if(caractere == '='){ 
+        /* 
+        tk.lexema = ":="; 
+        tk.simbolo = "satribuicao"; 
+        */ 
+        ler(); 
+    }else{ 
+        /* 
+        tk.lexema = ':'; 
+        tk.simbolo = "sdoispontos"; 
+        */ 
+    } 
+} 
+
+void trata_aritmetico(token *token_inst){ 
+    ler();
+    token_inst->lexema = caractere; 
+    switch(caractere){
+        case '+': token_inst = "smais"; 
+        case '-': token_inst = "smenos" ;
+        case '*': token_inst = "smul" ;
+    }
+    ler(); 
 } 
