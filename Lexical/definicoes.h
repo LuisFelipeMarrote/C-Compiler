@@ -3,9 +3,11 @@
 #include <string.h> 
 #include <ctype.h> 
 
-enum tipos {smais, smenos, smul, snum, satribuicao, sdoispontos};  
+enum tipos {smais, smenos, smul, snum, satribuicao, sdoispontos, sprograma, sse, sentao,
+ ssenao, senquanto, sfaca, sinício, sfim, sescreva, sleia, svar, sinteiro, sbooleano, 
+ sverdadeiro, sfalso, sprocedimento, sfuncao, sdiv, se, sou, snao, sidentificador};  
 
 typedef struct{ 
-  char lexema;          // ver ponteiro / string 
+  char* lexema;          // ver ponteiro / string 
   enum tipos simbolo; 
 }token; 
