@@ -12,4 +12,4 @@ enum tipos {smais, smenos, smul, snum, satribuicao, sdoispontos,svirgula,
 typedef struct{ 
   char* lexema;          // ver ponteiro / string 
   enum tipos simbolo; 
-}token; 
+}token;
