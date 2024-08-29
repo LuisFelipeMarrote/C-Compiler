@@ -39,12 +39,14 @@ void ler()
 /// Cria um token baseado num array de char passado
 void set_token_s(token *tk, char string[])
 { 
+    memset (tk->lexema, 0, lexema_size_max);
     memcpy ( tk->lexema, string, strlen(string)+1 ); 
 } 
 
 /// Cria um token baseado no caractere atual
 void set_token_c(token *tk)
 { 
+    memset (tk->lexema, 0, lexema_size_max);
     memcpy ( tk->lexema, &caractere, sizeof(caractere) ); 
 } 
 
@@ -53,12 +55,12 @@ void set_token_c(token *tk)
 void trata_digito(token *tk){ 
     /* Falta:
         confirmar concatenação de caracteres
-    */
+    */ 
 
-    char *num = &caractere; 
+    char num[lexema_size_max]; 
     ler(); 
     while(caractere > 47 && caractere < 58){ 
-        strcat(num, &caractere, 1);  // ver como fazer isso para string
+        strncat(num, &caractere, 1);  // ver como fazer isso para string
         ler(); 
     }
     set_token_s (tk, num);
@@ -142,11 +144,13 @@ void trata_ident_reserv(token *tk){
         - caractere/letra/'_'
         - id = id + caractere
     */
-    char caract_aux[lexema_size_max] = caractere;
-
+    char caract_aux[lexema_size_max] = "";
+    strncat(caract_aux, &caractere, 1);  
     ler();
-    while(1/* caractere é letra ou dígito ou "_' */){
-        strcat(caract_aux, &caractere, 1); 
+    
+    while((47 < caractere && caractere < 58 )|| (64 < caractere && caractere < 91) ||
+          (96 < caractere && caractere < 123) || (caractere == 95)){
+        strncat(caract_aux, &caractere, 1); 
         ler();
     }
 
@@ -164,7 +168,7 @@ void trata_ident_reserv(token *tk){
         tk->simbolo = senquanto;
     }else if (strcmp(caract_aux, "faca") == 0) {
         tk->simbolo = sfaca;
-    }else if (strcmp(caract_aux, "início") == 0) {
+    }else if (strcmp(caract_aux, "inicio") == 0) {
         tk->simbolo = sinício;
     }else if (strcmp(caract_aux, "fim") == 0) {
         tk->simbolo = sfim;
@@ -239,15 +243,26 @@ void trata_relacional(token *tk){
     }
 }
 
+void printList()
+{
+    Node *no = primeiro;
+    while (no->next != NULL)
+    {
+        puts(no->tk.lexema);
+        no = no->next;
+    }
+}
+
 void pega_token(token *tk){ 
     /*falta:  
         - caractere é letra (se atentar a exceções como 'ç') 
         - erro (descobrir o que retornar) 
     */  
+   char aux = caractere;
     if(47 < caractere && caractere < 58){ 
         trata_digito(tk);  
     }else{ 
-        if(/*caractere é letra*/1){ 
+        if((64 < caractere && caractere < 91) || (96 < caractere && caractere < 123)){ 
             trata_ident_reserv(tk); 
         }else{ 
             if(caractere == ':'){ 
@@ -257,7 +272,7 @@ void pega_token(token *tk){
                     trata_aritmetico(tk); 
                 }else{ 
                     if(caractere == '!' || caractere == '<' || caractere == '>' || caractere == '='){ 
-                        //trata_relacional(tk); 
+                        trata_relacional(tk); 
                     }else{ 
                         if(caractere == ';' || caractere == ','|| caractere == '('|| caractere == ')'|| caractere == '.'){ 
                             trata_pontuacao(tk); 
@@ -285,32 +300,32 @@ void AnalisadorLexicalN1()
 
     while (caractere != EOF) 
     {
-        while((caractere == '{' || caractere == ' ' || caractere == '\n') && caractere != EOF) 
+        while((caractere == '{')) 
         {
-            if(caractere == '{') 
-            { 
                 while(caractere != '}' && caractere != EOF) 
                 { 
                     ler(); 
-                }
+                }            
+                if(caractere == EOF) 
+                { 
+                    ///error()
+                } 
                 ler(); 
-            }                 
-
-            while((caractere == ' ' || caractere == '\n') && caractere != EOF) 
-            { 
-                ler(); 
-            } 
         } 
 
         if(caractere != EOF) 
         { 
             printf("%c", caractere);
-            ler();
             token tk;
             pega_token(&tk);
             insere_lista(&tk);
+            ler();
         }
     } 
-
+    printList();
     fclose(fp); 
+}
+
+int main(){
+    AnalisadorLexicalN1();
 }
