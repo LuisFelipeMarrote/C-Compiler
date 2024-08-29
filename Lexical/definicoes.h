@@ -3,7 +3,7 @@
 #include <string.h> 
 #include <ctype.h> 
 
-#define lexema_size_max 40
+#define lexema_size_max 30
 
 enum tipos {smais, smenos, smul, snum, satribuicao, sdoispontos,svirgula, 
             sabre_parenteses, sfecha_parenteses, sponto_virgula, sprograma, sse, sentao,
