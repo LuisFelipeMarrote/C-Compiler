@@ -1,21 +1,6 @@
-/*
-==============================================================================================
-
-Ainda não tenho certeza da melhor forma de colocar todas as funções (um aqeuivo ou vários),
-mas vou colocar todos aqui por enquanto só para arrumar coisas como identação
-
-
-Faltas atuais:
-    -> pega_token:
-        - caractere é letra (se atentar a exceções como 'ç') 
-        - erro (descobrir o que retornar) 
-    -> trata_digito:
-        - confirmar concatenação de caracteres
-
-==============================================================================================
-*/
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include "definicoes.h"
 
 
@@ -52,15 +37,10 @@ void set_token_c(token *tk)
 } 
 
 
-//falta
 void trata_digito(token *tk){ 
-    /* Falta:
-        confirmar concatenação de caracteres
-    */ 
-
     char num[lexema_size_max]; 
-    while(caractere > 47 && caractere < 58){ 
-        strncat(num, &caractere, 1);  // ver como fazer isso para string
+    while(isdigit(caractere)){ 
+        strncat(num, &caractere, 1);  
         ler(); 
     }
     set_token_s (tk, num);
@@ -139,59 +119,58 @@ void insere_lista(token *tk)
 }
 
 void trata_ident_reserv(token *tk){
-    char caract_aux[lexema_size_max] = "";
-    strncat(caract_aux, &caractere, 1);  
+    char id[lexema_size_max] = "";
+    strncat(id, &caractere, 1);  
     ler();
     
-    while((47 < caractere && caractere < 58 )|| (64 < caractere && caractere < 91) ||
-          (96 < caractere && caractere < 123) || (caractere == 95)){
-        strncat(caract_aux, &caractere, 1); 
+    while(isalnum(caractere) || (caractere == 95)){
+        strncat(id, &caractere, 1); 
         ler();
     }
     char ao = caractere;
-    set_token_s(tk, caract_aux);
+    set_token_s(tk, id);
 
-    if (strcmp(caract_aux, "programa") == 0) {
+    if (strcmp(id, "programa") == 0) {
         tk->simbolo = sprograma;
-    } else if (strcmp(caract_aux, "se") == 0) {
+    } else if (strcmp(id, "se") == 0) {
         tk->simbolo = sse;
-    }else if (strcmp(caract_aux, "entao") == 0) {
+    }else if (strcmp(id, "entao") == 0) {
         tk->simbolo = sentao;
-    }else if (strcmp(caract_aux, "senao") == 0) {
+    }else if (strcmp(id, "senao") == 0) {
         tk->simbolo = ssenao;
-    }else if (strcmp(caract_aux, "enquanto") == 0) {
+    }else if (strcmp(id, "enquanto") == 0) {
         tk->simbolo = senquanto;
-    }else if (strcmp(caract_aux, "faca") == 0) {
+    }else if (strcmp(id, "faca") == 0) {
         tk->simbolo = sfaca;
-    }else if (strcmp(caract_aux, "inicio") == 0) {
+    }else if (strcmp(id, "inicio") == 0) {
         tk->simbolo = sinício;
-    }else if (strcmp(caract_aux, "fim") == 0) {
+    }else if (strcmp(id, "fim") == 0) {
         tk->simbolo = sfim;
-    }else if (strcmp(caract_aux, "escreva") == 0) {
+    }else if (strcmp(id, "escreva") == 0) {
         tk->simbolo = sescreva;
-    }else if (strcmp(caract_aux, "leia") == 0) {
+    }else if (strcmp(id, "leia") == 0) {
         tk->simbolo = sleia;
-    }else if (strcmp(caract_aux, "var") == 0) {
+    }else if (strcmp(id, "var") == 0) {
         tk->simbolo = svar;
-    }else if (strcmp(caract_aux, "inteiro") == 0) {
+    }else if (strcmp(id, "inteiro") == 0) {
         tk->simbolo = sinteiro;
-    }else if (strcmp(caract_aux, "booleano") == 0) {
+    }else if (strcmp(id, "booleano") == 0) {
         tk->simbolo = sbooleano;
-    }else if (strcmp(caract_aux, "verdadeiro") == 0) {
+    }else if (strcmp(id, "verdadeiro") == 0) {
         tk->simbolo = sverdadeiro;
-    }else if (strcmp(caract_aux, "falso") == 0) {
+    }else if (strcmp(id, "falso") == 0) {
         tk->simbolo = sfalso;
-    }else if (strcmp(caract_aux, "procedimento") == 0) {
+    }else if (strcmp(id, "procedimento") == 0) {
         tk->simbolo = sprocedimento;
-    }else if (strcmp(caract_aux, "funcao") == 0) {
+    }else if (strcmp(id, "funcao") == 0) {
         tk->simbolo = sfuncao;
-    }else if (strcmp(caract_aux, "div") == 0) {
+    }else if (strcmp(id, "div") == 0) {
         tk->simbolo = sdiv;
-    }else if (strcmp(caract_aux, "e") == 0) {
+    }else if (strcmp(id, "e") == 0) {
         tk->simbolo = se;
-    }else if (strcmp(caract_aux, "ou") == 0) {
+    }else if (strcmp(id, "ou") == 0) {
         tk->simbolo = sou;
-    }else if (strcmp(caract_aux, "nao") == 0) {
+    }else if (strcmp(id, "nao") == 0) {
         tk->simbolo = snao;
     }else{
         tk-> simbolo = sidentificador;
@@ -248,7 +227,7 @@ void printList()
     printf("%s", no->tk.lexema);
 }
 
-void desibimbador()
+void desalocador()
 {
     Node *no = atual;
     while (no->prev != NULL)
@@ -261,15 +240,11 @@ void desibimbador()
 }
 
 void pega_token(token *tk){ 
-    /*falta:  
-        - caractere é letra (se atentar a exceções como 'ç') 
-        - erro (descobrir o que retornar) 
-    */  
    char aux = caractere;
-    if(47 < caractere && caractere < 58){ 
+    if(isdigit(caractere)){ 
         trata_digito(tk);  
     }else{ 
-        if((64 < caractere && caractere < 91) || (96 < caractere && caractere < 123)){ 
+        if(isalpha(caractere)){ 
             trata_ident_reserv(tk); 
         }else{ 
             if(caractere == ':'){ 
@@ -334,7 +309,7 @@ void AnalisadorLexicalN1()
         }
     } 
     printList();
-    desibimbador();
+    desalocador();
     fclose(fp); 
 }
 
