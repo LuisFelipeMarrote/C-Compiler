@@ -216,15 +216,21 @@ void trata_relacional(token *tk){
     }
 }
 
+void print_token(token *tk){
+    printf("==================================================================================\n");
+    printf("Lexema: %s\tSimbolo:%s\n", tk->lexema, print_enum(tk->simbolo));
+    printf("==================================================================================\n");
+}
+
 void printList()
 {
     Node *no = atual;
     while (no->prev != NULL)
     {
-        printf("%s", no->tk.lexema);
+        print_token(no);
         no = no->prev;
     }
-    printf("%s", no->tk.lexema);
+    print_token(no);
 }
 
 void desalocador()
