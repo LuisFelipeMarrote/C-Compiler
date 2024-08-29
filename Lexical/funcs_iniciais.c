@@ -54,14 +54,15 @@ void trata_digito(token *tk){
     /* Falta:
         confirmar concatenação de caracteres
     */
+
     char *num = &caractere; 
     ler(); 
     while(caractere > 47 && caractere < 58){ 
-       num = num + caractere; // ver como fazer isso para string
+        strcat(num, &caractere, 1);  // ver como fazer isso para string
         ler(); 
-    } 
-    tk->simbolo = snum; 
-
+    }
+    set_token_s (tk, num);
+    tk->simbolo = snum;
 } 
 
 void trata_atribuicao(token *tk){ 
@@ -73,8 +74,8 @@ void trata_atribuicao(token *tk){
     }else{  
         set_token_s (tk, ":"); 
         tk->simbolo = sdoispontos; 
-    } 
-} 
+    }
+}
 
 void trata_aritmetico(token *tk){ 
     set_token_c (tk);  
@@ -141,16 +142,14 @@ void trata_ident_reserv(token *tk){
         - caractere/letra/'_'
         - id = id + caractere
     */
-    char* id = &caractere;
-    int size = 0;
+    char caract_aux[lexema_size_max] = caractere;
+
     ler();
     while(1/* caractere é letra ou dígito ou "_' */){
-        size += 1; //rever
+        strcat(caract_aux, &caractere, 1); 
         ler();
     }
 
-    char caract_aux[size];
-    memmove (caract_aux,id,size);
     set_token_s(tk, caract_aux);
 
     if (strcmp(caract_aux, "programa") == 0) {
@@ -207,6 +206,7 @@ void trata_relacional(token *tk){
     switch(switchcaractere){
         case '!':
             if(caractere == '='){
+                set_token_s(tk, "!=");             
                 tk->simbolo = sdif;
                 ler();
             }
@@ -216,19 +216,23 @@ void trata_relacional(token *tk){
             break;
         case '<':
             if(caractere == '='){
+                set_token_s(tk, "<=");
                 tk->simbolo = smenorig;
                 ler();
             }
             else{
+                set_token_s(tk, "<");
                 tk->simbolo = smenor;
             }
             break;
         case '>':
             if(caractere == '='){
+                set_token_s(tk, ">=");
                 tk->simbolo = smaiorig;
                 ler();
             }
             else{
+                set_token_s(tk, ">");
                 tk->simbolo = smaior;
             }
             break;
