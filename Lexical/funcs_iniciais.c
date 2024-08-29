@@ -23,14 +23,15 @@ typedef struct Node Node;
 
 struct Node{ 
   token tk;          // ver ponteiro / string 
-  Node *next;
+  Node *prev;
 }; 
 
 char caractere;
 char *filename; 
 FILE *fp; 
-Node *primeiro = NULL;
-Node *atual = NULL;
+Node *atual;
+
+void printList();
 
 void ler()
 { 
@@ -58,7 +59,6 @@ void trata_digito(token *tk){
     */ 
 
     char num[lexema_size_max]; 
-    ler(); 
     while(caractere > 47 && caractere < 58){ 
         strncat(num, &caractere, 1);  // ver como fazer isso para string
         ler(); 
@@ -118,32 +118,27 @@ void trata_pontuacao(token *tk){
     default:
         break;
     }
+    ler();
 } 
 
 void insere_lista(token *tk)
 {
-    Node no;
+    Node *no = (Node*) malloc(sizeof(Node));
+    memcpy ( &(no->tk), tk, sizeof(token) );
 
-    memcpy ( &no.tk, tk, sizeof(token) );
-    no.next = NULL;
-
-    if(primeiro != NULL)
+    if(atual != NULL)
     {
-        atual->next = &no;
-        atual = &no;
-    }
+        no->prev = atual;
+    }    
     else
     {
-        primeiro = &no;
-        atual = primeiro;
+        no->prev = NULL;
     }
+
+    atual = no;
 }
 
 void trata_ident_reserv(token *tk){
-    /*Falta:
-        - caractere/letra/'_'
-        - id = id + caractere
-    */
     char caract_aux[lexema_size_max] = "";
     strncat(caract_aux, &caractere, 1);  
     ler();
@@ -153,7 +148,7 @@ void trata_ident_reserv(token *tk){
         strncat(caract_aux, &caractere, 1); 
         ler();
     }
-
+    char ao = caractere;
     set_token_s(tk, caract_aux);
 
     if (strcmp(caract_aux, "programa") == 0) {
@@ -201,7 +196,6 @@ void trata_ident_reserv(token *tk){
     }else{
         tk-> simbolo = sidentificador;
     }
-
 } 
 
 void trata_relacional(token *tk){
@@ -210,7 +204,7 @@ void trata_relacional(token *tk){
     switch(switchcaractere){
         case '!':
             if(caractere == '='){
-                set_token_s(tk, "!=");             
+                set_token_s(tk, "!=");
                 tk->simbolo = sdif;
                 ler();
             }
@@ -245,12 +239,25 @@ void trata_relacional(token *tk){
 
 void printList()
 {
-    Node *no = primeiro;
-    while (no->next != NULL)
+    Node *no = atual;
+    while (no->prev != NULL)
     {
-        puts(no->tk.lexema);
-        no = no->next;
+        printf("%s", no->tk.lexema);
+        no = no->prev;
     }
+    printf("%s", no->tk.lexema);
+}
+
+void desibimbador()
+{
+    Node *no = atual;
+    while (no->prev != NULL)
+    {
+        atual = no->prev;
+        free(no);
+        no = atual;
+    }    
+    free(no);
 }
 
 void pega_token(token *tk){ 
@@ -300,7 +307,7 @@ void AnalisadorLexicalN1()
 
     while (caractere != EOF) 
     {
-        while((caractere == '{')) 
+        while(caractere == '{') 
         {
                 while(caractere != '}' && caractere != EOF) 
                 { 
@@ -313,16 +320,21 @@ void AnalisadorLexicalN1()
                 ler(); 
         } 
 
+        while(caractere == ' ' || caractere == '\n')
+        {
+            ler();
+        }
+
         if(caractere != EOF) 
         { 
-            printf("%c", caractere);
+            ///printf("%c", caractere);
             token tk;
             pega_token(&tk);
             insere_lista(&tk);
-            ler();
         }
     } 
     printList();
+    desibimbador();
     fclose(fp); 
 }
 
