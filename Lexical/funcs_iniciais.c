@@ -227,10 +227,10 @@ void printList()
     Node *no = atual;
     while (no->prev != NULL)
     {
-        print_token(no);
+        print_token(&(no->tk));
         no = no->prev;
     }
-    print_token(no);
+    print_token(&(no->tk));
 }
 
 void desalocador()
