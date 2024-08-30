@@ -16,7 +16,20 @@ char *filename;
 FILE *fp; 
 Node *atual;
 
+void ler();
 void printList();
+void trata_digito(token *tk);
+void trata_atribuicao(token *tk);
+void trata_aritmetico(token *tk);
+void trata_pontuacao(token *tk);
+void insere_lista(token *tk);
+void trata_ident_reserv(token *tk);
+void trata_relacional(token *tk);
+void print_token(token *tk);
+void printList();
+void desalocador();
+void pega_token(token *tk);
+void AnalisadorLexicalN1();
 
 void ler()
 { 
@@ -217,14 +230,14 @@ void trata_relacional(token *tk){
 }
 
 void print_token(token *tk){
-    printf("==================================================================================\n");
-    printf("Lexema: %s\tSimbolo:%s\n", tk->lexema, print_enum(tk->simbolo));
+    printf("Lexema: %s\tSimbolo: %s\n", tk->lexema, print_enum(tk->simbolo));
     printf("==================================================================================\n");
 }
 
 void printList()
 {
     Node *no = atual;
+    printf("==================================================================================\n");
     while (no->prev != NULL)
     {
         print_token(&(no->tk));
@@ -284,28 +297,32 @@ void AnalisadorLexicalN1()
         printf("Error: could not open file %s", filename); 
         return; 
     } 
+
     ler(); 
 
-    while (caractere != EOF) 
+    while (caractere != EOF)
     {
-        while(caractere == '{') 
-        {
-                while(caractere != '}' && caractere != EOF) 
-                { 
+        while ((caractere == '{' || caractere == ' ' || caractere == '\n') && caractere != EOF) 
+        {        
+            if(caractere == '{') 
+            {
+                    while(caractere != '}' && caractere != EOF) 
+                    { 
+                        ler(); 
+                    }            
+                    if(caractere == EOF) 
+                    { 
+                        ///error()
+                    } 
                     ler(); 
-                }            
-                if(caractere == EOF) 
-                { 
-                    ///error()
-                } 
-                ler(); 
-        } 
+            } 
 
-        while(caractere == ' ' || caractere == '\n')
-        {
-            ler();
-        }
-
+            while(caractere == ' ' || caractere == '\n')
+            {
+                ler();
+            }
+        }             
+        
         if(caractere != EOF) 
         { 
             ///printf("%c", caractere);
@@ -313,7 +330,8 @@ void AnalisadorLexicalN1()
             pega_token(&tk);
             insere_lista(&tk);
         }
-    } 
+    }
+    
     printList();
     desalocador();
     fclose(fp); 
