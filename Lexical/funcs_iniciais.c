@@ -295,7 +295,9 @@ void pega_token(token *tk){
 void lexical_error(int n, token *tk){
     set_token_s(tk, "Erro");
     tk->simbolo = serro;
-    printf("Erro lexical %s na linha %d\n", print_lexical_error(n), linha);
+    printf("Erro lexical");
+    print_lexical_error(n);
+    printf("na linha %d\n", linha);
     ler();
 }
 
@@ -335,6 +337,7 @@ void AnalisadorLexicalN1()
                     { 
                         token tk;
                         lexical_error(1, &tk);
+                        insere_lista(&tk);
                     } 
                     ler(); 
             } 
@@ -342,6 +345,7 @@ void AnalisadorLexicalN1()
             if(caractere == '}'){
                 token tk;
                 lexical_error(2, &tk);
+                insere_lista(&tk);  
             }
 
             while(caractere == ' ' || caractere == '\n')

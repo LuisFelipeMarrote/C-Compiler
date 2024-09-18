@@ -20,13 +20,14 @@ char* print_enum(enum tipos simbolo){
     return tipo[simbolo];       
 }
 
-char* print_lexical_error(int n){
+void print_lexical_error(int n){
   char* erros[] = {"",
    "1: Chaves Abertas (era esperado '}')",
    "2: chave aberta"
    "3: Caractere Inválido",
    "4: <rever msg> ! sem = depois", 
   };
+  printf(" %s ", erros[n]);
 }
 
 typedef struct{ 
