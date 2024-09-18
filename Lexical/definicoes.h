@@ -5,19 +5,28 @@
 
 #define lexema_size_max 30
 
-enum tipos {smais, smenos, smul, snum, satribuicao, sdoispontos,svirgula, 
+enum tipos {smais, smenos, smult, snúmero, satribuicao, sdoispontos,svírgula, 
             sabre_parenteses, sfecha_parenteses, sponto_virgula, sprograma, sse, sentao,
             ssenao, senquanto, sfaca, sinício, sfim, sescreva, sleia, svar, sinteiro, sbooleano, 
             sverdadeiro, sfalso, sprocedimento, sfuncao, sdiv, se, sou, snao, sidentificador, 
-            sdif, smenorig, smenor, smaiorig, smaior};  
+            sdif, smenorig, smenor, smaiorig, smaior, sponto, sig, serro};  
 
 char* print_enum(enum tipos simbolo){
-    char* tipo[] = {"smais", "smenos", "smul", "snum", "satribuicao", "sdoispontos", "svirgula",
+    char* tipo[] = {"smais", "smenos", "smult", "snúmero", "satribuicao", "sdoispontos", "svírgula",
             "sabre_parenteses", "sfecha_parenteses", "sponto_virgula", "sprograma", "sse", "sentao",
             "ssenao", "senquanto", "sfaca", "sinício", "sfim", "sescreva", "sleia", "svar", "sinteiro", "sbooleano", 
             "sverdadeiro", "sfalso", "sprocedimento", "sfuncao", "sdiv", "se", "sou", "snao", "sidentificador",
-            "sdif", "smenorig", "smenor", "smaiorig", "smaior"}; 
+            "sdif", "smenorig", "smenor", "smaiorig", "smaior", "sponto", "sig", "serro"}; 
     return tipo[simbolo];       
+}
+
+char* print_lexical_error(int n){
+  char* erros[] = {"",
+   "1: Chaves Abertas (era esperado '}')",
+   "2: chave aberta"
+   "3: Caractere Inválido",
+   "4: <rever msg> ! sem = depois", 
+  };
 }
 
 typedef struct{ 

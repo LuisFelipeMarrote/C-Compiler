@@ -15,6 +15,7 @@ char caractere;
 char *filename; 
 FILE *fp; 
 Node *atual;
+int linha;
 
 void ler();
 void printList();
@@ -30,6 +31,7 @@ void printList();
 void desalocador();
 void pega_token(token *tk);
 void AnalisadorLexicalN1();
+void lexical_error(int n, token *tk);
 
 void ler()
 { 
@@ -49,7 +51,6 @@ void set_token_c(token *tk)
     memcpy ( tk->lexema, &caractere, sizeof(caractere) ); 
 } 
 
-
 void trata_digito(token *tk){ 
     char num[lexema_size_max]; 
     while(isdigit(caractere)){ 
@@ -57,7 +58,7 @@ void trata_digito(token *tk){
         ler(); 
     }
     set_token_s (tk, num);
-    tk->simbolo = snum;
+    tk->simbolo = snúmero;
 } 
 
 void trata_atribuicao(token *tk){ 
@@ -82,19 +83,18 @@ void trata_aritmetico(token *tk){
             tk->simbolo = smenos ;
             break;
         case '*':  
-            tk->simbolo = smul ;
+            tk->simbolo = smult ;
             break;
     }
     ler(); 
 } 
-
 
 void trata_pontuacao(token *tk){
     set_token_c (tk);  
     switch (caractere)
     {
     case ',':
-        tk->simbolo = svirgula;
+        tk->simbolo = svírgula;
         break;
     case '(':
         tk->simbolo = sabre_parenteses;
@@ -106,7 +106,7 @@ void trata_pontuacao(token *tk){
         tk->simbolo = sponto_virgula;
         break;    
     case '.':
-        tk->simbolo = sfim;
+        tk->simbolo = sponto;
         break;    
     default:
         break;
@@ -201,7 +201,8 @@ void trata_relacional(token *tk){
                 ler();
             }
             else{
-                //erro
+                ungetc(caractere, fp);
+                lexical_error(4, tk);
             }
             break;
         case '<':
@@ -225,6 +226,10 @@ void trata_relacional(token *tk){
                 set_token_s(tk, ">");
                 tk->simbolo = smaior;
             }
+            break;
+        case '=':
+            set_token_s(tk, "=");
+            tk->simbolo = sig;
             break;
     }
 }
@@ -278,7 +283,7 @@ void pega_token(token *tk){
                         if(caractere == ';' || caractere == ','|| caractere == '('|| caractere == ')'|| caractere == '.'){ 
                             trata_pontuacao(tk); 
                         }else{ 
-                            /*erro*/ 
+                            lexical_error(3, tk); 
                         } 
                     } 
                 } 
@@ -286,6 +291,13 @@ void pega_token(token *tk){
         } 
     }
 } 
+
+void lexical_error(int n, token *tk){
+    set_token_s(tk, "Erro");
+    tk->simbolo = serro;
+    printf("Erro lexical %s na linha %d\n", print_lexical_error(n), linha);
+    ler();
+}
 
 void AnalisadorLexicalN1()
 {
@@ -298,6 +310,8 @@ void AnalisadorLexicalN1()
         return; 
     } 
 
+    linha = 1;
+
     ler(); 
 
     while (caractere != EOF)
@@ -306,19 +320,35 @@ void AnalisadorLexicalN1()
         {        
             if(caractere == '{') 
             {
-                    while(caractere != '}' && caractere != EOF) 
+                int abre = 0;
+                    while((caractere != '}' || abre > 1) && caractere != EOF) 
                     { 
+                        if(caractere == '{') 
+                            abre++;
+                        if(caractere == '}') 
+                            abre--;
+                        if(caractere == '\n')
+                            linha++;
                         ler(); 
                     }            
                     if(caractere == EOF) 
                     { 
-                        ///error()
+                        token tk;
+                        lexical_error(1, &tk);
                     } 
                     ler(); 
             } 
 
+            if(caractere == '}'){
+                token tk;
+                lexical_error(2, &tk);
+            }
+
             while(caractere == ' ' || caractere == '\n')
             {
+                if(caractere == '\n'){
+                    linha++;
+                }
                 ler();
             }
         }             
@@ -333,6 +363,7 @@ void AnalisadorLexicalN1()
     }
     
     printList();
+    printf("linhas: %d", linha);
     desalocador();
     fclose(fp); 
 }
