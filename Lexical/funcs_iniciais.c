@@ -316,7 +316,7 @@ void AnalisadorLexicalN1()
 
     while (caractere != EOF)
     {
-        while ((caractere == '{' || caractere == ' ' || caractere == '\n') && caractere != EOF) 
+        while ((caractere == '{' || caractere == ' ' || caractere == '\n' || caractere == '}') && caractere != EOF) 
         {        
             if(caractere == '{') 
             {
