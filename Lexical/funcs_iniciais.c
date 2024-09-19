@@ -293,11 +293,21 @@ void pega_token(token *tk){
 } 
 
 void lexical_error(int n, token *tk){
+    char* erros[] = {"",
+        "1: Chaves Abertas ('{') sem chaves fechadas depois (era esperado '}')",
+        "2: Chaves Fechadas ('}') sem chaves abertas antes (era esperado '{' antes)",
+        "3: Caractere Inválido",
+        "4: Ocorrencia de Exclamação ('!') sem Sinal de Igual ('=') depois (símbolo inválido)" 
+    };
+    
+    printf("Erro lexical");
+    printf(" %s ", erros[n]);
+    printf("na linha %d\n", linha);
+
+    
     set_token_s(tk, "Erro");
     tk->simbolo = serro;
-    printf("Erro lexical");
-    print_lexical_error(n);
-    printf("na linha %d\n", linha);
+
     ler();
 }
 
