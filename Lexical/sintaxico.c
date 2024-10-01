@@ -7,7 +7,7 @@
 void sintax_error(int n); 
 void Analisa_Bloco(token *tk); 
 void Analisa_et_variáveis(token *tk); 
-void Analisa_subrotinas();  
+void Analisa_subrotinas(token *tk);  
 void Analisa_comandos(token *tk); 
 void Analisa_Variaveis(token *tk); 
 void Analisa_Tipo(token *tk); 
@@ -19,7 +19,8 @@ void Analisa_leia(token *tk);
 void Analisa_escreva(token *tk);
 void Analisa_atribuicao(token *tk);
 void Chamada_procedimento(token *tk);
-
+void Analisa_termo(token *tk);
+void Analisa_Chamada_de_Procedimento(token *tk);
 
 void AnalisadorSintatico();
 
@@ -37,7 +38,9 @@ void sintax_error(int n){
         "9: (falta sinicio)",
         "10: (sla)",
         "11: (sla)",
-        "12: (fecha parentesis)"
+        "12: (fecha parenteses)",
+        "13: (abre paranteses)",
+        "0: (sponto e virgula)"
         };
     
     printf("Erro de sintaxe");
@@ -48,7 +51,7 @@ void sintax_error(int n){
 void Analisa_Bloco(token *tk){
     //tk = lexico
     Analisa_et_variáveis(tk);
-    Analisa_subrotinas();
+    Analisa_subrotinas(tk);
     Analisa_comandos(tk);
 }
 
@@ -195,6 +198,70 @@ void Analisa_Tipo(token *tk){
     //tk = lexico
 }
 
+void Analisa_escreva(token *tk){
+    if(tk->simbolo = sabre_parenteses){
+        //tk = lexico
+        if(tk->simbolo = sidentificador){
+            ///if(pesquisa_declvarfunc_tabela(token.lexema))
+                if(tk->simbolo = sfecha_parenteses){
+                    //tk = lexico
+                }
+                else{
+                    sintax_error(12);
+                }
+            ///else(erro)
+        }
+        else{
+            sintax_error(2);
+            }
+    }
+    else{
+        sintax_error(13);
+    }
+}
+
+void Analisa_subrotinas(token *tk){
+    ///def auxrot, flag inteiro
+/*  flag = 0
+    if(tk->simbolo = sprocedimento) | (tk->simbolo = sfuncao)
+        auxrot = rotulo
+        gera('        ', JMP,rotulo,'        ')     {salta sub-rotinas}
+        rotulo = rotulo + 1
+        flag = 1
+*/
+    while((tk->simbolo = sprocedimento) | (tk->simbolo = sfuncao)){
+        if(tk->simbolo = sprocedimento){
+            analisa_declaracao_procedimento();
+        }
+        else{
+            analisa_declaracao_funcao();
+        }
+        if(tk->simbolo = sponto_virgula){
+            //tk = lexico;
+        }
+        else{
+            sintax_error(0);
+        }
+    }
+    ///if (flag = 1){
+    ///Gera(auxrot,NULL,'        ','         ')     {incio do principal}
+    ///}
+}
+
+void Analisa_termo(token *tk){
+    analisa_fator();
+    while((tk->simbolo = smult) | (tk->simbolo = sdiv) | (tk->simbolo = se)){
+        //tk = lexico;
+        analisa_fator();
+    }
+}
+
+void Analisa_Chamada_de_Procedimento(token *tk){
+    /*Nao sei mas vou tentar
+    if(tk->simbolo =  )
+    
+    */
+}
 int main(){
     AnalisadorSintatico();
 }
