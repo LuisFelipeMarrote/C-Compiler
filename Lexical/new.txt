@@ -1,9 +1,8 @@
-programa test !{};}
-
+programa test;
 var v: inteiro;
  i,max, juro,: inteiro;
 inicio
-enquanto v != -1
+enquanto v ! -12
 faca
 inicio
  {leia o valor inicial}
@@ -22,8 +21,3 @@ inicio
  escreva(valor)
 fim
 fim
-
-
-
-
-    

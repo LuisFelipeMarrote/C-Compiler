@@ -9,7 +9,7 @@ var a, x:==inteiro;
        z: booleano;
 inicio
   se x>1  entao
-      x:=0;
+      x:= 0;
   leia(z);
   enquanto (a != +89) e (a<=--1000)  {condicao de parada}
   faca inicio
@@ -17,7 +17,6 @@ inicio
        fim;
   escreva(a)
 fim;
-
 
 procedimento analisa2;
 inicio
