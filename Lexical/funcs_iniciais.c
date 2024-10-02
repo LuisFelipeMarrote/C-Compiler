@@ -313,7 +313,7 @@ void lexical_error(int n, token *tk){
 
 void AnalisadorLexicalN1()
 {
-    filename = "teste_8.txt";
+    filename = "teste_3.txt";
     fp = fopen(filename, "r");
 
     if (fp == NULL) 
