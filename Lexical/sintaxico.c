@@ -199,11 +199,11 @@ void Analisa_Tipo(token *tk){
 }
 
 void Analisa_escreva(token *tk){
-    if(tk->simbolo = sabre_parenteses){
+    if(tk->simbolo == sabre_parenteses){
         //tk = lexico
-        if(tk->simbolo = sidentificador){
+        if(tk->simbolo == sidentificador){
             ///if(pesquisa_declvarfunc_tabela(token.lexema))
-                if(tk->simbolo = sfecha_parenteses){
+                if(tk->simbolo == sfecha_parenteses){
                     //tk = lexico
                 }
                 else{
@@ -229,14 +229,14 @@ void Analisa_subrotinas(token *tk){
         rotulo = rotulo + 1
         flag = 1
 */
-    while((tk->simbolo = sprocedimento) | (tk->simbolo = sfuncao)){
-        if(tk->simbolo = sprocedimento){
+    while((tk->simbolo == sprocedimento) | (tk->simbolo == sfuncao)){
+        if(tk->simbolo == sprocedimento){
             analisa_declaracao_procedimento();
         }
         else{
             analisa_declaracao_funcao();
         }
-        if(tk->simbolo = sponto_virgula){
+        if(tk->simbolo == sponto_virgula){
             //tk = lexico;
         }
         else{
@@ -250,18 +250,37 @@ void Analisa_subrotinas(token *tk){
 
 void Analisa_termo(token *tk){
     analisa_fator();
-    while((tk->simbolo = smult) | (tk->simbolo = sdiv) | (tk->simbolo = se)){
+    while((tk->simbolo == smult) | (tk->simbolo == sdiv) | (tk->simbolo == se)){
         //tk = lexico;
         analisa_fator();
     }
 }
 
 void Analisa_Chamada_de_Procedimento(token *tk){
-    /*Nao sei mas vou tentar
-    if(tk->simbolo =  )
-    
-    */
+    //Nao sei mas vou tentar
+    if(tk->simbolo = sidentificador){
+        //tk = lexico;
+        if(tk->simbolo == sabre_parenteses){
+            //tk = lexico;
+            if(tk->simbolo != sfecha_parenteses){
+                ///analisa_parametros
+            }
+            if(tk->simbolo == sfecha_parenteses){
+                //tk = lexico
+            }
+            else{
+                sintax_error(12);
+            }
+        }
+        else{
+            sintax_error(13);
+        }
+    }
+    else{
+        sintax_error(2);
+    }
 }
+
 int main(){
     AnalisadorSintatico();
 }
