@@ -335,5 +335,5 @@ void AnalisadorLexical(FILE *fp_main, int *linha_main, token *token){
     fp = fp_main;
     tk_main = token;
     AnalisadorLexicalN1();  
-    print_token(tk_main);  
+    //print_token(tk_main);  
 }

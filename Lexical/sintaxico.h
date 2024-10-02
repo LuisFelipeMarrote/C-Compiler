@@ -26,7 +26,7 @@ void Analisa_atrib_chprocedimento();
 void Analisa_se();
 void Analisa_enquanto();
 void Analisa_leia(); 
-void Analisa_escreva(); // ok
+void Analisa_escreva();
 void Analisa_atribuicao();
 void Chamada_procedimento();
 void Analisa_termo();
@@ -45,17 +45,34 @@ void sintax_error(int n){
     char* erros[] = {"falta definir",
         "1: Esperado 'programa'",
         "2: Esperado identificador para escrever",
-        "3: Esperado ponto e virgula", 
+        "3: Esperado ';'", 
         "4: Esperado ponto final",
         "5: (honestamente nn entendi ainda, rever o que é)",
-        "6: (faltou ';' em et_variaveis)",
-        "7: Esperado um identificador para var",
+        "6: Esperado ';' após declaração de variáveis",
+        "7: Esperado um identificador para 'var'",
         "8: Declaração de variável com tipo inválido",
         "9: Esperado inicio",
-        "10: (sla)",
-        "11: (sla)",
-        "12: (fecha parenteses)",
-        "13: rever  (tem 2 c esse numero)",
+        "10: Esperado '(' após 'leia'",
+        "11: Esperado identificador para leitura",
+        "12: Esperado ')' para 'leia'",
+        "13: Esperado '(' após 'escreva'",
+        "14: Esperado ')' para 'escreva'",
+        "15: Esperado identificador para escrita",
+        "16: Esperado identificador de processo",
+        "17: Esperado '(' após processo",
+        "18: Esperado ')' após processo",
+        "19: Esperado ';' após comando",
+        "20: Esperado 'faca' após enquanto",
+        "21: Esperado identificador para declaração de procedimento",
+        "22: Esperado ';' após a declaração de procedimento",
+        "23: Esperado identificador para declaração de função",
+        "24: Esperado ':' para declaração de função",
+        "25: Tipo inválido para a função",
+        "26: Esperado ';' após a declaração de função",
+        "27: Esperado 'entao' após 'se'",
+        "28: Esperado ')'",
+        "29: Encontrado simbolo inesperado para um fator",
+        "30: Esperado ';' após subrotina",
         };
     
     printf("Erro de sintaxe");
@@ -81,7 +98,7 @@ void Analisa_comandos(){
                 if(tk->simbolo != sfim)
                     Analisa_comando_simples(tk);
             }else{
-                sintax_error(0);       
+                sintax_error(19);       
                 AnalisadorLexical(fp,linha,tk);
             }
         }
@@ -200,7 +217,7 @@ void Analisa_enquanto(){
         Gera(´ ´,JMP,auxrot1,´ ´) {retorna início loop}
         Gera(auxrot2,NULL,´ ´,´ ´) {fim do while}*/
     }else{
-        sintax_error(0);
+        sintax_error(20);
     }
 }
 
@@ -221,14 +238,14 @@ void Analisa_declaração_procedimento(){
         if(tk->simbolo == sponto_virgula){
             Analisa_Bloco(tk);
         }else{
-            sintax_error(0);
+            sintax_error(22);
         }
         ///
         /*fim
         senão ERRO
         */
     }else{
-        sintax_error(0);
+        sintax_error(21);
     }
     ///DESEMPILHA OU VOLTA NÍVEL
 }
@@ -256,17 +273,17 @@ void Analisa_declaracao_funcao(){
                 if(tk->simbolo == sponto_virgula){
                     Analisa_Bloco(tk);
                 }else{
-                    sintax_error(0);
+                    sintax_error(26);
                 }
             }else{
-                sintax_error(0);
+                sintax_error(25);
             }
         }else{
-            sintax_error(0);
+            sintax_error(24);
         }
         ///senao ERRO
     }else{
-        sintax_error(0);
+        sintax_error(23);
     }
     ///DESEMPILHA OU VOLTA NÍVEL
 }
@@ -282,7 +299,7 @@ void Analisa_se(){
             Analisa_comando_simples(tk);
         }
     }else{
-        sintax_error(0);
+        sintax_error(27);
     }
 }
 
@@ -326,15 +343,14 @@ void Analisa_fator(){
         if(tk->simbolo == sfecha_parenteses){
             AnalisadorLexical(fp,linha,tk);
         }else{
-            sintax_error(0);
+            sintax_error(28);
         }
     }else if(strcmp(tk->lexema, "verdadeiro") || strcmp(tk->lexema, "falso")){
         AnalisadorLexical(fp,linha,tk);
     }else{
-        sintax_error(0);
+        sintax_error(29);
     }
 }
-
 
 void Analisa_Tipo(){
     if(tk->simbolo != sinteiro && tk->simbolo != sbooleano){
@@ -354,12 +370,12 @@ void Analisa_escreva(){
                     AnalisadorLexical(fp,linha,tk);
                 }
                 else{
-                    sintax_error(12);
+                    sintax_error(14);
                 }
             ///else(erro)
         }
         else{
-            sintax_error(2);
+            sintax_error(15);
             }
     }
     else{
@@ -387,7 +403,7 @@ void Analisa_subrotinas(){
             AnalisadorLexical(fp,linha,tk);;
         }
         else{
-            sintax_error(0);
+            sintax_error(30);
         }
     }
     ///if (flag = 1){
@@ -416,15 +432,15 @@ void Analisa_Chamada_de_Procedimento(){
                 AnalisadorLexical(fp,linha,tk);
             }
             else{
-                sintax_error(12);
+                sintax_error(18);
             }
         }
         else{
-            sintax_error(13);
+            sintax_error(17);
         }
     }
     else{
-        sintax_error(2);
+        sintax_error(16);
     }
 }
 
