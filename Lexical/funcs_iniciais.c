@@ -1,17 +1,16 @@
 #include "funcs_iniciais_lib.h"
+#include "sintaxico.h"
 
-FILE *fp; 
-char* filename = "new.txt";
-token tk;
-int linha_main = 0;
 
 int main(){
+    FILE *fp; 
+    char* filename = "new.txt";
+    token main_tk;
+    int linha_main = 1;
     fp = fopen(filename, "r");
     caractere = fgetc(fp); 
-    while ( feof(fp) != 1)
-    { 
-        AnalisadorLexical(fp,&linha_main,&tk);
-        print_token(&tk);
-    }
+    AnalisadorSintatico(fp,&linha_main,&main_tk);
+    //AnalisadorLexical(fp,&linha_main,&tk);
+    //print_token(&main_tk);
     print_linhas();
 }

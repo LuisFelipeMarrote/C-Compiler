@@ -1,8 +1,8 @@
+#pragma once
 #include <stdlib.h> 
 #include <stdio.h> 
 #include <string.h> 
 #include <ctype.h> 
-
 #define lexema_size_max 30
 
 enum tipos {smais, smenos, smult, snúmero, satribuicao, sdoispontos,svírgula, 

@@ -2,7 +2,7 @@ programa test;
 var v: inteiro;
  i,max, juro,: inteiro;
 inicio
-enquanto v ! -12
+enquanto v != -12
 faca
 inicio
  {leia o valor inicial}

@@ -1,3 +1,4 @@
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -333,5 +334,6 @@ void AnalisadorLexical(FILE *fp_main, int *linha_main, token *token){
     linha = linha_main;
     fp = fp_main;
     tk_main = token;
-    AnalisadorLexicalN1();    
+    AnalisadorLexicalN1();  
+    print_token(tk_main);  
 }
