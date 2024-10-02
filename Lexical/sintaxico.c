@@ -15,18 +15,22 @@ void Analisa_comando_simples(token *tk);
 void Analisa_atrib_chprocedimento(token *tk); 
 void Analisa_se(token *tk);
 void Analisa_enquanto(token *tk);
-void Analisa_leia(token *tk);
-void Analisa_escreva(token *tk);
+void Analisa_leia(token *tk); 
+void Analisa_escreva(token *tk); // ok
 void Analisa_atribuicao(token *tk);
 void Chamada_procedimento(token *tk);
 void Analisa_termo(token *tk);
 void Analisa_Chamada_de_Procedimento(token *tk);
+void Analisa_expressao(token *tk);
+void Analisa_declaração_procedimento(token *tk);
+void Analisa_expressao(token *tk);
+void Analisa_expressao_simples(token *tk);
 
 void AnalisadorSintatico();
 
 void sintax_error(int n){
     //rever todos os rotulos de erro abaixo (placeholders)
-    char* erros[] = {"",
+    char* erros[] = {"falta definir",
         "1: (tk inicial != sprograma)",
         "2: (esperado sidentificador)",
         "3: (faltou ponto e virgula)", 
@@ -39,8 +43,7 @@ void sintax_error(int n){
         "10: (sla)",
         "11: (sla)",
         "12: (fecha parenteses)",
-        "13: (abre paranteses)",
-        "0: (sponto e virgula)"
+        "13: rever  (tem 2 c esse numero)",
         };
     
     printf("Erro de sintaxe");
@@ -120,8 +123,6 @@ void Analisa_leia(token *tk){
     }
 }
 
-
-
 void Analisa_et_variáveis(token *tk){
     if(tk->simbolo == sidentificador){
         while(tk->simbolo == sidentificador){
@@ -157,6 +158,162 @@ void Analisa_Variaveis(token *tk){
     }while(tk->simbolo == sdoispontos);
     //tk = lexico();
     Analisa_Tipo(tk);
+}
+
+///def auxrot1,auxrot2 inteiro
+void Analisa_enquanto(token *tk){
+    ///
+    /* auxrot1:= rotulo
+    Gera(rotulo,NULL,´ ´,´ ´) {início do while}
+    rotulo:= rotulo+1*/
+    //tk = lexico
+    Analisa_expressao(tk);
+    if(tk->simbolo == sfaca){
+        ///
+        /*auxrot2:= rotulo
+        Gera(´ ´,JMPF,rotulo,´ ´) {salta se falso}
+        rotulo:= rotulo+1
+        */
+       //tk = lexico
+       Analisa_comando_simples(tk);
+       ///
+       /*
+        Gera(´ ´,JMP,auxrot1,´ ´) {retorna início loop}
+        Gera(auxrot2,NULL,´ ´,´ ´) {fim do while}*/
+    }else{
+        sintax_error(0);
+    }
+}
+
+void Analisa_declaração_procedimento(token *tk){
+    //tk = lexico
+    ///nivel := "L"(marca ou novo galho)
+    if(tk->simbolo == sidentificador){
+        ///
+        /*pesquisa_declproc_tabela(token.lexema)
+        se não encontrou
+        então início
+        Insere_tabela(token.lexema,”procedimento”,nível, rótulo)
+        {guarda na TabSimb}
+        Gera(rotulo,NULL,´ ´,´ ´)
+        {CALL irá buscar este rótulo na TabSimb}
+        rotulo:= rotulo+1*/
+        // tk = lexico
+        if(tk->simbolo = sponto_virgula){
+            Analisa_Bloco(tk);
+        }else{
+            sintax_error(0);
+        }
+        ///
+        /*fim
+        senão ERRO
+        */
+    }else{
+        sintax_error(0);
+    }
+    ///DESEMPILHA OU VOLTA NÍVEL
+}
+
+void Analisa_declaração_função(token *tk){
+    //tk = lexico
+    ///nível := “L” (marca ou novo galho)
+    if(tk->simbolo == sidentificador){
+        ///
+        /*pesquisa_declfunc_tabela(token.lexema)
+        se não encontrou
+        então início
+        Insere_tabela(token.lexema,””,nível,rótulo)*/
+        //tk = lexico
+        if(tk->simbolo == sdoispontos){
+            //tk = lexico
+            if(tk->simbolo == sinteiro || tk->simbolo == sbooleano){
+                ///
+                /*se (token.símbolo = Sinteger)
+                então TABSIMB[pc].tipo:=
+                “função inteiro”
+                senão TABSIMB[pc].tipo:=
+                “função booleana”*/
+                //tk = lexico
+                if(tk->simbolo = sponto_virgula){
+                    Analisa_Bloco(tk);
+                }else{
+                    sintax_error(0);
+                }
+            }else{
+                sintax_error(0);
+            }
+        }else{
+            sintax_error(0);
+        }
+        ///senao ERRO
+    }else{
+        sintax_error(0);
+    }
+    ///DESEMPILHA OU VOLTA NÍVEL
+}
+
+void Analisa_se(token *tk){
+    //tk = lexico
+    Analisa_expressao(tk);
+    if(tk->simbolo == sentao){
+        //tk = lexico
+        Analisa_comando_simples(tk);
+        if(tk->simbolo == ssenao){
+            //tk = lexico
+            Analisa_comando_simples(tk);
+        }
+    }else{
+        sintax_error(0);
+    }
+}
+
+void Analisa_expressao(token *tk){
+    Analisa_expressao_simples(tk);
+    if(tk->simbolo == smaior || tk->simbolo == smaiorig || tk->simbolo == sig || tk->simbolo == smenor || tk->simbolo == smenorig || tk->simbolo == sdif){
+        //tk = lexico
+        Analisa_expressao_simples(tk);
+    }
+}
+
+void Analisa_expressao_simples(token *tk){
+    if(tk->simbolo == smais || tk->simbolo == smenor){
+        //tk = lexico
+        Analisa_termo(tk);
+        while(tk->simbolo == smais || tk->simbolo == smenos || tk->simbolo == sou){
+            //tk = lexico
+            Analisa_termo(tk);
+        }
+    }
+}
+
+void Analisa_fator(token *tk){
+    if(tk->simbolo == sidentificador){
+        ///
+        /*Se pesquisa_tabela(token.lexema,nível,ind)
+            Então Se (TabSimb[ind].tipo = “função inteiro”) ou
+            (TabSimb[ind].tipo = “função booleano”)
+            Então Analisa_chamada_função
+            Senão Léxico(token)
+            Senão ERRO
+        */
+    }else if(tk->simbolo == snúmero){
+        //tk = lexico
+    }else if(tk->simbolo == snao){
+        //tk = lexico
+        Analisa_fator(tk);
+    }else if(tk->simbolo == sabre_parenteses){
+        //tk = lexico
+        Analisa_expressao(tk);
+        if(tk->simbolo == sfecha_parenteses){
+            //tk =lexico
+        }else{
+            sintax_error(0);
+        }
+    }else if(strcmp(tk->lexema, "verdadeiro") || strcmp(tk->lexema, "falso")){
+        //tk = lexico
+    }else{
+        sintax_error(0);
+    }
 }
 
 /// def rótulo inteiro
