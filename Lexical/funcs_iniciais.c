@@ -4,7 +4,7 @@
 
 int main(){
     FILE *fp; 
-    char* filename = "new.txt";
+    char* filename = "ExtraS.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");

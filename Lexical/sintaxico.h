@@ -47,7 +47,7 @@ void sintax_error(int n){
         "2: Esperado identificador para escrever",
         "3: Esperado ';'", 
         "4: Esperado ponto final",
-        "5: (honestamente nn entendi ainda, rever o que é)",
+        "5: Encontrado ponto final antes do fim do arquivo",
         "6: Esperado ';' após declaração de variáveis",
         "7: Esperado um identificador para 'var'",
         "8: Declaração de variável com tipo inválido",
@@ -400,7 +400,7 @@ void Analisa_subrotinas(){
             Analisa_declaracao_funcao();
         }
         if(tk->simbolo == sponto_virgula){
-            AnalisadorLexical(fp,linha,tk);;
+            AnalisadorLexical(fp,linha,tk);
         }
         else{
             sintax_error(30);
@@ -450,11 +450,21 @@ void Analisa_atribuicao(){
 }
 
 void Chamada_procedimento(){
-
+    //ver o que isso deve fazer
 }
 
 void Analisa_declaracao_procedimento(){
-
+    AnalisadorLexical(fp,linha,tk);
+    if(tk->simbolo == sidentificador){
+        AnalisadorLexical(fp,linha,tk);
+        if(tk->simbolo == sponto_virgula){
+            Analisa_Bloco();
+        }else{
+            sintax_error(0);
+        }
+    }else{
+        sintax_error(0);
+    }
 }
 
 /// def rótulo inteiro
@@ -473,8 +483,9 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(&tk);
                 if(tk->simbolo == sponto){
-                    if(1/*acabou o arquivo ou é comentário*/){
-                        //sucesso (return something?)
+                    AnalisadorLexical(fp,linha,tk);
+                    if(feof(fp)/*acabou o arquivo ou é comentário*/){
+                        printf("SUCESSO!\n");
                     }else{
                         sintax_error(5);
                     }

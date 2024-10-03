@@ -1,1 +1,10 @@
 ->LEMBRAR ERRO LIXO NUMERO no lexico
+
+LEMBRAR QUE IMPLEMENTEI MEIA BOCA AS ULTIMAS 3
+
+O CODIGO TESTE NAO TEM EXPRESSOES MUITO ELABORADAS, MAS JA FOI UTILIZADO COMO TESTE FINAL
+A GALERA COSTUMA ERRAR MTT EXPRESSOES ELABORADAS, ENTAO CUIDADO
+
+pesquisar biblioteca qd (acho) de interface grafica no C
+
+rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
