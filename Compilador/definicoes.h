@@ -16,7 +16,7 @@ char* print_enum(enum tipos simbolo){
             "sabre_parenteses", "sfecha_parenteses", "sponto_virgula", "sprograma", "sse", "sentao",
             "ssenao", "senquanto", "sfaca", "sinício", "sfim", "sescreva", "sleia", "svar", "sinteiro", "sbooleano", 
             "sverdadeiro", "sfalso", "sprocedimento", "sfuncao", "sdiv", "se", "sou", "snao", "sidentificador",
-            "sdif", "smenorig", "smenor", "smaiorig", "smaior", "sponto", "sig", "serro"}; 
+            "sdif", "smenorig", "smenor", "smaiorig", "smaior", "sponto", "sig", "serro", "sbase"}; 
     return tipo[simbolo];       
 }
 
