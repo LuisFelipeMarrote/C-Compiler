@@ -1,10 +1,10 @@
-#include "funcs_iniciais_lib.h"
-#include "sintaxico.h"
+#include "lexico.h"
+#include "sintatico.h"
 
 
 int main(){
     FILE *fp; 
-    char* filename = "ExtraS.txt";
+    char* filename = "new.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");

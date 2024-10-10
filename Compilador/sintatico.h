@@ -7,7 +7,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "definicoes.h"
-#include "funcs_iniciais_lib.h"
+#include "lexico.h"
 //#include "funcs_iniciais.c"
 
 FILE *fp; 
