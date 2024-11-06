@@ -25,11 +25,11 @@ typedef struct{
   enum tipos simbolo; 
 }token;
 
-/*typedef struct node_lista_token;
+typedef struct node_lista_token;
 typedef struct node_lista_token{
     token tk;
     node_lista_token* prox;
-}node_lista_token;*/
+}node_lista_token;
 
 
 /*typedef struct {
