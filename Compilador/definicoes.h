@@ -24,3 +24,15 @@ typedef struct{
   char lexema[lexema_size_max]; 
   enum tipos simbolo; 
 }token;
+
+/*typedef struct node_lista_token;
+typedef struct node_lista_token{
+    token tk;
+    node_lista_token* prox;
+}node_lista_token;*/
+
+
+/*typedef struct {
+  char c;
+  node_pilha_char* prev;
+} node_pilha_char;*/

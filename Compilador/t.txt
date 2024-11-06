@@ -8,3 +8,4 @@ A GALERA COSTUMA ERRAR MTT EXPRESSOES ELABORADAS, ENTAO CUIDADO
 pesquisar biblioteca qd (acho) de interface grafica no C
 
 rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
+conferir _error(0) tbm (tem de varios tipos)

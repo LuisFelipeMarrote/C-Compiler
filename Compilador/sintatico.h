@@ -8,6 +8,7 @@
 #include <ctype.h>
 #include "definicoes.h"
 #include "lexico.h"
+#include "simbolos.h"
 //#include "funcs_iniciais.c"
 
 FILE *fp; 
@@ -175,11 +176,9 @@ void Analisa_et_variáveis(){
 void Analisa_Variaveis(){
     do{
         if(tk->simbolo == sidentificador){
-            ///Pesquisa_duplicvar_tabela(tk->lexema)
-            ///se nao encontrou duplicidade
-            ///entao inicio
-            //{
-                ///insere_tabela(token->lexema, "variavel", "", "")
+            if(Pesquisa_duplicvar_tabela(tk->lexema)){
+                //se nao encontrou duplicidade
+                insere_tab_simbolos(tk->lexema, "variavel", " ", " ");
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == svírgula || tk->simbolo == sdoispontos){
                     if(tk->simbolo == svírgula){
@@ -188,8 +187,13 @@ void Analisa_Variaveis(){
                             sintax_error(7);
                         }
                     }
+                }else{
+                    sintax_error(0);
                 }
-            //}///senao ERRO
+            }else{
+                //se encontrou duplicidade
+                semantic_error(0);
+            }
         }
     }while(tk->simbolo != sdoispontos);
     AnalisadorLexical(fp,linha,tk);
@@ -355,7 +359,9 @@ void Analisa_fator(){
 void Analisa_Tipo(){
     if(tk->simbolo != sinteiro && tk->simbolo != sbooleano){
         sintax_error(8);
-    }///else{ coloca_tipo_tabela}
+    }else{
+        coloca_tipo_tabela(tk->lexema);
+    }
     AnalisadorLexical(fp,linha,tk);
 }
 
@@ -469,6 +475,7 @@ void Analisa_declaracao_procedimento(){
 
 /// def rótulo inteiro
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
+    nova_tabela(); // inicializa a tabela de simbolos
     ///rotulo := 1
     fp = fp_main;
     tk = token_main;
@@ -478,7 +485,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     if(tk->simbolo == sprograma){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
-            ///insere_tabela(tk->lexema, "nomedeprograma", "", "");
+            insere_tab_simbolos(tk->lexema, "nomedeprograma", 0, " ");
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(&tk);
