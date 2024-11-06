@@ -6,6 +6,12 @@
 #include "lexico.h"
 #include "semantico.h"
 
+/*
+    Essa tabela é uma variável global (ponteiro "tabela" aponta para o topo)
+    esse arquivo tem as funções que interagem com a tabela
+    EVITAR ALTERAR A VARIÁVEL "TABELA" DIRETAMENTE (excessão de insert e pop)!
+*/
+
 typedef struct entrada_tab_simbolos entrada_tab_simbolos;
 typedef struct entrada_tab_simbolos{
     char nome_ident[lexema_size_max];
@@ -46,8 +52,15 @@ void pop_tab_simbolos(){
 
 ///implementar
 int Pesquisa_duplicvar_tabela(char* indent){
-    printf("Nao implementei ainda(Pesquisa_duplicvar_tabela)");
-    //encontrou = false
+    entrada_tab_simbolos* entrada_atual = tabela;
+    while(entrada_atual->tipo != sbase){
+        enum tipos teste = entrada_atual->tipo;
+        char* ident_tabela = entrada_atual->nome_ident;
+        if(!strcmp(ident_tabela, indent)){
+            return 0; // encontrou = false (0)
+        }
+        entrada_atual = entrada_atual->prev;
+    };
     return 1; // não encontrou = true
 }
 

@@ -1,7 +1,3 @@
-/*
-    Ultimas funcoes antes dpo analisador geral.
-*/
-
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
@@ -9,7 +5,6 @@
 #include "definicoes.h"
 #include "lexico.h"
 #include "simbolos.h"
-//#include "funcs_iniciais.c"
 
 FILE *fp; 
 token *tk;
@@ -134,6 +129,7 @@ void Analisa_atrib_chprocedimento(){
     }
 }
 
+/// tabela
 void Analisa_leia(){
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sabre_parenteses){
@@ -178,7 +174,7 @@ void Analisa_Variaveis(){
         if(tk->simbolo == sidentificador){
             if(Pesquisa_duplicvar_tabela(tk->lexema)){
                 //se nao encontrou duplicidade
-                insere_tab_simbolos(tk->lexema, "variavel", " ", " ");
+                insere_tab_simbolos(tk->lexema, "variavel", snull, "-");
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == svírgula || tk->simbolo == sdoispontos){
                     if(tk->simbolo == svírgula){
@@ -201,6 +197,7 @@ void Analisa_Variaveis(){
 }
 
 ///def auxrot1,auxrot2 inteiro
+/// tabela
 void Analisa_enquanto(){
     ///
     /* auxrot1:= rotulo
@@ -225,6 +222,7 @@ void Analisa_enquanto(){
     }
 }
 
+/// tabela
 void Analisa_declaração_procedimento(){
     AnalisadorLexical(fp,linha,tk);
     ///nivel := "L"(marca ou novo galho)
@@ -254,6 +252,7 @@ void Analisa_declaração_procedimento(){
     ///DESEMPILHA OU VOLTA NÍVEL
 }
 
+/// tabela
 void Analisa_declaracao_funcao(){
     AnalisadorLexical(fp,linha,tk);
     ///nível := “L” (marca ou novo galho)
@@ -307,6 +306,7 @@ void Analisa_se(){
     }
 }
 
+/// pos fixa
 void Analisa_expressao(){
     Analisa_expressao_simples(tk);
     if(tk->simbolo == smaior || tk->simbolo == smaiorig || tk->simbolo == sig || tk->simbolo == smenor || tk->simbolo == smenorig || tk->simbolo == sdif){
@@ -325,6 +325,7 @@ void Analisa_expressao_simples(){
     }
 }
 
+/// tabela
 void Analisa_fator(){
     if(tk->simbolo == sidentificador){
         ///
@@ -365,6 +366,7 @@ void Analisa_Tipo(){
     AnalisadorLexical(fp,linha,tk);
 }
 
+/// tabela
 void Analisa_escreva(){
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sabre_parenteses){
@@ -389,6 +391,7 @@ void Analisa_escreva(){
     }
 }
 
+/// tabela ?
 void Analisa_subrotinas(){
     ///def auxrot, flag inteiro
 /*  flag = 0
@@ -425,6 +428,7 @@ void Analisa_termo(){
     }
 }
 
+/// ?
 void Analisa_Chamada_de_Procedimento(){
     //Nao sei mas vou tentar
     if(tk->simbolo == sidentificador){
@@ -455,6 +459,7 @@ void Analisa_atribuicao(){
     Analisa_expressao();
 }
 
+/// ?
 void Chamada_procedimento(){
     //ver o que isso deve fazer
 }
@@ -485,13 +490,13 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     if(tk->simbolo == sprograma){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
-            insere_tab_simbolos(tk->lexema, "nomedeprograma", 0, " ");
+            insere_tab_simbolos(tk->lexema, "nomedeprograma", snull, "-");
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(&tk);
                 if(tk->simbolo == sponto){
                     AnalisadorLexical(fp,linha,tk);
-                    if(feof(fp)/*acabou o arquivo ou é comentário*/){
+                    if(feof(fp)){
                         printf("SUCESSO!\n");
                     }else{
                         sintax_error(5);
