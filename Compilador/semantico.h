@@ -225,8 +225,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
             semantic_error(0);
             return serro;
         }
-        return (pilha->tk.simbolo);
     }
 
-    return serro;
+    return (pilha->tk.simbolo);
 }
