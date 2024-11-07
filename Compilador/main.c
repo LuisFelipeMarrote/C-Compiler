@@ -1,6 +1,7 @@
 #include "lexico.h"
 #include "sintatico.h"
 #include "simbolos.h"
+#include "semantico.h"
 
 int main(){
     FILE *fp; 
@@ -47,7 +48,6 @@ int main(){
     }
 
     lista = converte_inf_posfix(lista);
-
     node_lista_token* atual = lista;
     int i = 1;
     while (atual != NULL) {
@@ -56,6 +56,9 @@ int main(){
         i++;
         atual = atual->prox;
     }
+
+    enum tipos tipo_expressao = semantico_expressao(lista);
+    printf("\ntipo: %s", print_enum(tipo_expressao));
 
     // Liberação de memória (opcional)
     atual = lista;

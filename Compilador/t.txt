@@ -9,10 +9,9 @@ pesquisar biblioteca qd (acho) de interface grafica no C
 
 rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
 conferir _error(0) tbm (tem de varios tipos)
-conferir free parentesis (conversão) 
+
 implementar escopo tabela de simbolos (array 4 char)
 implementar positivo/negativo
 rever escopo ao checar duplicidade tabela de símbolos!
-free desempilhar semantico expressao
-conferir tipo operador (ident / var)
+
 ver de fazer geração de código durante a análise semantica da expressão

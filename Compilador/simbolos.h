@@ -3,34 +3,24 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "definicoes.h"
-#include "lexico.h"
-#include "semantico.h"
 
-/*
-    Essa tabela é uma variável global (ponteiro "tabela" aponta para o topo)
-    esse arquivo tem as funções que interagem com a tabela
-    EVITAR ALTERAR A VARIÁVEL "TABELA" DIRETAMENTE (excessão de insert e pop)!
-*/
+void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo, enum tipos tipo, char rotulo);
+void insere_tab_simbolos(char nome_ident[], char escopo, enum tipos tipo, char rotulo);
+void pop_tab_simbolos();
+entrada_tab_simbolos* busca_ident(char identificador[]);
+int Pesquisa_duplicvar_tabela(char* indent);
+void coloca_tipo_tabela(char* ident);
+void nova_tabela();
+void deleta_tabela();
 
-typedef struct entrada_tab_simbolos entrada_tab_simbolos;
-typedef struct entrada_tab_simbolos{
-    char nome_ident[lexema_size_max];
-    char escopo; //rever tipo
-    enum tipos tipo;
-    //adicionar end memoria (ver qual tipo usar)
-    entrada_tab_simbolos* prev;
-}entrada_tab_simbolos;
+//ponteiro para o topo da tabela
+entrada_tab_simbolos* tabela = NULL; 
 
 void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo, enum tipos tipo, char rotulo){
     entrada->escopo = escopo;
     entrada->tipo = tipo;
     memcpy(entrada->nome_ident, string, strlen(string) + 1);
 }
-
-
-
-//ponteiro para o topo da tabela
-entrada_tab_simbolos* tabela; 
 
 void insere_tab_simbolos(char nome_ident[], char escopo, enum tipos tipo, char rotulo){
     entrada_tab_simbolos* novo = (entrada_tab_simbolos*) malloc(sizeof(entrada_tab_simbolos));
@@ -50,11 +40,24 @@ void pop_tab_simbolos(){
     }
 }
 
+//busca na tabela de simbolos por um identificador e retorna a entrada
+entrada_tab_simbolos* busca_ident(char identificador[]){
+    entrada_tab_simbolos* entrada_atual = tabela;
+    while(entrada_atual->tipo != sbase){
+        char* ident_tabela = entrada_atual->nome_ident;
+
+        if(!strcmp(ident_tabela, identificador)){
+            return(entrada_atual);
+        }
+        entrada_atual = entrada_atual->prev;
+    }
+    return NULL;
+}
+
 ///implementar escopo
 int Pesquisa_duplicvar_tabela(char* indent){
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){
-        enum tipos teste = entrada_atual->tipo;
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, indent)){
             return 0; // encontrou = false (0)

@@ -55,6 +55,14 @@ node_lista_token* adicionar_token(node_lista_token* lista, token tk) {
     return lista;
 }
 
+typedef struct entrada_tab_simbolos entrada_tab_simbolos;
+struct entrada_tab_simbolos{
+    char nome_ident[lexema_size_max];
+    char escopo; //rever tipo
+    enum tipos tipo;
+    //adicionar end memoria (ver qual tipo usar)
+    entrada_tab_simbolos* prev;
+};
 
 /*typedef struct {
   char c;

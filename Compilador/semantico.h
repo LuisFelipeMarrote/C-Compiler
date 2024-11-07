@@ -3,7 +3,6 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "definicoes.h"
-#include "lexico.h"
 #include "simbolos.h"
 
 void semantic_error(int n){
@@ -20,7 +19,7 @@ void semantic_error(int n){
 
 //empilha primeiro token de uma lista
 void empilha_token(node_lista_token** pilha, node_lista_token** lista){
-    if(pilha != NULL){//se a pilha ja existir
+    if(*pilha != NULL){//se a pilha ja existir
         node_lista_token* temp = *lista;
         *lista = (*lista)->prox;
         temp->prox = *pilha;
@@ -32,7 +31,7 @@ void empilha_token(node_lista_token** pilha, node_lista_token** lista){
     }
 }
 
-//falta pos/neg
+///falta pos/neg
 int prioridade(enum tipos tipo){
     //rever positivo e negativo (talvez lidar com eles fora daqui) - ou colocar um sinal
     switch(tipo){
@@ -58,6 +57,7 @@ int prioridade(enum tipos tipo){
     }
 }
 
+///falta pos/neg
 int checa_operador(enum tipos tipo){
     switch(tipo){
         case se:
@@ -79,6 +79,7 @@ int checa_operador(enum tipos tipo){
     }
 }
 
+//struct com dados de cada operação (tipos de operadores e resultados e numero de operadores)
 typedef struct operacao operacao;
 typedef struct operacao{
     int qtd_operadores;
@@ -86,6 +87,7 @@ typedef struct operacao{
     enum tipos tipo_resultado;
 }operacao;
 
+//recebe um sinal e retorna o formato da operacao
 operacao formato_operacao(enum tipos tipo){
     operacao retorno;
     //fazer positivo/negativo
@@ -137,11 +139,9 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
                 retorno_pos = lista_infix;
             }
             lista_infix = lista_infix->prox;
-        }else if(lista_infix->tk.simbolo == sabre_parenteses){
-            //Se for abre-parênteses empilha; 
+        }else if(lista_infix->tk.simbolo == sabre_parenteses){ //Se for abre-parênteses empilha; 
             empilha_token(&pilha, &lista_infix);
-        }else if(lista_infix->tk.simbolo == sfecha_parenteses){     
-            //Se for fecha-parênteses, desempilha tudo copiando na saída até o primeiro abre-parênteses
+        }else if(lista_infix->tk.simbolo == sfecha_parenteses){ //Se for fecha-parênteses, desempilha tudo copiando na saída até o primeiro abre-parênteses
             while (pilha->tk.simbolo != sabre_parenteses){
                 lista_pos->prox = pilha;
                 lista_pos = lista_pos->prox;
@@ -149,7 +149,9 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
             }
             
             //desempilha abre parentesis
+            node_lista_token* temp_free = pilha;
             pilha = pilha->prox;
+            free(temp_free);
 
             lista_infix = lista_infix->prox;
         }else if(checa_operador(lista_infix->tk.simbolo)){
@@ -177,21 +179,32 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
     node_lista_token* pilha = NULL;
 
     while(lista_posfix != NULL){
-        if(lista_posfix->tk.simbolo == snúmero || sidentificador){
-            //se for variável, empilha
-            empilha_token(pilha, lista_posfix);
+        if(lista_posfix->tk.simbolo == snúmero || lista_posfix->tk.simbolo == sidentificador){ //se for variável, empilha
+            empilha_token(&pilha, &lista_posfix);
         
-        }else if(checa_operador(lista_posfix->tk.simbolo)){
-            //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
+        }else if(checa_operador(lista_posfix->tk.simbolo)){ //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
             operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
+
             for(int i = 0; i<analisando.qtd_operadores; i++){
-                ///procurar na tabela se for ident
+                //procurar tabela
+                if(pilha->tk.simbolo == sidentificador){
+                    entrada_tab_simbolos* entrada_tabela_operador;
+                    entrada_tabela_operador = busca_ident(pilha->tk.lexema);
+                    if(entrada_tabela_operador == NULL){
+                        semantic_error(0);
+                        return serro;
+                    }
+                    pilha->tk.simbolo = entrada_tabela_operador->tipo;
+                }
+
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
                     semantic_error(0);
+                    return serro;   
                 }else{
-                    ///node_lista_token* (vai ser free)
+                    ///gera código (?)
+                    node_lista_token* temp_free = pilha;
                     pilha = pilha->prox;
-                    ///free
+                    free(temp_free);
                 }
             } 
 
@@ -206,10 +219,11 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
             //tira o operador da lista
             temp_node = lista_posfix;
             lista_posfix = lista_posfix->prox;
-            //free(temp_node);
+            free(temp_node);
         }
         if(pilha->prox != NULL){
             semantic_error(0);
+            return serro;
         }
         return (pilha->tk.simbolo);
     }

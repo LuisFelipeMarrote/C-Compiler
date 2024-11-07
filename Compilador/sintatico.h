@@ -5,6 +5,7 @@
 #include "definicoes.h"
 #include "lexico.h"
 #include "simbolos.h"
+#include "semantico.h"
 
 FILE *fp; 
 token *tk;
