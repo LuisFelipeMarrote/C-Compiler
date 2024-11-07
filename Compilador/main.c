@@ -2,28 +2,6 @@
 #include "sintatico.h"
 #include "simbolos.h"
 
-node_lista_token* novo_no_token(token tk) {
-    node_lista_token* novo_no = (node_lista_token*)malloc(sizeof(node_lista_token));
-    if (novo_no) {
-        novo_no->tk = tk;
-        novo_no->prox = NULL;
-    }
-    return novo_no;
-}
-
-node_lista_token* adicionar_token(node_lista_token* lista, token tk) {
-    node_lista_token* novo_no = novo_no_token(tk);
-    if (!lista) {
-        return novo_no;
-    }
-    node_lista_token* atual = lista;
-    while (atual->prox != NULL) {
-        atual = atual->prox;
-    }
-    atual->prox = novo_no;
-    return lista;
-}
-
 int main(){
     FILE *fp; 
     char* filename = "teste_posfix.txt";

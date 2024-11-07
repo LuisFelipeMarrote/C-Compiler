@@ -31,6 +31,30 @@ typedef struct node_lista_token{
     node_lista_token* prox;
 }node_lista_token;
 
+//cria novo node de lista de tokens
+node_lista_token* novo_no_token(token tk) {
+    node_lista_token* novo_no = (node_lista_token*)malloc(sizeof(node_lista_token));
+    if (novo_no) {
+        novo_no->tk = tk;
+        novo_no->prox = NULL;
+    }
+    return novo_no;
+}
+
+//adiciona um token a uma lista
+node_lista_token* adicionar_token(node_lista_token* lista, token tk) {
+    node_lista_token* novo_no = novo_no_token(tk);
+    if (!lista) {
+        return novo_no;
+    }
+    node_lista_token* atual = lista;
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+    atual->prox = novo_no;
+    return lista;
+}
+
 
 /*typedef struct {
   char c;

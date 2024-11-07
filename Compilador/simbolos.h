@@ -50,7 +50,7 @@ void pop_tab_simbolos(){
     }
 }
 
-///implementar
+///implementar escopo
 int Pesquisa_duplicvar_tabela(char* indent){
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){

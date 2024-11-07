@@ -5,6 +5,7 @@
 #include "definicoes.h"
 #include "lexico.h"
 #include "simbolos.h"
+
 void semantic_error(int n){
     //rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
@@ -17,12 +18,19 @@ void semantic_error(int n){
 
 }
 
-/*
-Precedência (maior para menor):
-    Aritméticos: (+ positivo, - negativo) (*,div) (+,-)
-    Relacionais: (todos iguais)
-    Lógicos: (não) (e) (ou) 
-*/
+//empilha primeiro token de uma lista
+void empilha_token(node_lista_token** pilha, node_lista_token** lista){
+    if(pilha != NULL){//se a pilha ja existir
+        node_lista_token* temp = *lista;
+        *lista = (*lista)->prox;
+        temp->prox = *pilha;
+        *pilha = temp;
+    }else{ // se for a primeira vez empilhando, aponta para o token
+        *pilha = *lista;
+        *lista = (*lista)->prox;
+        (*pilha)->prox = NULL;
+    }
+}
 
 //falta pos/neg
 int prioridade(enum tipos tipo){
@@ -71,12 +79,53 @@ int checa_operador(enum tipos tipo){
     }
 }
 
+typedef struct operacao operacao;
+typedef struct operacao{
+    int qtd_operadores;
+    enum tipos tipos_operadores;
+    enum tipos tipo_resultado;
+}operacao;
+
+operacao formato_operacao(enum tipos tipo){
+    operacao retorno;
+    //fazer positivo/negativo
+    switch(tipo){
+        case smult:
+        case sdiv:
+        case smais:
+        case smenos:
+            retorno.qtd_operadores = 2;
+            retorno.tipo_resultado = sinteiro;
+            retorno.tipos_operadores = sinteiro;
+            break;
+        case sdif:
+        case smaior:
+        case smenor:
+        case smenorig:
+        case smaiorig:
+        case sig:
+            retorno.qtd_operadores = 2;
+            retorno.tipos_operadores = sinteiro;
+            retorno.tipo_resultado = sbooleano;
+            break;
+        case se:
+        case sou:
+            retorno.qtd_operadores = 2;
+            retorno.tipos_operadores = sbooleano;
+            retorno.tipo_resultado = sbooleano;
+        case snao:
+            retorno.qtd_operadores = 1;
+            retorno.tipos_operadores = sbooleano;
+            retorno.tipo_resultado = sbooleano;
+    }
+    return(retorno);
+}
+
 //recebe expressao como lista de tokens (esquerda = início) e transforma em lista pos-fixa (reordena a lista) e retorna o início
 node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     node_lista_token* retorno_pos = NULL; // endereço de retorno (início da lista posfixa)
     node_lista_token* lista_pos = NULL; // ponteiro para ultimo elemento adicionado na lista posfixa
     node_lista_token* pilha = NULL; // topo da pilha
-    int flag_primeiro_empilha = 0; // flag para inicializar ponteiro pilha
 
     while(lista_infix != NULL){
         if(lista_infix->tk.simbolo == snúmero || lista_infix->tk.simbolo == sidentificador){ //Se for variável ou número copia na saída;     
@@ -90,17 +139,7 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
             lista_infix = lista_infix->prox;
         }else if(lista_infix->tk.simbolo == sabre_parenteses){
             //Se for abre-parênteses empilha; 
-            if(pilha != NULL){//se a pilha ja existir
-                node_lista_token* temp = lista_infix;
-                lista_infix = lista_infix->prox;
-                temp->prox = pilha;
-                pilha = temp;
-            }else{ // se for a primeira vez empilhando, aponta para o token
-                pilha = lista_infix;
-                lista_infix = lista_infix->prox;
-                pilha->prox = NULL;
-            }
-
+            empilha_token(&pilha, &lista_infix);
         }else if(lista_infix->tk.simbolo == sfecha_parenteses){     
             //Se for fecha-parênteses, desempilha tudo copiando na saída até o primeiro abre-parênteses
             while (pilha->tk.simbolo != sabre_parenteses){
@@ -123,20 +162,57 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
             }
 
             //empilha
-            if(pilha != NULL){//se a pilha ja existir
-                node_lista_token* temp = lista_infix;
-                lista_infix = lista_infix->prox;
-                temp->prox = pilha;
-                pilha = temp;
-            }else{ // se for a primeira vez empilhando, aponta para o token
-                pilha = lista_infix;
-                lista_infix = lista_infix->prox;
-                pilha->prox = NULL;
-            }
+            empilha_token(&pilha, &lista_infix);
         }
     }
 
     //Se terminar a expressão, desempilhar copiando na saída todos os operadores ainda existentes na pilha
     lista_pos->prox = pilha;
     return retorno_pos;
+}
+
+//recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
+enum tipos semantico_expressao(node_lista_token* lista_posfix){
+    // percorre a lista empilhando os valores, e desempilhando conforme encontra operadores
+    node_lista_token* pilha = NULL;
+
+    while(lista_posfix != NULL){
+        if(lista_posfix->tk.simbolo == snúmero || sidentificador){
+            //se for variável, empilha
+            empilha_token(pilha, lista_posfix);
+        
+        }else if(checa_operador(lista_posfix->tk.simbolo)){
+            //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
+            operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
+            for(int i = 0; i<analisando.qtd_operadores; i++){
+                ///procurar na tabela se for ident
+                if(pilha->tk.simbolo != analisando.tipos_operadores){
+                    semantic_error(0);
+                }else{
+                    ///node_lista_token* (vai ser free)
+                    pilha = pilha->prox;
+                    ///free
+                }
+            } 
+
+            //empilha resultado
+            token temp_token;
+            temp_token.simbolo = analisando.tipo_resultado;
+            node_lista_token* temp_node = novo_no_token(temp_token);
+            
+            temp_node->prox = pilha;
+            pilha = pilha->prox;
+
+            //tira o operador da lista
+            temp_node = lista_posfix;
+            lista_posfix = lista_posfix->prox;
+            //free(temp_node);
+        }
+        if(pilha->prox != NULL){
+            semantic_error(0);
+        }
+        return (pilha->tk.simbolo);
+    }
+
+    return serro;
 }
