@@ -2,10 +2,32 @@
 #include "sintatico.h"
 #include "simbolos.h"
 
+node_lista_token* novo_no_token(token tk) {
+    node_lista_token* novo_no = (node_lista_token*)malloc(sizeof(node_lista_token));
+    if (novo_no) {
+        novo_no->tk = tk;
+        novo_no->prox = NULL;
+    }
+    return novo_no;
+}
+
+node_lista_token* adicionar_token(node_lista_token* lista, token tk) {
+    node_lista_token* novo_no = novo_no_token(tk);
+    if (!lista) {
+        return novo_no;
+    }
+    node_lista_token* atual = lista;
+    while (atual->prox != NULL) {
+        atual = atual->prox;
+    }
+    atual->prox = novo_no;
+    return lista;
+}
 
 int main(){
     FILE *fp; 
-    char* filename = "new.txt";
+    char* filename = "teste_posfix.txt";
+    //char* filename = "new.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");
@@ -15,7 +37,7 @@ int main(){
     //print_token(&main_tk);
     //print_linhas();
     
-    nova_tabela();
+    /*nova_tabela();
 
     
     insere_tab_simbolos("sla", 'x', snull, ' ');
@@ -35,5 +57,34 @@ int main(){
         printf("Escopo: %c\n", tabela->escopo);
 
         pop_tab_simbolos();
+    }*/
+   
+    //teste conversao polonesa inversa:
+    
+    node_lista_token* lista = NULL;
+    while (!feof(fp)) {
+
+        AnalisadorLexical(fp, &linha_main, &main_tk);
+        lista = adicionar_token(lista, main_tk);
     }
+
+    lista = converte_inf_posfix(lista);
+
+    node_lista_token* atual = lista;
+    int i = 1;
+    while (atual != NULL) {
+        //printf("\ntoken %d: ", i);
+        printf("%s", atual->tk.lexema);
+        i++;
+        atual = atual->prox;
+    }
+
+    // Liberação de memória (opcional)
+    atual = lista;
+    while (atual != NULL) {
+        node_lista_token* temp = atual;
+        atual = atual->prox;
+        free(temp);
+    }
+
 }
