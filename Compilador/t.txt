@@ -11,7 +11,13 @@ rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
 conferir _error(0) tbm (tem de varios tipos)
 
 implementar escopo tabela de simbolos (array 4 char)
-implementar positivo/negativo
+implementar positivo/negativo (possívelmente em analisa_expressao sintatico - conferir p nn fazer bosta)
 rever escopo ao checar duplicidade tabela de símbolos!
 
 ver de fazer geração de código durante a análise semantica da expressão
+
+
+rever todos insere tabela do sintatico
+
+confirmar se pode ter variavel com nome de func (precisaria verificar tipo da tabela ao checar duplicidade)
+confirmar se coloco os if(analisa_tipo_expressao_semantica errado){erro semantico} antes do codigo do sintatico, ou se coloco o sintatico dentro da saída verdadeira

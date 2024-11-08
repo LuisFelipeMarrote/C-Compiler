@@ -229,3 +229,11 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
 
     return (pilha->tk.simbolo);
 }
+
+enum tipos analisa_tipo_expressao_semantica(){
+    Analisa_expressao(tk);
+    expressao_infix = converte_inf_posfix(expressao_infix);
+    enum tipos tipo = semantico_expressao(expressao_infix);
+    expressao_infix = NULL;
+    return tipo;
+}
