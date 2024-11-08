@@ -198,7 +198,7 @@ void Analisa_Variaveis(){
 }
 
 ///def auxrot1,auxrot2 inteiro
-/// tabela
+/// gera código
 void Analisa_enquanto(){
     ///
     /* auxrot1:= rotulo
@@ -224,6 +224,7 @@ void Analisa_enquanto(){
 }
 
 /// tabela
+/// gera codigo
 void Analisa_declaração_procedimento(){
     AnalisadorLexical(fp,linha,tk);
     ///nivel := "L"(marca ou novo galho)
@@ -362,7 +363,7 @@ void Analisa_Tipo(){
     if(tk->simbolo != sinteiro && tk->simbolo != sbooleano){
         sintax_error(8);
     }else{
-        coloca_tipo_tabela(tk->lexema);
+        coloca_tipo_tabela(tk);
     }
     AnalisadorLexical(fp,linha,tk);
 }

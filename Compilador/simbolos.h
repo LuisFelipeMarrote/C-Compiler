@@ -16,13 +16,13 @@ void deleta_tabela();
 //ponteiro para o topo da tabela
 entrada_tab_simbolos* tabela = NULL; 
 
-void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo, enum tipos tipo, char rotulo){
-    entrada->escopo = escopo;
+void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo[], enum tipos tipo, char rotulo[]){
+    strcpy(entrada->escopo, escopo);
     entrada->tipo = tipo;
     memcpy(entrada->nome_ident, string, strlen(string) + 1);
 }
 
-void insere_tab_simbolos(char nome_ident[], char escopo, enum tipos tipo, char rotulo){
+void insere_tab_simbolos(char nome_ident[], char escopo[], enum tipos tipo, char rotulo[]){
     entrada_tab_simbolos* novo = (entrada_tab_simbolos*) malloc(sizeof(entrada_tab_simbolos));
     popula_entrada(novo, nome_ident, escopo, tipo, rotulo);
 
@@ -79,7 +79,7 @@ void nova_tabela(){
     
     //popula a primeira entrada
     char* nome_base = "base_da_pilha";
-    base->escopo = '-';
+    strcpy(base->escopo, '-');
     memcpy(base->nome_ident, nome_base, strlen(nome_base) + 1);
     base->tipo = sbase;
     tabela = base;    
