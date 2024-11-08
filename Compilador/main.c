@@ -5,13 +5,13 @@
 
 int main(){
     FILE *fp; 
-    char* filename = "teste_posfix.txt";
-    //char* filename = "new.txt";
+    //char* filename = "teste_posfix.txt";
+    char* filename = "new.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");
     caractere = fgetc(fp); 
-    //AnalisadorSintatico(fp,&linha_main,&main_tk);
+    AnalisadorSintatico(fp,&linha_main,&main_tk);
     //AnalisadorLexical(fp,&linha_main,&tk);
     //print_token(&main_tk);
     //print_linhas();
@@ -40,32 +40,32 @@ int main(){
    
     //teste conversao polonesa inversa:
     
-    node_lista_token* lista = NULL;
-    while (!feof(fp)) {
+    // node_lista_token* lista = NULL;
+    // while (!feof(fp)) {
 
-        AnalisadorLexical(fp, &linha_main, &main_tk);
-        lista = adicionar_token(lista, main_tk);
-    }
+    //     AnalisadorLexical(fp, &linha_main, &main_tk);
+    //     lista = adicionar_token(lista, main_tk);
+    // }
 
-    lista = converte_inf_posfix(lista);
-    node_lista_token* atual = lista;
-    int i = 1;
-    while (atual != NULL) {
-        //printf("\ntoken %d: ", i);
-        printf("%s", atual->tk.lexema);
-        i++;
-        atual = atual->prox;
-    }
+    // lista = converte_inf_posfix(lista);
+    // node_lista_token* atual = lista;
+    // int i = 1;
+    // while (atual != NULL) {
+    //     //printf("\ntoken %d: ", i);
+    //     printf("%s", atual->tk.lexema);
+    //     i++;
+    //     atual = atual->prox;
+    // }
 
-    enum tipos tipo_expressao = semantico_expressao(lista);
-    printf("\ntipo: %s", print_enum(tipo_expressao));
+    // enum tipos tipo_expressao = semantico_expressao(lista);
+    // printf("\ntipo: %s", print_enum(tipo_expressao));
 
-    // Liberação de memória (opcional)
-    atual = lista;
-    while (atual != NULL) {
-        node_lista_token* temp = atual;
-        atual = atual->prox;
-        free(temp);
-    }
+    // // Liberação de memória (opcional)
+    // atual = lista;
+    // while (atual != NULL) {
+    //     node_lista_token* temp = atual;
+    //     atual = atual->prox;
+    //     free(temp);
+    // }
 
 }

@@ -1,0 +1,15 @@
+    START
+0NULL
+    JMPF1
+    RD
+    STR
+    RD
+    STR
+    RD
+    STR
+2NULL
+    JMPF3
+    JMP2
+3NULL
+    JMP0
+1NULL

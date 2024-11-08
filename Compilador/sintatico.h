@@ -10,6 +10,12 @@
 FILE *fp; 
 token *tk;
 int *linha;
+FILE *new_fp;
+int rotulo;
+char str_aux[4] = "";
+char nome_arquivo[30];
+int num_var = 0;
+
 
 void sintax_error(int n); 
 void Analisa_Bloco(); 
@@ -34,8 +40,64 @@ void Analisa_declaracao_funcao();
 void Analisa_expressao();
 void Analisa_expressao_simples();
 void Analisa_fator();
-
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
+void Cria_arquivo();
+void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]);
+
+
+// void Seta_string(char str[], int size){
+//     char ajuda[size];
+//     memset(ajuda,' ', size);
+//     str[0] = 'a';
+// }
+
+void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]){
+    //redeclara isso, pois ele ta passando como string literal, ou seja, so daa para ler
+    //entao eu so preciso declarar variaveis aux e copiar a informaçao paraa laa
+    char linha[20] = {}; //ver como inicializa a lista vazia 
+    //Seta_string(rotulo, 4);
+    strcat(linha, rotulo);
+    //Seta_string(instrucao, sizeof(instrucao));
+    strcat(linha, instrucao);
+    if (strcmp(atr1, "    ") != 0)
+    {
+        //Seta_string(atr1, sizeof(atr1));
+        strcat(linha, atr1);
+    }
+    else if (strcmp(atr2, "    ") != 0)
+    {
+        //Seta_string(atr2, sizeof(atr2));
+        strcat(linha, atr2);
+    }
+    strcat(linha, "\n");
+
+    fputs(linha, new_fp);
+    
+}
+
+void Cria_arquivo(){
+
+    strcat(nome_arquivo, tk->lexema);
+    strcat(nome_arquivo, ".txt");
+
+    new_fp = fopen(nome_arquivo, "r");
+
+    if (new_fp != NULL)
+    {
+        remove(new_fp);
+        printf("O arquivo '%s' já existe e foi bÃÃÃnidu.\n", nome_arquivo);
+    }
+
+    new_fp = fopen(nome_arquivo, "w");
+
+    // Verifica se o arquivo foi aberto com sucesso
+    if (new_fp == NULL) {
+        printf("Erro ao criar o arquivo.\n");
+    }
+
+    printf("Arquivo criado e texto escrito com sucesso.\n");
+
+}
 
 void sintax_error(int n){
     //rever todos os rotulos de erro abaixo (placeholders)
@@ -142,6 +204,8 @@ void Analisa_leia(){
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sfecha_parenteses){
                     AnalisadorLexical(fp,linha,tk);
+                    Gera("    ","RD","    ","    "); 
+                    Gera("    ","STR","    ","    ");          
                 } else{
                     sintax_error(12);
                 }
@@ -176,6 +240,7 @@ void Analisa_Variaveis(){
             if(Pesquisa_duplicvar_tabela(tk->lexema)){
                 //se nao encontrou duplicidade
                 insere_tab_simbolos(tk->lexema, "variavel", snull, "-");
+                Gera("")
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == svírgula || tk->simbolo == sdoispontos){
                     if(tk->simbolo == svírgula){
@@ -200,24 +265,19 @@ void Analisa_Variaveis(){
 ///def auxrot1,auxrot2 inteiro
 /// tabela
 void Analisa_enquanto(){
-    ///
-    /* auxrot1:= rotulo
-    Gera(rotulo,NULL,´ ´,´ ´) {início do while}
-    rotulo:= rotulo+1*/
+    int auxrot1 = rotulo;
+    Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
+    rotulo = rotulo+1;
     AnalisadorLexical(fp,linha,tk);
     Analisa_expressao(tk);
     if(tk->simbolo == sfaca){
-        ///
-        /*auxrot2:= rotulo
-        Gera(´ ´,JMPF,rotulo,´ ´) {salta se falso}
-        rotulo:= rotulo+1
-        */
-       AnalisadorLexical(fp,linha,tk);
-       Analisa_comando_simples(tk);
-       ///
-       /*
-        Gera(´ ´,JMP,auxrot1,´ ´) {retorna início loop}
-        Gera(auxrot2,NULL,´ ´,´ ´) {fim do while}*/
+        int auxrot2 = rotulo;
+        Gera("    ","JMPF",itoa(auxrot2,str_aux,10),"    ");
+        rotulo = rotulo+1;
+        AnalisadorLexical(fp,linha,tk);
+        Analisa_comando_simples(tk);
+        Gera("    ","JMP",itoa(auxrot1,str_aux,10),"    ");
+        Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
     }else{
         sintax_error(20);
     }
@@ -394,14 +454,15 @@ void Analisa_escreva(){
 
 /// tabela ?
 void Analisa_subrotinas(){
-    ///def auxrot, flag inteiro
-/*  flag = 0
-    if(tk->simbolo = sprocedimento) | (tk->simbolo = sfuncao)
-        auxrot = rotulo
-        gera('        ', JMP,rotulo,'        ')     {salta sub-rotinas}
-        rotulo = rotulo + 1
-        flag = 1
-*/
+    int flag = 0;        
+    int auxrot = rotulo;
+    if(tk->simbolo == sprocedimento && tk->simbolo == sfuncao) ///tk->simbolo = sprocedimento && tk->simbolo = sfuncao
+    {
+        Gera("    ", "JMP",itoa(rotulo,str_aux,10),"");
+        rotulo = rotulo + 1;
+        flag = 1;
+    }
+
     while((tk->simbolo == sprocedimento) | (tk->simbolo == sfuncao)){
         if(tk->simbolo == sprocedimento){
             Analisa_declaracao_procedimento(tk);
@@ -416,9 +477,9 @@ void Analisa_subrotinas(){
             sintax_error(30);
         }
     }
-    ///if (flag = 1){
-    ///Gera(auxrot,NULL,'        ','         ')     {incio do principal}
-    ///}
+    if (flag == 1){
+        Gera(itoa(auxrot,str_aux,10),"NULL","    ","    ");
+    }
 }
 
 void Analisa_termo(){
@@ -489,6 +550,8 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
 
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sprograma){
+        Cria_arquivo();
+        Gera("    ", "START", "    ",  "    ");
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
             insere_tab_simbolos(tk->lexema, "nomedeprograma", snull, "-");
