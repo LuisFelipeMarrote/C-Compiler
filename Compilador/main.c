@@ -1,17 +1,17 @@
 #include "lexico.h"
 #include "sintatico.h"
-#include "simbolos.h"
-#include "semantico.h"
+//#include "simbolos.h"
+//#include "semantico.h"
 
 int main(){
     FILE *fp; 
-    char* filename = "teste_posfix.txt";
-    //char* filename = "new.txt";
+    //char* filename = "teste_posfix.txt";
+    char* filename = "new.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");
     caractere = fgetc(fp); 
-    //AnalisadorSintatico(fp,&linha_main,&main_tk);
+    AnalisadorSintatico(fp,&linha_main,&main_tk);
     //AnalisadorLexical(fp,&linha_main,&tk);
     //print_token(&main_tk);
     //print_linhas();
@@ -40,7 +40,7 @@ int main(){
    
     //teste conversao polonesa inversa:
     
-    node_lista_token* lista = NULL;
+    /*node_lista_token* lista = NULL;
     while (!feof(fp)) {
 
         AnalisadorLexical(fp, &linha_main, &main_tk);
@@ -66,6 +66,6 @@ int main(){
         node_lista_token* temp = atual;
         atual = atual->prox;
         free(temp);
-    }
+    }*/
 
 }

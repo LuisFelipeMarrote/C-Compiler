@@ -35,6 +35,7 @@ void Analisa_declaracao_funcao();
 void Analisa_expressao_simples();
 void Analisa_fator();
 void Analisa_chamada_funcao();
+enum tipos analisa_tipo_expressao_semantica();
 
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
 
@@ -176,7 +177,7 @@ void Analisa_Variaveis(){
         if(tk->simbolo == sidentificador){
             if(Pesquisa_duplicvar_tabela(tk->lexema)){
                 //se nao encontrou duplicidade
-                insere_tab_simbolos(tk->lexema, svar, "-", "-");
+                insere_tab_simbolos(tk->lexema, svar, '-', "-");
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == svírgula || tk->simbolo == sdoispontos){
                     if(tk->simbolo == svírgula){
@@ -229,7 +230,7 @@ void Analisa_enquanto(){
 /// gera codigo
 void Analisa_declaração_procedimento(){
     AnalisadorLexical(fp,linha,tk);
-    char nivel = "L"; //(marca ou novo galho)
+    char nivel = 'L'; //(marca ou novo galho)
     if(tk->simbolo == sidentificador){
         if(pesquisa_declfunc_tabela){ ///CONFIRMAR SE PODE USAR A MSM Q VARIAVEL
             insere_tab_simbolos(tk->lexema,sprocedimento,nivel, " "/*rótulo*/);
@@ -510,7 +511,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     if(tk->simbolo == sprograma){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
-            insere_tab_simbolos(tk->lexema, snull, "nomedeprograma", "-");
+            insere_tab_simbolos(tk->lexema, snomeprog, '-', "-");
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(&tk);
@@ -534,4 +535,12 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     else{
         sintax_error(1);
     }
+}
+
+enum tipos analisa_tipo_expressao_semantica(){
+    Analisa_expressao(tk);
+    expressao_infix = converte_inf_posfix(expressao_infix);
+    enum tipos tipo = semantico_expressao(expressao_infix);
+    expressao_infix = NULL;
+    return tipo;
 }
