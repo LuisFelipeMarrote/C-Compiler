@@ -25,7 +25,7 @@ void Analisa_se();
 void Analisa_enquanto();
 void Analisa_leia(); 
 void Analisa_escreva();
-void Analisa_atribuicao();
+void Analisa_atribuicao(token ident);
 void Chamada_procedimento();
 void Analisa_termo();
 void Analisa_Chamada_de_Procedimento();
@@ -124,9 +124,10 @@ void Analisa_comando_simples(){
 }
 
 void Analisa_atrib_chprocedimento(){
+    token temp = *tk;
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == satribuicao){
-        Analisa_atribuicao(tk);
+        Analisa_atribuicao(temp);
     }else{
         Chamada_procedimento(tk);
     }
@@ -228,11 +229,11 @@ void Analisa_enquanto(){
 }
 
 /// gera codigo
-void Analisa_declaração_procedimento(){
+void Analisa_declaracao_procedimento(){
     AnalisadorLexical(fp,linha,tk);
     char nivel = 'L'; //(marca ou novo galho)
     if(tk->simbolo == sidentificador){
-        if(pesquisa_declfunc_tabela){ ///CONFIRMAR SE PODE USAR A MSM Q VARIAVEL
+        if(pesquisa_declfunc_tabela){ ///CONFIRMAR SE PODE USAR A MSM pesquisa_declfunc Q VARIAVEL
             insere_tab_simbolos(tk->lexema,sprocedimento,nivel, " "/*rótulo*/);
             /*{guarda na TabSimb}
             Gera(rotulo,NULL,´ ´,´ ´)
@@ -251,6 +252,7 @@ void Analisa_declaração_procedimento(){
         sintax_error(21);
     }
     ///DESEMPILHA OU VOLTA NÍVEL
+    volta_nivel();
 }
 
 void Analisa_declaracao_funcao(){
@@ -288,6 +290,7 @@ void Analisa_declaracao_funcao(){
         sintax_error(23);
     }
     ///DESEMPILHA OU VOLTA NÍVEL
+    volta_nivel();
 }
 
 void Analisa_se(){
@@ -319,6 +322,7 @@ void Analisa_expressao(){
 
 void Analisa_expressao_simples(){
     if(tk->simbolo == smais || tk->simbolo == smenos)
+        //esse smais e smenos é pos/neg
         AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
     Analisa_termo(tk);
@@ -356,7 +360,7 @@ void Analisa_fator(){
         Analisa_expressao(tk);
         if(tk->simbolo == sfecha_parenteses){
             AnalisadorLexical(fp,linha,tk);
-            expressao_infix = adicionar_token(expressao_infix, *tk);
+            expressao_infix = adicionar_token(expressao_infix, *tk); //conferindo se precisa dessa
         }else{
             sintax_error(28);
         }
@@ -466,30 +470,20 @@ void Analisa_Chamada_de_Procedimento(){
     }
 }
 
-/// ?
-void Analisa_atribuicao(){
+/// ? rever inteiro - comecei a corrigir sem perceber que nem a base tinha!
+void Analisa_atribuicao(token ident){
     AnalisadorLexical(fp,linha,tk);
-    Analisa_expressao();
-    ///LEMBRETE analisa_tipo_expressao_semantica();
+    entrada_tab_simbolos* var = busca_ident(ident.lexema);
+    enum tipos tipo = analisa_tipo_expressao_semantica();
+    if(var->tipo != tipo){
+        semantic_error(0); //atribuição com tipo diferente
+    }
+
 }
 
 /// ?
 void Chamada_procedimento(){
     //ver o que isso deve fazer
-}
-
-void Analisa_declaracao_procedimento(){
-    AnalisadorLexical(fp,linha,tk);
-    if(tk->simbolo == sidentificador){
-        AnalisadorLexical(fp,linha,tk);
-        if(tk->simbolo == sponto_virgula){
-            Analisa_Bloco();
-        }else{
-            sintax_error(0);
-        }
-    }else{
-        sintax_error(0);
-    }
 }
 
 void Analisa_chamada_funcao(){

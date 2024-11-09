@@ -13,6 +13,7 @@ void coloca_tipo_tabela(char* ident, enum tipos tipo);
 void nova_tabela();
 void deleta_tabela();
 int pesquisa_declfunc_tabela(char* indent);
+void volta_nivel();
 
 //ponteiro para o topo da tabela
 entrada_tab_simbolos* tabela = NULL; 
@@ -81,7 +82,7 @@ void coloca_tipo_tabela(char* ident, enum tipos tipo){
 
 void nova_tabela(){
     entrada_tab_simbolos* base = (entrada_tab_simbolos*) malloc(sizeof(entrada_tab_simbolos));
-    popula_entrada(base, "base_da_pilha", '-', sbase, "-");
+    popula_entrada(base, "base_da_pilha", 'L', sbase, "-");
     tabela = base;    
 }
 
@@ -103,4 +104,13 @@ int pesquisa_declfunc_tabela(char* indent){
         entrada_atual = entrada_atual->prev;
     };
     return 0; // não encontrou = false
+}
+
+
+void volta_nivel(){
+    while(tabela != NULL && tabela->escopo != 'L'){
+        entrada_tab_simbolos* temp = tabela;
+        tabela = tabela->prev;
+        free(temp);
+    }
 }
