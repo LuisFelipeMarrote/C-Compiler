@@ -1,5 +1,3 @@
-->LEMBRAR ERRO LIXO NUMERO no lexico
-
 LEMBRAR QUE IMPLEMENTEI MEIA BOCA AS ULTIMAS 3
 
 O CODIGO TESTE NAO TEM EXPRESSOES MUITO ELABORADAS, MAS JA FOI UTILIZADO COMO TESTE FINAL
@@ -21,3 +19,8 @@ rever todos insere tabela do sintatico
 
 confirmar se pode ter variavel com nome de func (precisaria verificar tipo da tabela ao checar duplicidade)
 confirmar se coloco os if(analisa_tipo_expressao_semantica errado){erro semantico} antes do codigo do sintatico, ou se coloco o sintatico dentro da saída verdadeira
+rever atribuição de tipo (principalmente para funcao e proc)
+
+possivel fonte de erro: entrada da tabela de simbolos pode ter lixo! (nome_ident)
+
+testando sint17.txt, tem problema que o processo nao é inserido na tabela de simbolos (acho que nao implementei)

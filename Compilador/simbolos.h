@@ -20,7 +20,7 @@ entrada_tab_simbolos* tabela = NULL;
 void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo, enum tipos tipo, char rotulo[]){
     entrada->escopo = escopo;
     entrada->tipo = tipo;
-    memcpy(entrada->nome_ident, string, strlen(string) + 1);
+    strcpy(entrada->nome_ident, string);
 }
 
 void insere_tab_simbolos(char nome_ident[], enum tipos tipo, char escopo, char rotulo[]){
@@ -72,11 +72,10 @@ int Pesquisa_duplicvar_tabela(char* indent){
 
 ///implementar
 void coloca_tipo_tabela(char* ident, enum tipos tipo){
-    entrada_tab_simbolos* entrada = busca_ident(ident);
-    if(entrada != NULL) {
-        entrada->tipo = tipo;
-    } else {
-        printf("Erro: Identificador não encontrado na tabela\n");
+    entrada_tab_simbolos* temp = tabela;
+    while(temp->tipo == svar || temp->tipo == sprocedimento || temp->tipo == sfuncao){
+        temp->tipo = tipo;
+        temp = temp->prev;
     }
 }
 
