@@ -208,7 +208,8 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
                 }
             } 
 
-            ///gera código (?) - exemplo: c b div -> manda (em diferentes funções) c, b, div, nessa ordem. 
+            ///gera código (?) - exemplo: c b div -> manda (em diferentes funções) c, b, div, nessa ordem - entrada da tabela inteira (se for numero, manda só o numero).
+            ///lembrar de colocar um if vendo se é numero ou identificador para mandar pela funcao certa. 
 
             //empilha resultado
             token temp_token;
