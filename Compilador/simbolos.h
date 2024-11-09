@@ -22,6 +22,7 @@ void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo, e
     entrada->escopo = escopo;
     entrada->tipo = tipo;
     strcpy(entrada->nome_ident, string);
+    strcpy(entrada->rotulo, rotulo);
 }
 
 void insere_tab_simbolos(char nome_ident[], enum tipos tipo, char escopo, char rotulo[]){
