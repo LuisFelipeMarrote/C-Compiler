@@ -222,11 +222,11 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
             lista_posfix = lista_posfix->prox;
             free(temp_node);
         }
-        if(pilha->prox != NULL){
+    }
+    if(pilha->prox != NULL){
             semantic_error(0);
             return serro;
         }
-    }
 
     return (pilha->tk.simbolo);
 }

@@ -314,8 +314,8 @@ void Analisa_se(){
 void Analisa_expressao(){
     Analisa_expressao_simples(tk);
     if(tk->simbolo == smaior || tk->simbolo == smaiorig || tk->simbolo == sig || tk->simbolo == smenor || tk->simbolo == smenorig || tk->simbolo == sdif){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
         Analisa_expressao_simples(tk);
     }
 }
@@ -323,13 +323,13 @@ void Analisa_expressao(){
 void Analisa_expressao_simples(){
     if(tk->simbolo == smais || tk->simbolo == smenos){
         //esse smais e smenos é pos/neg
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
     }
     Analisa_termo(tk);
     while(tk->simbolo == smais || tk->simbolo == smenos || tk->simbolo == sou){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
         Analisa_termo(tk);
     }
 }
@@ -341,33 +341,33 @@ void Analisa_fator(){
             if(tab_simb->tipo == fint || tab_simb->tipo == fbool){
                 Analisa_chamada_funcao();
             }else{
-                AnalisadorLexical(fp,linha,tk);
                 expressao_infix = adicionar_token(expressao_infix, *tk);
+                AnalisadorLexical(fp,linha,tk);
             }
         }else{
             semantic_error(0); // ident nao esta na tabela (var nao declarada)
         }
         //AnalisadorLexical(fp,linha,tk);
     }else if(tk->simbolo == snúmero){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
     }else if(tk->simbolo == snao){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
         Analisa_fator(tk);
     }else if(tk->simbolo == sabre_parenteses){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
         Analisa_expressao(tk);
         if(tk->simbolo == sfecha_parenteses){
-            AnalisadorLexical(fp,linha,tk);
             expressao_infix = adicionar_token(expressao_infix, *tk); //conferindo se precisa dessa
+            AnalisadorLexical(fp,linha,tk);
         }else{
             sintax_error(28);
         }
     }else if(strcmp(tk->lexema, "verdadeiro") || strcmp(tk->lexema, "falso")){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
     }else{
         sintax_error(29);
     }
@@ -439,8 +439,8 @@ void Analisa_subrotinas(){
 void Analisa_termo(){
     Analisa_fator(tk);
     while((tk->simbolo == smult) | (tk->simbolo == sdiv) | (tk->simbolo == se)){
-        AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+        AnalisadorLexical(fp,linha,tk);
         Analisa_fator(tk);
     }
 }
@@ -533,7 +533,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
 }
 
 enum tipos analisa_tipo_expressao_semantica(){
-    expressao_infix = adicionar_token(expressao_infix, *tk);
+    //expressao_infix = adicionar_token(expressao_infix, *tk);
     Analisa_expressao(tk);
     expressao_infix = converte_inf_posfix(expressao_infix);
     enum tipos tipo = semantico_expressao(expressao_infix);
