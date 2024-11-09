@@ -1,11 +1,12 @@
 #include "lexico.h"
 #include "sintatico.h"
-#include "simbolos.h"
-#include "semantico.h"
+//#include "simbolos.h"
+//#include "semantico.h"
 
 int main(){
     FILE *fp; 
     //char* filename = "teste_posfix.txt";
+
     char* filename = "new.txt";
     token main_tk;
     int linha_main = 1;
