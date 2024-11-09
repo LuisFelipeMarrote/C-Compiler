@@ -23,4 +23,6 @@ rever atribuição de tipo (principalmente para funcao e proc)
 possivel fonte de erro: entrada da tabela de simbolos pode ter lixo! (nome_ident)
 
 
-'c' sendo adicionado duas vezes na expressão (primeiro ident logo após parentesis)
+'c' sendo adicionado duas vezes na expressão (primeiro ident logo após parentesis) (rever se ainda está sint 17)
+
+-> o caractere após a expressao pode ser adicionado na lista sem querer (gerando loop) - rever onde adicionar na expressao (nao necessariamente junto do lexico)

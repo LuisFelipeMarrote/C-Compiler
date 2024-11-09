@@ -28,6 +28,7 @@ void empilha_token(node_lista_token** pilha, node_lista_token** lista){
         *pilha = *lista;
         *lista = (*lista)->prox;
         (*pilha)->prox = NULL;
+        printf("");
     }
 }
 

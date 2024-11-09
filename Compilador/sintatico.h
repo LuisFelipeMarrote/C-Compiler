@@ -321,10 +321,11 @@ void Analisa_expressao(){
 }
 
 void Analisa_expressao_simples(){
-    if(tk->simbolo == smais || tk->simbolo == smenos)
+    if(tk->simbolo == smais || tk->simbolo == smenos){
         //esse smais e smenos é pos/neg
         AnalisadorLexical(fp,linha,tk);
         expressao_infix = adicionar_token(expressao_infix, *tk);
+    }
     Analisa_termo(tk);
     while(tk->simbolo == smais || tk->simbolo == smenos || tk->simbolo == sou){
         AnalisadorLexical(fp,linha,tk);
@@ -532,6 +533,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
 }
 
 enum tipos analisa_tipo_expressao_semantica(){
+    expressao_infix = adicionar_token(expressao_infix, *tk);
     Analisa_expressao(tk);
     expressao_infix = converte_inf_posfix(expressao_infix);
     enum tipos tipo = semantico_expressao(expressao_infix);
