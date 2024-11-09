@@ -1,3 +1,7 @@
+// problema com o enquanto: jmpf faz a chamada de um rotulo que nao foi declarado
+// problema com variáveis repetidas: caso exista uma variavel repetida ele tem que usar a variavel declarada mais internamente.
+// criar uma lista que correlaciona uma variavel com um lexema e um nivel, ele procura a primeira variavel com esse lexema
+
 #pragma once
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,10 +10,14 @@
 #include "lexico.h"
 #include "simbolos.h"
 #include "semantico.h"
+#include "geracao.h"
 
 FILE *fp; 
 token *tk;
 int *linha;
+int rotulo;
+char str_aux[4] = "";
+int num_var = 0;
 node_lista_token* expressao_infix;
 
 void sintax_error(int n); 
@@ -29,14 +37,13 @@ void Analisa_atribuicao(token ident);
 void Chamada_procedimento();
 void Analisa_termo();
 void Analisa_Chamada_de_Procedimento();
-void Analisa_expressao();
 void Analisa_declaracao_procedimento();
 void Analisa_declaracao_funcao();
 void Analisa_expressao_simples();
+void Analisa_expressao();
 void Analisa_fator();
 void Analisa_chamada_funcao();
 enum tipos analisa_tipo_expressao_semantica();
-
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
 
 void sintax_error(int n){
@@ -85,6 +92,7 @@ void Analisa_Bloco(){
     Analisa_et_variáveis(tk);
     Analisa_subrotinas(tk);
     Analisa_comandos(tk);
+    //tenho que colocar o dalloc aqui
 }
 
 void Analisa_comandos(){
@@ -145,6 +153,9 @@ void Analisa_leia(){
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sfecha_parenteses){
                     AnalisadorLexical(fp,linha,tk);
+                    Gera("    ","RD","    ","    ");
+                    //retorno da tabela de simbolos
+                    //Gera("    ","STR",rotulo_tab,"    ");          
                 } else{
                     sintax_error(12);
                 }
@@ -203,26 +214,21 @@ void Analisa_Variaveis(){
 ///def auxrot1,auxrot2 inteiro
 /// gera código
 void Analisa_enquanto(){
-    ///
-    /* auxrot1:= rotulo
-    Gera(rotulo,NULL,´ ´,´ ´) {início do while}
-    rotulo:= rotulo+1*/
+    int auxrot1 = rotulo;
+    Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
+    rotulo = rotulo+1;
     AnalisadorLexical(fp,linha,tk);
     if(analisa_tipo_expressao_semantica() != sbooleano){
         semantic_error(0);
     }
     if(tk->simbolo == sfaca){
-        ///
-        /*auxrot2:= rotulo
-        Gera(´ ´,JMPF,rotulo,´ ´) {salta se falso}
-        rotulo:= rotulo+1
-        */
-       AnalisadorLexical(fp,linha,tk);
-       Analisa_comando_simples(tk);
-       ///
-       /*
-        Gera(´ ´,JMP,auxrot1,´ ´) {retorna início loop}
-        Gera(auxrot2,NULL,´ ´,´ ´) {fim do while}*/
+        int auxrot2 = rotulo;
+        Gera("    ","JMPF",itoa(auxrot2,str_aux,10),"    ");
+        rotulo = rotulo+1;
+        AnalisadorLexical(fp,linha,tk);
+        Analisa_comando_simples(tk);
+        Gera("    ","JMP",itoa(auxrot1,str_aux,10),"    ");
+        Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
     }else{
         sintax_error(20);
     }
@@ -294,16 +300,37 @@ void Analisa_declaracao_funcao(){
 }
 
 void Analisa_se(){
+
     AnalisadorLexical(fp,linha,tk);
     if(analisa_tipo_expressao_semantica() != sbooleano){
         semantic_error(0);
     }
+
+    int auxrot1;
+    auxrot1 = rotulo;
+    Gera("    ","JMPF",itoa(auxrot1,str_aux,10),"    ");
+    rotulo = rotulo+1;
+
     if(tk->simbolo == sentao){
+
         AnalisadorLexical(fp,linha,tk);
-        Analisa_comando_simples(tk);
+        Analisa_comando_simples(tk);    
+    
+        int auxrot2;   
+        auxrot2 = rotulo;
+
+        if(tk->simbolo == ssenao){ //remendo para ele no colocar um jmp caso nao tenha um ssenao         
+            Gera("    ","JMP",itoa(auxrot2,str_aux,10),"    ");
+        }
+
+        rotulo = rotulo+1;    
+        Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
+
         if(tk->simbolo == ssenao){
             AnalisadorLexical(fp,linha,tk);
-            Analisa_comando_simples(tk);
+            Analisa_comando_simples(tk);            
+    
+            Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
         }
     }else{
         sintax_error(27);
@@ -390,7 +417,10 @@ void Analisa_escreva(){
         if(tk->simbolo == sidentificador){
             AnalisadorLexical(fp,linha,tk);
             ///if(pesquisa_declvarfunc_tabela(token.lexema))
-                if(tk->simbolo == sfecha_parenteses){
+                if(tk->simbolo == sfecha_parenteses){                    
+                    //retorno da tabela de simbolos pela busca do token.lexema
+                    //Gera("    ","LDV",rotulo_tab,"    ");   
+                    Gera("    ","PRN","    ","    ");
                     AnalisadorLexical(fp,linha,tk);
                 }
                 else{
@@ -409,14 +439,15 @@ void Analisa_escreva(){
 
 /// gera codigo
 void Analisa_subrotinas(){
-    ///def auxrot, flag inteiro
-/*  flag = 0
-    if(tk->simbolo = sprocedimento) | (tk->simbolo = sfuncao)
-        auxrot = rotulo
-        gera('        ', JMP,rotulo,'        ')     {salta sub-rotinas}
-        rotulo = rotulo + 1
-        flag = 1
-*/
+    int flag = 0;        
+    int auxrot = rotulo;
+    if(tk->simbolo == sprocedimento && tk->simbolo == sfuncao) ///tk->simbolo = sprocedimento && tk->simbolo = sfuncao
+    {
+        Gera("    ", "JMP",itoa(rotulo,str_aux,10),"");
+        rotulo = rotulo + 1;
+        flag = 1;
+    }
+
     while((tk->simbolo == sprocedimento) | (tk->simbolo == sfuncao)){
         if(tk->simbolo == sprocedimento){
             Analisa_declaracao_procedimento(tk);
@@ -431,9 +462,9 @@ void Analisa_subrotinas(){
             sintax_error(30);
         }
     }
-    ///if (flag = 1){
-    ///Gera(auxrot,NULL,'        ','         ')     {incio do principal}
-    ///}
+    if (flag == 1){
+        Gera(itoa(auxrot,str_aux,10),"NULL","    ","    ");
+    }
 }
 
 void Analisa_termo(){
@@ -504,6 +535,8 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
 
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sprograma){
+        Cria_arquivo(tk);
+        Gera("    ", "START", "    ",  "    ");
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
             insere_tab_simbolos(tk->lexema, snomeprog, '-', "-");
@@ -513,6 +546,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
                 if(tk->simbolo == sponto){
                     AnalisadorLexical(fp,linha,tk);
                     if(feof(fp)){
+                        Gera("    ","HLT","    ","    ");
                         printf("SUCESSO!\n");
                     }else{
                         sintax_error(5);

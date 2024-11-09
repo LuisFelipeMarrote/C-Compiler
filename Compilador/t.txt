@@ -28,3 +28,4 @@ possivel fonte de erro: entrada da tabela de simbolos pode ter lixo! (nome_ident
 -> o caractere após a expressao pode ser adicionado na lista sem querer (gerando loop) - rever onde adicionar na expressao (nao necessariamente junto do lexico)
 
 Confirmar analisa_se pos merge
+-> ver organizar operadores para mandar para geração de código (semantico_expressao)
