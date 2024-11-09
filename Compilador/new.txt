@@ -16,7 +16,7 @@ inicio
  enquanto i <= max { (1+juro) elevado a n }
  faca inicio
  valor:= valor*(1+juro);
- i:= i+1
+ i:= i+1;
  fim; 
  escreva(valor)
 fim
