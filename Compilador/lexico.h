@@ -55,7 +55,7 @@ void set_token_c(token *tk)
 } 
 
 void trata_digito(token *tk){ 
-    char num[lexema_size_max]; 
+    char num[lexema_size_max] = ""; 
     while(isdigit(caractere)){ 
         strncat(num, &caractere, 1);  
         ler(); 
