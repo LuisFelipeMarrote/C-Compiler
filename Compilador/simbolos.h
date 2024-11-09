@@ -107,10 +107,11 @@ int pesquisa_declfunc_tabela(char* indent){
 }
 
 
-void volta_nivel(){
+void volta_nivel(){ ///possivelmente adicionar a quantidade de variaveis desalocadas
     while(tabela != NULL && tabela->escopo != 'L'){
         entrada_tab_simbolos* temp = tabela;
         tabela = tabela->prev;
         free(temp);
     }
+    tabela->escopo = '-'; ///confirmar isso
 }

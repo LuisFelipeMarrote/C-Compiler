@@ -59,7 +59,7 @@ void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]);
 void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]){
     //redeclara isso, pois ele ta passando como string literal, ou seja, so daa para ler
     //entao eu so preciso declarar variaveis aux e copiar a informaçao paraa laa
-    char linha[20] = {}; //ver como inicializa a lista vazia 
+    char linha[20]; //ver como inicializa a lista vazia 
     //Seta_string(rotulo, 4);
     strcat(linha, rotulo);
     //Seta_string(instrucao, sizeof(instrucao));

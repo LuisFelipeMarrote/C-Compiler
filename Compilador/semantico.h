@@ -185,7 +185,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
         
         }else if(checa_operador(lista_posfix->tk.simbolo)){ //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
             operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
-
+            /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 //procurar tabela
                 if(pilha->tk.simbolo == sidentificador){
@@ -202,12 +202,13 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
                     semantic_error(0);
                     return serro;   
                 }else{
-                    ///gera código (?)
                     node_lista_token* temp_free = pilha;
                     pilha = pilha->prox;
                     free(temp_free);
                 }
             } 
+
+            ///gera código (?) - exemplo: c b div -> manda (em diferentes funções) c, b, div, nessa ordem. 
 
             //empilha resultado
             token temp_token;
