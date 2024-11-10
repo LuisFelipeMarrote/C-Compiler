@@ -16,6 +16,8 @@ void deleta_tabela();
 int pesquisa_declfunc_tabela(char* indent);
 void volta_nivel();
 int pesquisa_declvar_tabela(token tk);
+int pesquisa_declvarfunc_tabela(char* indent);
+
 //ponteiro para o topo da tabela
 entrada_tab_simbolos* tabela = NULL; 
 
@@ -58,21 +60,6 @@ entrada_tab_simbolos* busca_ident(char identificador[]){
     return NULL;
 }
 
-int Pesquisa_duplicvar_tabela(char* indent){
-    entrada_tab_simbolos* entrada_atual = tabela;
-    int fim_de_escopo = 1;
-    while(entrada_atual->tipo != sbase && fim_de_escopo){
-        char* ident_tabela = entrada_atual->nome_ident;
-        if(!strcmp(ident_tabela, indent)){
-            return 0; // encontrou = false (0)
-        }
-        if(entrada_atual->escopo == 'L')
-            fim_de_escopo = 0;
-        entrada_atual = entrada_atual->prev;
-    };
-    return 1; // não encontrou = true
-}
-
 void coloca_tipo_tabela(char* ident, enum tipos tipo){
     entrada_tab_simbolos* temp = tabela;
     while(temp->tipo == svar || temp->tipo == sprocedimento || temp->tipo == sfuncao){
@@ -95,17 +82,6 @@ void deleta_tabela(){
     }
 }
 
-int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
-    entrada_tab_simbolos* entrada_atual = tabela;
-    while(entrada_atual->tipo != sbase){
-        char* ident_tabela = entrada_atual->nome_ident;
-        if(!strcmp(ident_tabela, indent)){
-            return 0; // encontrou = false (0)
-        }
-        entrada_atual = entrada_atual->prev;
-    };
-    return 1; // não encontrou = verdadeiro (1)
-}
 
 
 void volta_nivel(){ ///possivelmente adicionar a quantidade de variaveis desalocadas
@@ -117,7 +93,22 @@ void volta_nivel(){ ///possivelmente adicionar a quantidade de variaveis desaloc
     tabela->escopo = '-'; ///confirmar isso
 }
 
-int pesquisa_declvar_tabela(token tk){
+int Pesquisa_duplicvar_tabela(char* indent){ //pesquisa se a variavel ja foi declarada no escopo 
+    entrada_tab_simbolos* entrada_atual = tabela;
+    int fim_de_escopo = 1;
+    while(entrada_atual->tipo != sbase && fim_de_escopo){
+        char* ident_tabela = entrada_atual->nome_ident;
+        if(!strcmp(ident_tabela, indent)){
+            return 0; // encontrou = false (0)
+        }
+        if(entrada_atual->escopo == 'L')
+            fim_de_escopo = 0;
+        entrada_atual = entrada_atual->prev;
+    };
+    return 1; // não encontrou = true
+}
+
+int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarada
     //achou = 1;
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){
@@ -132,4 +123,29 @@ int pesquisa_declvar_tabela(token tk){
         entrada_atual = entrada_atual->prev;
     };
     return 0; 
+}
+
+int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
+    entrada_tab_simbolos* entrada_atual = tabela;
+    while(entrada_atual->tipo != sbase){
+        char* ident_tabela = entrada_atual->nome_ident;
+        if(!strcmp(ident_tabela, indent)){
+            if(entrada_atual->tipo != fint && entrada_atual->tipo !=fbool)
+            return 0; // encontrou = false (0)
+        }
+        entrada_atual = entrada_atual->prev;
+    };
+    return 1; // não encontrou = verdadeiro (1)
+}
+
+int pesquisa_declvarfunc_tabela(char* indent){ 
+    entrada_tab_simbolos* entrada_atual = tabela;
+    while(entrada_atual->tipo != sbase){
+        char* ident_tabela = entrada_atual->nome_ident;
+        if(!strcmp(ident_tabela, indent)){
+            return 0; // encontrou = false (0)
+        }
+        entrada_atual = entrada_atual->prev;
+    };
+    return 1; // não encontrou = verdadeiro (1)
 }
