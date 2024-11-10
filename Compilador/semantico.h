@@ -28,13 +28,10 @@ void empilha_token(node_lista_token** pilha, node_lista_token** lista){
         *pilha = *lista;
         *lista = (*lista)->prox;
         (*pilha)->prox = NULL;
-        printf("");
     }
 }
 
-///falta pos/neg
 int prioridade(enum tipos tipo){
-    //rever positivo e negativo (talvez lidar com eles fora daqui) - ou colocar um sinal
     switch(tipo){
         case se:
         case sou:
@@ -53,12 +50,13 @@ int prioridade(enum tipos tipo){
         case smult:
         case sdiv:
             return(4);
+        case ssinalu:
+            return(5);
         default: 
             return(0);
     }
 }
 
-///falta pos/neg
 int checa_operador(enum tipos tipo){
     switch(tipo){
         case se:
@@ -74,6 +72,7 @@ int checa_operador(enum tipos tipo){
         case smenos:
         case smult:
         case sdiv:
+        case ssinalu:
             return(1);
         default: 
             return(0);
@@ -91,7 +90,6 @@ typedef struct operacao{
 //recebe um sinal e retorna o formato da operacao
 operacao formato_operacao(enum tipos tipo){
     operacao retorno;
-    //fazer positivo/negativo
     switch(tipo){
         case smult:
         case sdiv:
@@ -116,10 +114,16 @@ operacao formato_operacao(enum tipos tipo){
             retorno.qtd_operadores = 2;
             retorno.tipos_operadores = sbooleano;
             retorno.tipo_resultado = sbooleano;
+            break;
         case snao:
             retorno.qtd_operadores = 1;
             retorno.tipos_operadores = sbooleano;
             retorno.tipo_resultado = sbooleano;
+            break;
+        case ssinalu:
+            retorno.qtd_operadores = 1;
+            retorno.qtd_operadores = sinteiro;
+            retorno.qtd_operadores = sinteiro;
     }
     return(retorno);
 }
@@ -131,7 +135,7 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     node_lista_token* pilha = NULL; // topo da pilha
 
     while(lista_infix != NULL){
-        if(lista_infix->tk.simbolo == snúmero || lista_infix->tk.simbolo == sidentificador){ //Se for variável ou número copia na saída;     
+        if(lista_infix->tk.simbolo == sinteiro || lista_infix->tk.simbolo == sidentificador){ //Se for variável ou número copia na saída;     
             if(lista_pos != NULL){ // se não for a primeira vez, muda o ponteiro prox e atualiza ponteiro lista
                 lista_pos->prox = lista_infix;
                 lista_pos = lista_pos->prox;
@@ -174,30 +178,31 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     return retorno_pos;
 }
 
-//recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
+///recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
 enum tipos semantico_expressao(node_lista_token* lista_posfix){
     // percorre a lista empilhando os valores, e desempilhando conforme encontra operadores
     node_lista_token* pilha = NULL;
 
     while(lista_posfix != NULL){
-        if(lista_posfix->tk.simbolo == snúmero || lista_posfix->tk.simbolo == sidentificador){ //se for variável, empilha
+        if(lista_posfix->tk.simbolo == sinteiro || lista_posfix->tk.simbolo == sidentificador){ //se for variável, empilha
+            if(lista_posfix->tk.simbolo == sidentificador){
+                //procurar tabela
+                if(lista_posfix->tk.simbolo == sidentificador){
+                    entrada_tab_simbolos* entrada_tabela_operador;
+                    entrada_tabela_operador = busca_ident(lista_posfix->tk.lexema);
+                    if(entrada_tabela_operador == NULL){
+                        semantic_error(0);
+                        return serro;
+                    }
+                    lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
+                }
+            }
             empilha_token(&pilha, &lista_posfix);
         
         }else if(checa_operador(lista_posfix->tk.simbolo)){ //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
             operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
             /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
-                //procurar tabela
-                if(pilha->tk.simbolo == sidentificador){
-                    entrada_tab_simbolos* entrada_tabela_operador;
-                    entrada_tabela_operador = busca_ident(pilha->tk.lexema);
-                    if(entrada_tabela_operador == NULL){
-                        semantic_error(0);
-                        return serro;
-                    }
-                    pilha->tk.simbolo = entrada_tabela_operador->tipo;
-                }
-
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
                     semantic_error(0);
                     return serro;   
@@ -217,7 +222,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
             node_lista_token* temp_node = novo_no_token(temp_token);
             
             temp_node->prox = pilha;
-            pilha = pilha->prox;
+            pilha = temp_node; 
 
             //tira o operador da lista
             temp_node = lista_posfix;

@@ -7,7 +7,7 @@ int main(){
     FILE *fp; 
     //char* filename = "teste_posfix.txt";
 
-    char* filename = "new.txt";
+    char* filename = "teste_semant.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");

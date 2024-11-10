@@ -40,14 +40,14 @@ void print_linhas()
 {
     printf("linhas: %d", *linha); // fazer uma função para printar as linhas
 }
-/// Cria um token baseado num array de char passado
+// Cria um token baseado num array de char passado
 void set_token_s(token *tk, char string[])
 { 
     memset (tk->lexema, 0, lexema_size_max);
     memcpy ( tk->lexema, string, strlen(string)+1 ); 
 } 
 
-/// Cria um token baseado no caractere atual
+// Cria um token baseado no caractere atual
 void set_token_c(token *tk)
 { 
     memset (tk->lexema, 0, lexema_size_max);

@@ -10,7 +10,7 @@ enum tipos {smais, smenos, smult, snúmero, satribuicao, sdoispontos,svírgula,
             ssenao, senquanto, sfaca, sinício, sfim, sescreva, sleia, svar, sinteiro, sbooleano, 
             sverdadeiro, sfalso, sprocedimento, sfuncao, sdiv, se, sou, snao, sidentificador, 
             sdif, smenorig, smenor, smaiorig, smaior, sponto, sig, serro, sbase, snull, fint, 
-            fbool, snomeprog};  
+            fbool, snomeprog, ssinalu};  
 
 char* print_enum(enum tipos simbolo){
     char* tipo[] = {"smais", "smenos", "smult", "snúmero", "satribuicao", "sdoispontos", "svírgula",
@@ -18,7 +18,7 @@ char* print_enum(enum tipos simbolo){
             "ssenao", "senquanto", "sfaca", "sinício", "sfim", "sescreva", "sleia", "svar", "sinteiro", "sbooleano", 
             "sverdadeiro", "sfalso", "sprocedimento", "sfuncao", "sdiv", "se", "sou", "snao", "sidentificador",
             "sdif", "smenorig", "smenor", "smaiorig", "smaior", "sponto", "sig", "serro", "sbase", "snull", "fint", 
-            "fbool", "snomeprog"}; 
+            "fbool", "snomeprog", "ssinalu"}; 
     return tipo[simbolo];       
 }
 

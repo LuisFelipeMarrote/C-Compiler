@@ -47,7 +47,7 @@ enum tipos analisa_tipo_expressao_semantica();
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
 
 void sintax_error(int n){
-    //rever todos os rotulos de erro abaixo (placeholders)
+    ///rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
         "1: Esperado 'programa'",
         "2: Esperado identificador para escrever",
@@ -257,7 +257,6 @@ void Analisa_declaracao_procedimento(){
     }else{
         sintax_error(21);
     }
-    ///DESEMPILHA OU VOLTA NÍVEL
     volta_nivel();
 }
 
@@ -295,7 +294,6 @@ void Analisa_declaracao_funcao(){
     }else{
         sintax_error(23);
     }
-    ///DESEMPILHA OU VOLTA NÍVEL
     volta_nivel();
 }
 
@@ -337,7 +335,6 @@ void Analisa_se(){
     }
 }
 
-/// pos fixa
 void Analisa_expressao(){
     Analisa_expressao_simples(tk);
     if(tk->simbolo == smaior || tk->simbolo == smaiorig || tk->simbolo == sig || tk->simbolo == smenor || tk->simbolo == smenorig || tk->simbolo == sdif){
@@ -349,7 +346,7 @@ void Analisa_expressao(){
 
 void Analisa_expressao_simples(){
     if(tk->simbolo == smais || tk->simbolo == smenos){
-        //esse smais e smenos é pos/neg
+        tk->simbolo = ssinalu;
         expressao_infix = adicionar_token(expressao_infix, *tk);
         AnalisadorLexical(fp,linha,tk);
     }
@@ -376,6 +373,7 @@ void Analisa_fator(){
         }
         //AnalisadorLexical(fp,linha,tk);
     }else if(tk->simbolo == snúmero){
+        tk->simbolo = sinteiro;
         expressao_infix = adicionar_token(expressao_infix, *tk);
         AnalisadorLexical(fp,linha,tk);
     }else if(tk->simbolo == snao){
@@ -506,11 +504,14 @@ void Analisa_Chamada_de_Procedimento(){
 void Analisa_atribuicao(token ident){
     AnalisadorLexical(fp,linha,tk);
     entrada_tab_simbolos* var = busca_ident(ident.lexema);
-    enum tipos tipo = analisa_tipo_expressao_semantica();
-    if(var->tipo != tipo){
-        semantic_error(0); //atribuição com tipo diferente
+    if(var != NULL){
+        enum tipos tipo = analisa_tipo_expressao_semantica();
+        if(var->tipo != tipo){
+            semantic_error(0); //atribuição com tipo diferente
+        }
+    }else{
+        semantic_error(0);
     }
-
 }
 
 /// ?
