@@ -141,15 +141,12 @@ void Analisa_atrib_chprocedimento(){
     }
 }
 
-/// tabela
 void Analisa_leia(){
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sabre_parenteses){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
-            ///se pesquisa_declvar_tabela(tk->lexema)
-            {
-                ///(pesquisa em toda a tabela)
+            if(pesquisa_declvar_tabela(*tk)){
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sfecha_parenteses){
                     AnalisadorLexical(fp,linha,tk);
@@ -159,7 +156,9 @@ void Analisa_leia(){
                 } else{
                     sintax_error(12);
                 }
-            }///senao erro
+            }else{
+                semantic_error(0); // nao achou
+            }
         }else{
             sintax_error(11);
         }
@@ -239,7 +238,7 @@ void Analisa_declaracao_procedimento(){
     AnalisadorLexical(fp,linha,tk);
     char nivel = 'L'; //(marca ou novo galho)
     if(tk->simbolo == sidentificador){
-        if(pesquisa_declfunc_tabela){ ///CONFIRMAR SE PODE USAR A MSM pesquisa_declfunc Q VARIAVEL
+        if(pesquisa_declfunc_tabela(tk->lexema)){
             insere_tab_simbolos(tk->lexema,sprocedimento,nivel, " "/*rótulo*/);
             /*{guarda na TabSimb}
             Gera(rotulo,NULL,´ ´,´ ´)
@@ -347,6 +346,7 @@ void Analisa_expressao(){
 void Analisa_expressao_simples(){
     if(tk->simbolo == smais || tk->simbolo == smenos){
         tk->simbolo = ssinalu;
+        strcat(tk->lexema, "u");
         expressao_infix = adicionar_token(expressao_infix, *tk);
         AnalisadorLexical(fp,linha,tk);
     }
@@ -407,14 +407,13 @@ void Analisa_Tipo(){
     AnalisadorLexical(fp,linha,tk);
 }
 
-/// tabela
 void Analisa_escreva(){
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sabre_parenteses){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
             AnalisadorLexical(fp,linha,tk);
-            ///if(pesquisa_declvarfunc_tabela(token.lexema))
+            if(pesquisa_declvarfunc_tabela(tk->lexema)){
                 if(tk->simbolo == sfecha_parenteses){                    
                     //retorno da tabela de simbolos pela busca do token.lexema
                     //Gera("    ","LDV",rotulo_tab,"    ");   
@@ -424,7 +423,9 @@ void Analisa_escreva(){
                 else{
                     sintax_error(14);
                 }
-            ///else(erro)
+            }else{
+                semantic_error(0);
+            }
         }
         else{
             sintax_error(15);
@@ -568,7 +569,6 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
 }
 
 enum tipos analisa_tipo_expressao_semantica(){
-    //expressao_infix = adicionar_token(expressao_infix, *tk);
     Analisa_expressao(tk);
     expressao_infix = converte_inf_posfix(expressao_infix);
     enum tipos tipo = semantico_expressao(expressao_infix);

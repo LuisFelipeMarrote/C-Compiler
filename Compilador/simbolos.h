@@ -14,7 +14,7 @@ void nova_tabela();
 void deleta_tabela();
 int pesquisa_declfunc_tabela(char* indent);
 void volta_nivel();
-
+int pesquisa_declvar_tabela(token tk);
 //ponteiro para o topo da tabela
 entrada_tab_simbolos* tabela = NULL; 
 
@@ -94,7 +94,7 @@ void deleta_tabela(){
     }
 }
 
-int pesquisa_declfunc_tabela(char* indent){
+int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){
         char* ident_tabela = entrada_atual->nome_ident;
@@ -114,4 +114,20 @@ void volta_nivel(){ ///possivelmente adicionar a quantidade de variaveis desaloc
         free(temp);
     }
     tabela->escopo = '-'; ///confirmar isso
+}
+
+int pesquisa_declvar_tabela(token tk){
+    //achou = 1;
+    entrada_tab_simbolos* entrada_atual = tabela;
+    while(entrada_atual->tipo != sbase){
+        char* ident_tabela = entrada_atual->nome_ident;
+        if(!strcmp(ident_tabela, tk.lexema)){
+            if(entrada_atual->tipo != tk.simbolo){
+                semantic_error(0); //achou, mas tipo errado
+            }
+            return 1; // encontrou 
+        }
+        entrada_atual = entrada_atual->prev;
+    };
+    return 0; 
 }
