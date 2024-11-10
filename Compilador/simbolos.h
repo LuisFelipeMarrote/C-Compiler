@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include "definicoes.h"
+#include "simbolos.h"
 
 void popula_entrada(entrada_tab_simbolos* entrada, char string[], char escopo, enum tipos tipo, char rotulo[]);
 void insere_tab_simbolos(char nome_ident[], enum tipos tipo, char escopo, char rotulo[]);
@@ -123,7 +124,8 @@ int pesquisa_declvar_tabela(token tk){
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, tk.lexema)){
             if(entrada_atual->tipo != tk.simbolo){
-                semantic_error(0); //achou, mas tipo errado
+                printf("ver o que fazer sobre esse erro");
+                //semantic_error(0); //achou, mas tipo errado
             }
             return 1; // encontrou 
         }
