@@ -125,6 +125,9 @@ int Pesquisa_duplicvar_tabela(char* indent){
     return 1; // não encontrou = true
 }
 
+/// @brief Pesquisa se a variavel ja foi declarada na parte visível da tabela (não limitado por escopo) - SÓ LÊ INTEIRO
+/// @param tk 
+/// @return 1 se achou
 int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarada
     //achou = 1;
     entrada_tab_simbolos* entrada_atual = tabela;
@@ -158,6 +161,9 @@ int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
     return 1; // não encontrou = verdadeiro (1)
 }
 
+/// @brief Em analisa_leia, procura por uma variável ou função(retorno) para escrever
+/// @param indent nome
+/// @return achou(0) ou nao(1)
 int pesquisa_declvarfunc_tabela(char* indent){ 
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){

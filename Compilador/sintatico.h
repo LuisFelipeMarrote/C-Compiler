@@ -215,19 +215,22 @@ void Analisa_enquanto(){
     Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
     rotulo = rotulo+1;
     AnalisadorLexical(fp,linha,tk);
-    if(analisa_tipo_expressao_semantica() != sbooleano){
-        semantic_error(0);
-    }
-    if(tk->simbolo == sfaca){
-        int auxrot2 = rotulo;
-        Gera("    ","JMPF",itoa(auxrot2,str_aux,10),"    ");
-        rotulo = rotulo+1;
-        AnalisadorLexical(fp,linha,tk);
-        Analisa_comando_simples(tk);
-        Gera("    ","JMP",itoa(auxrot1,str_aux,10),"    ");
-        Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
+    if(analisa_tipo_expressao_semantica() == sbooleano){
+        if(tk->simbolo == sfaca){
+            int auxrot2 = rotulo;
+            Gera("    ","JMPF",itoa(auxrot2,str_aux,10),"    ");
+            rotulo = rotulo+1;
+
+            AnalisadorLexical(fp,linha,tk);
+            Analisa_comando_simples(tk);
+
+            Gera("    ","JMP",itoa(auxrot1,str_aux,10),"    ");
+            Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
+        }else{
+            sintax_error(20);
+        }
     }else{
-        sintax_error(20);
+        semantic_error(0);
     }
 }
 
@@ -295,40 +298,39 @@ void Analisa_declaracao_funcao(){
 }
 
 void Analisa_se(){
-
     AnalisadorLexical(fp,linha,tk);
-    if(analisa_tipo_expressao_semantica() != sbooleano){
-        semantic_error(0);
-    }
+    if(analisa_tipo_expressao_semantica() != sbooleano){    
+        int auxrot1;
+        auxrot1 = rotulo;
+        Gera("    ","JMPF",itoa(auxrot1,str_aux,10),"    ");
+        rotulo = rotulo+1;
 
-    int auxrot1;
-    auxrot1 = rotulo;
-    Gera("    ","JMPF",itoa(auxrot1,str_aux,10),"    ");
-    rotulo = rotulo+1;
+        if(tk->simbolo == sentao){
 
-    if(tk->simbolo == sentao){
-
-        AnalisadorLexical(fp,linha,tk);
-        Analisa_comando_simples(tk);    
-    
-        int auxrot2;   
-        auxrot2 = rotulo;
-
-        if(tk->simbolo == ssenao){ //remendo para ele no colocar um jmp caso nao tenha um ssenao         
-            Gera("    ","JMP",itoa(auxrot2,str_aux,10),"    ");
-        }
-
-        rotulo = rotulo+1;    
-        Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
-
-        if(tk->simbolo == ssenao){
             AnalisadorLexical(fp,linha,tk);
-            Analisa_comando_simples(tk);            
-    
-            Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
+            Analisa_comando_simples(tk);    
+        
+            int auxrot2;   
+            auxrot2 = rotulo;
+
+            if(tk->simbolo == ssenao){ //remendo para ele no colocar um jmp caso nao tenha um ssenao         
+                Gera("    ","JMP",itoa(auxrot2,str_aux,10),"    ");
+            }
+
+            rotulo = rotulo+1;    
+            Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
+
+            if(tk->simbolo == ssenao){
+                AnalisadorLexical(fp,linha,tk);
+                Analisa_comando_simples(tk);            
+        
+                Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
+            }
+        }else{
+            sintax_error(27);
         }
     }else{
-        sintax_error(27);
+        semantic_error(0);
     }
 }
 
@@ -505,7 +507,11 @@ void Analisa_atribuicao(token ident){
 void Chamada_procedimento(){
     entrada_tab_simbolos* proc = busca_ident(tk->lexema);
     if(proc != NULL){
-        AnalisadorLexical(fp,linha,tk);
+        if(proc->tipo == sprocedimento){
+            AnalisadorLexical(fp,linha,tk);
+        }else{
+            semantic_error(0);
+        }
     }else{
         semantic_error(0);
     }
