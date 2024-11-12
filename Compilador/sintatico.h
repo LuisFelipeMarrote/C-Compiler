@@ -491,8 +491,8 @@ void Analisa_atribuicao(token ident){
             }
         }else if(destino->tipo == tipo){
             //atribuição de variavel
-            if(destino->tipo == tipo){
-                ///rever
+            if(destino->tipo != tipo){
+                semantic_error(0);
             }
         }else{
             semantic_error(0); //atribuição com tipo diferente
