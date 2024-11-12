@@ -9,6 +9,7 @@ rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
 conferir _error(0) tbm (tem de varios tipos)
 
 confirmar se coloco os if(analisa_tipo_expressao_semantica errado){erro semantico} antes do codigo do sintatico, ou se coloco o sintatico dentro da saída verdadeira
+
 rever atribuição de tipo (principalmente para funcao e proc)
 
 possivel fonte de erro: entrada da tabela de simbolos pode ter lixo! (nome_ident)
@@ -24,3 +25,5 @@ confirmar implementar positivo/negativo (possívelmente em analisa_expressao_sim
 testar invete sinal
 
 rever retorno função (ver se o analisador sintatico pega esse caso e implementar o semantico)
+verdadeiro ou falso
+

@@ -504,6 +504,14 @@ void Analisa_chamada_funcao(){
         expressao_infix = adicionar_token(expressao_infix, *tk);*/
 }
 
+enum tipos analisa_tipo_expressao_semantica(){
+    Analisa_expressao(tk);
+    expressao_infix = converte_inf_posfix(expressao_infix);
+    enum tipos tipo = semantico_expressao(expressao_infix);
+    expressao_infix = NULL;
+    return tipo;
+}
+
 /// def rótulo inteiro
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     nova_tabela(); // inicializa a tabela de simbolos
@@ -544,12 +552,4 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     else{
         sintax_error(1);
     }
-}
-
-enum tipos analisa_tipo_expressao_semantica(){
-    Analisa_expressao(tk);
-    expressao_infix = converte_inf_posfix(expressao_infix);
-    enum tipos tipo = semantico_expressao(expressao_infix);
-    expressao_infix = NULL;
-    return tipo;
 }
