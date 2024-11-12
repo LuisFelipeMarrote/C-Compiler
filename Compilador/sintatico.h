@@ -105,7 +105,6 @@ void Analisa_comandos(){
                     Analisa_comando_simples(tk);
             }else{
                 sintax_error(19);       
-                AnalisadorLexical(fp,linha,tk);
             }
         }
         AnalisadorLexical(fp,linha,tk);
@@ -116,7 +115,7 @@ void Analisa_comandos(){
 
 void Analisa_comando_simples(){
     if(tk->simbolo == sidentificador){
-        Analisa_atrib_chprocedimento(tk); //sem
+        Analisa_atrib_chprocedimento(tk);
     }else if(tk->simbolo ==sse){
         Analisa_se(tk);
     }else if(tk->simbolo == senquanto){
@@ -134,9 +133,9 @@ void Analisa_atrib_chprocedimento(){
     token temp = *tk;
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == satribuicao){
-        Analisa_atribuicao(temp); //sem_ok
+        Analisa_atribuicao(temp); 
     }else{
-        Chamada_procedimento(tk); //sem
+        Chamada_procedimento(tk); 
     }
 }
 
@@ -264,7 +263,7 @@ void Analisa_declaracao_funcao(){
     if(tk->simbolo == sidentificador){
         if(pesquisa_declfunc_tabela(tk->lexema)){
             //nao encontrou
-            insere_tab_simbolos(tk->lexema,snull,nivel," "/*rótulo*/);
+            insere_tab_simbolos(tk->lexema,sfuncao,nivel," "/*rótulo*/);
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sdoispontos){
                 AnalisadorLexical(fp,linha,tk);
@@ -401,7 +400,7 @@ void Analisa_Tipo(){
     if(tk->simbolo != sinteiro && tk->simbolo != sbooleano){
         sintax_error(8);
     }else{
-        coloca_tipo_tabela(tk->lexema, tk->simbolo);
+        coloca_tipo_tabela("_var", tk->simbolo);
     }
     AnalisadorLexical(fp,linha,tk);
 }
@@ -437,32 +436,30 @@ void Analisa_escreva(){
 
 /// gera codigo
 void Analisa_subrotinas(){
-    int flag = 0;        
+    /*int flag = 0;        
     int auxrot = rotulo;
     if(tk->simbolo == sprocedimento && tk->simbolo == sfuncao)
     {
         Gera("    ", "JMP",itoa(rotulo,str_aux,10),"");
         rotulo = rotulo + 1;
         flag = 1;
-    }
+    }*/
 
-    while((tk->simbolo == sprocedimento) | (tk->simbolo == sfuncao)){
+    while((tk->simbolo == sprocedimento) || (tk->simbolo == sfuncao)){
         if(tk->simbolo == sprocedimento){
             Analisa_declaracao_procedimento(tk);
-        }
-        else{
+        }else{
             Analisa_declaracao_funcao();
         }
         if(tk->simbolo == sponto_virgula){
             AnalisadorLexical(fp,linha,tk);
-        }
-        else{
+        }else{
             sintax_error(30);
         }
     }
-    if (flag == 1){
+    /*if (flag == 1){
         Gera(itoa(auxrot,str_aux,10),"NULL","    ","    ");
-    }
+    }*/
 }
 
 void Analisa_termo(){
@@ -474,16 +471,34 @@ void Analisa_termo(){
     }
 }
 
+/// @brief analisa atribuições, verificando tipagem (analise semantica) e diferenciando atribuicao de variavel e retorno de funcao
+/// @param ident identificador lido antes do sinal de atribuição (:=) 
 void Analisa_atribuicao(token ident){
     AnalisadorLexical(fp,linha,tk);
-    entrada_tab_simbolos* var = busca_ident(ident.lexema);
-    if(var != NULL){
+    entrada_tab_simbolos* destino = busca_ident(ident.lexema);
+    if(destino != NULL){
         enum tipos tipo = analisa_tipo_expressao_semantica();
-        if(var->tipo != tipo){
+        if(destino->tipo == fint || destino->tipo == fbool){
+            //retorno de funcao
+            if(destino->tipo == fint){
+                if(tipo != sinteiro){
+                    semantic_error(0);
+                }
+            }else{
+                if(tipo != sbooleano){
+                    semantic_error(0);
+                }
+            }
+        }else if(destino->tipo == tipo){
+            //atribuição de variavel
+            if(destino->tipo == tipo){
+                ///rever
+            }
+        }else{
             semantic_error(0); //atribuição com tipo diferente
         }
     }else{
-        semantic_error(0);
+        semantic_error(0); //identificador não declarado
     }
 }
 

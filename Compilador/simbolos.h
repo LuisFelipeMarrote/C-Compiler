@@ -60,14 +60,31 @@ entrada_tab_simbolos* busca_ident(char identificador[]){
     return NULL;
 }
 
+///após declaração de variáveis ou funções, coloca os tipos na tabela baseado no parâmetro:
+///- se 'ident' = "_var", troca o tipo de todas as entradas svar seguidas no tipo passado
+///- se não, procura o ident na tabela e atribui fbool ou fint (passado no parametro)
 void coloca_tipo_tabela(char* ident, enum tipos tipo){
     entrada_tab_simbolos* temp = tabela;
-    while(temp->tipo == svar || temp->tipo == sprocedimento || temp->tipo == sfuncao){
-        temp->tipo = tipo;
-        temp = temp->prev;
+    if(!strcmp("_var", ident)){
+        while(temp->tipo == svar){
+            temp->tipo = tipo;
+            temp = temp->prev;
+        }
+    }else{
+        entrada_tab_simbolos* func = busca_ident(ident);
+        if(func!= NULL){
+            if(func->tipo == sfuncao){
+                func->tipo = tipo;
+            }else{     
+                semantic_error(0); // possivelmente nunca chegue aqui, ms sla
+            }
+        }else{
+            semantic_error(0); // possivelmente nunca chegue aqui, ms sla
+        }
     }
 }
 
+/// 
 void nova_tabela(){
     entrada_tab_simbolos* base = (entrada_tab_simbolos*) malloc(sizeof(entrada_tab_simbolos));
     popula_entrada(base, "base_da_pilha", 'L', sbase, "-");
@@ -91,7 +108,9 @@ void volta_nivel(){ ///possivelmente adicionar a quantidade de variaveis desaloc
     tabela->escopo = '-'; ///confirmar isso
 }
 
-int Pesquisa_duplicvar_tabela(char* indent){ //pesquisa se a variavel ja foi declarada no escopo 
+
+///- Pesquisa se a variavel ja foi declarada no escopo 
+int Pesquisa_duplicvar_tabela(char* indent){ 
     entrada_tab_simbolos* entrada_atual = tabela;
     int fim_de_escopo = 1;
     while(entrada_atual->tipo != sbase && fim_de_escopo){
@@ -123,6 +142,9 @@ int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarad
     return 0; 
 }
 
+/// @brief durante a declaração verifica se a função/procedimento já foi declarada antes (tabela inteira)
+/// @param indent nome da função
+/// @return encontrou = false (0), não encontrou = true (1)
 int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){
