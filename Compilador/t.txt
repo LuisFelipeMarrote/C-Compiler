@@ -20,3 +20,7 @@ Confirmar analisa_se pos merge
 
 confirmar implementar positivo/negativo (possívelmente em analisa_expressao_simples sintatico - conferir p nn fazer bosta)
     -> rever u na expressao posfix
+
+testar invete sinal
+
+rever retorno função (ver se o analisador sintatico pega esse caso e implementar o semantico)

@@ -36,7 +36,6 @@ void Analisa_escreva();
 void Analisa_atribuicao(token ident);
 void Chamada_procedimento();
 void Analisa_termo();
-void Analisa_Chamada_de_Procedimento();
 void Analisa_declaracao_procedimento();
 void Analisa_declaracao_funcao();
 void Analisa_expressao_simples();
@@ -117,7 +116,7 @@ void Analisa_comandos(){
 
 void Analisa_comando_simples(){
     if(tk->simbolo == sidentificador){
-        Analisa_atrib_chprocedimento(tk);
+        Analisa_atrib_chprocedimento(tk); //sem
     }else if(tk->simbolo ==sse){
         Analisa_se(tk);
     }else if(tk->simbolo == senquanto){
@@ -135,9 +134,9 @@ void Analisa_atrib_chprocedimento(){
     token temp = *tk;
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == satribuicao){
-        Analisa_atribuicao(temp);
+        Analisa_atribuicao(temp); //sem_ok
     }else{
-        Chamada_procedimento(tk);
+        Chamada_procedimento(tk); //sem
     }
 }
 
@@ -440,7 +439,7 @@ void Analisa_escreva(){
 void Analisa_subrotinas(){
     int flag = 0;        
     int auxrot = rotulo;
-    if(tk->simbolo == sprocedimento && tk->simbolo == sfuncao) ///tk->simbolo = sprocedimento && tk->simbolo = sfuncao
+    if(tk->simbolo == sprocedimento && tk->simbolo == sfuncao)
     {
         Gera("    ", "JMP",itoa(rotulo,str_aux,10),"");
         rotulo = rotulo + 1;
@@ -475,33 +474,6 @@ void Analisa_termo(){
     }
 }
 
-/// ?
-void Analisa_Chamada_de_Procedimento(){
-    //Nao sei mas vou tentar
-    if(tk->simbolo == sidentificador){
-        AnalisadorLexical(fp,linha,tk);;
-        if(tk->simbolo == sabre_parenteses){
-            AnalisadorLexical(fp,linha,tk);;
-            if(tk->simbolo != sfecha_parenteses){
-                ///analisa_parametros
-            }
-            if(tk->simbolo == sfecha_parenteses){
-                AnalisadorLexical(fp,linha,tk);
-            }
-            else{
-                sintax_error(18);
-            }
-        }
-        else{
-            sintax_error(17);
-        }
-    }
-    else{
-        sintax_error(16);
-    }
-}
-
-/// ? rever inteiro - comecei a corrigir sem perceber que nem a base tinha!
 void Analisa_atribuicao(token ident){
     AnalisadorLexical(fp,linha,tk);
     entrada_tab_simbolos* var = busca_ident(ident.lexema);
@@ -515,11 +487,17 @@ void Analisa_atribuicao(token ident){
     }
 }
 
-/// ?
 void Chamada_procedimento(){
-    //ver o que isso deve fazer
+    entrada_tab_simbolos* proc = busca_ident(tk->lexema);
+    if(proc != NULL){
+        AnalisadorLexical(fp,linha,tk);
+    }else{
+        semantic_error(0);
+    }
+
 }
 
+/// semantico
 void Analisa_chamada_funcao(){
     printf("Ainda nao implementei analisa chamada de função!");
     /*Lembrete: adicionar o seguinte apos qualquer chamada lexical (se envolver o analisa_expressão);

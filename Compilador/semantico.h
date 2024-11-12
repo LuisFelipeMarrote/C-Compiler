@@ -178,7 +178,7 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     return retorno_pos;
 }
 
-///recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
+//recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
 enum tipos semantico_expressao(node_lista_token* lista_posfix){
     // percorre a lista empilhando os valores, e desempilhando conforme encontra operadores
     node_lista_token* pilha = NULL;

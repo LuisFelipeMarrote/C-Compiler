@@ -82,8 +82,6 @@ void deleta_tabela(){
     }
 }
 
-
-
 void volta_nivel(){ ///possivelmente adicionar a quantidade de variaveis desalocadas
     while(tabela != NULL && tabela->escopo != 'L'){
         entrada_tab_simbolos* temp = tabela;
