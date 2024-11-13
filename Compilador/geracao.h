@@ -38,7 +38,7 @@ void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]){
         strcat(linha, atr2);
     }
     strcat(linha, "\n");
-    printf("\n%d ", new_fp);
+   // printf("\n%d ", new_fp);
     fputs(linha, new_fp);
 }
 
@@ -52,17 +52,17 @@ void Cria_arquivo(token *tk){
     if (new_fp != NULL)
     {
         remove(nome_arquivo);
-        printf("O arquivo '%s' já existe e foi bÃÃÃnidu.\n", nome_arquivo);
+    //    printf("O arquivo '%s' já existe e foi bÃÃÃnidu.\n", nome_arquivo);
     }
 
     new_fp = fopen(nome_arquivo, "w");
 
     // Verifica se o arquivo foi aberto com sucesso
     if (new_fp == NULL) {
-        printf("Erro ao criar o arquivo.\n");
+    //    printf("Erro ao criar o arquivo.\n");
     }
 
-    printf("%d", new_fp);
+    //printf("%d", new_fp);
 
 }
 

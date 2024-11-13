@@ -5,18 +5,6 @@
 #include "definicoes.h"
 #include "simbolos.h"
 
-void semantic_error(int n){
-    //rever todos os rotulos de erro abaixo (placeholders)
-    char* erros[] = {"falta definir",
-        "1: ",
-        };
-    
-    printf("Erro semantico");
-    printf(" %s ", erros[n]);
-    printf("na linha %d\n", *linha);
-
-}
-
 //empilha primeiro token de uma lista
 void empilha_token(node_lista_token** pilha, node_lista_token** lista){
     if(*pilha != NULL){//se a pilha ja existir
@@ -135,7 +123,7 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     node_lista_token* pilha = NULL; // topo da pilha
 
     while(lista_infix != NULL){
-        if(lista_infix->tk.simbolo == sinteiro || lista_infix->tk.simbolo == sidentificador){ //Se for variável ou número copia na saída;     
+        if(lista_infix->tk.simbolo == sinteiro || lista_infix->tk.simbolo == sidentificador){ //Se for ident(var ou func) ou número, copia na saída;     
             if(lista_pos != NULL){ // se não for a primeira vez, muda o ponteiro prox e atualiza ponteiro lista
                 lista_pos->prox = lista_infix;
                 lista_pos = lista_pos->prox;
@@ -196,7 +184,13 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
                     semantic_error(0);
                     return serro;
                 }
-                lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
+                if(entrada_tabela_operador->tipo == fint){
+                    lista_posfix->tk.simbolo = sinteiro;
+                }else if(entrada_tabela_operador->tipo == fbool){
+                    lista_posfix->tk.simbolo = sbooleano;
+                }else{
+                    lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
+                }
             }
             empilha_token(&pilha, &lista_posfix);
         

@@ -1,0 +1,17 @@
+    START
+    JMPF0
+0NULL
+    RD
+2NULL
+    JMPF3
+    JMP2
+3NULL
+    PRN
+    RD
+    JMPF4
+    PRN
+    JMP5
+4NULL
+    PRN
+5NULL
+    HLT

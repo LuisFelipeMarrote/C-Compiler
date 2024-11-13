@@ -30,3 +30,14 @@ Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
 >   Precisa colocar erros que em teoria nunca vão acontecer? (var nao declarada ao colocar tipo)
 >   Pode chamar função solta? (se puder, afeta chamada_proc)
+>   ponto e virgula no teste semant linha 33:
+    > <comando condicional := se <expressao> entao <comando> [senao <comando>]
+    > <comando> :=  (   <atribuição_chprocedimento>|
+                        <comando condicional> |
+                        <comando enquanto> |
+                        <comando leitura> |
+                        <comando escrita> |
+                        <comandos>)
+    > comandos := inicio <comando> {;<comando>} [;] fim
+    > <atribuição_chprocedimento>::= (<comando atribuicao>|<chamada de procedimento>)
+    > <chamada de procedimento>::= <identificador>

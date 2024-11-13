@@ -45,47 +45,6 @@ void Analisa_chamada_funcao();
 enum tipos analisa_tipo_expressao_semantica();
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
 
-void sintax_error(int n){
-    ///rever todos os rotulos de erro abaixo (placeholders)
-    char* erros[] = {"falta definir",
-        "1: Esperado 'programa'",
-        "2: Esperado identificador para escrever",
-        "3: Esperado ';'", 
-        "4: Esperado ponto final",
-        "5: Encontrado ponto final antes do fim do arquivo",
-        "6: Esperado ';' após declaração de variáveis",
-        "7: Esperado um identificador para 'var'",
-        "8: Declaração de variável com tipo inválido",
-        "9: Esperado inicio",
-        "10: Esperado '(' após 'leia'",
-        "11: Esperado identificador para leitura",
-        "12: Esperado ')' para 'leia'",
-        "13: Esperado '(' após 'escreva'",
-        "14: Esperado ')' para 'escreva'",
-        "15: Esperado identificador para escrita",
-        "16: Esperado identificador de processo",
-        "17: Esperado '(' após processo",
-        "18: Esperado ')' após processo",
-        "19: Esperado ';' após comando",
-        "20: Esperado 'faca' após enquanto",
-        "21: Esperado identificador para declaração de procedimento",
-        "22: Esperado ';' após a declaração de procedimento",
-        "23: Esperado identificador para declaração de função",
-        "24: Esperado ':' para declaração de função",
-        "25: Tipo inválido para a função",
-        "26: Esperado ';' após a declaração de função",
-        "27: Esperado 'entao' após 'se'",
-        "28: Esperado ')'",
-        "29: Encontrado simbolo inesperado para um fator",
-        "30: Esperado ';' após subrotina",
-        };
-    
-    printf("Erro de sintaxe");
-    printf(" %s ", erros[n]);
-    printf("na linha %d\n", *linha);
-
-}
-
 void Analisa_Bloco(){
     AnalisadorLexical(fp,linha,tk);
     Analisa_et_variáveis(tk);
@@ -135,7 +94,9 @@ void Analisa_atrib_chprocedimento(){
     if(tk->simbolo == satribuicao){
         Analisa_atribuicao(temp); 
     }else{
-        Chamada_procedimento(tk); 
+        char lex = tk->lexema[0];
+        ungetc(lex, fp);
+        Chamada_procedimento(temp);
     }
 }
 
@@ -506,8 +467,8 @@ void Analisa_atribuicao(token ident){
     }
 }
 
-void Chamada_procedimento(){
-    entrada_tab_simbolos* proc = busca_ident(tk->lexema);
+void Chamada_procedimento(token ident){
+    entrada_tab_simbolos* proc = busca_ident(ident.lexema);
     if(proc != NULL){
         if(proc->tipo == sprocedimento){
             AnalisadorLexical(fp,linha,tk);

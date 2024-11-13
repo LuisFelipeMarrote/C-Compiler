@@ -47,12 +47,12 @@ void pop_tab_simbolos(){
 }
 
 //busca na tabela de simbolos por um identificador e retorna a entrada
-entrada_tab_simbolos* busca_ident(char identificador[]){
+entrada_tab_simbolos* busca_ident(char* identificador){
     entrada_tab_simbolos* entrada_atual = tabela;
     while(entrada_atual->tipo != sbase){
         char* ident_tabela = entrada_atual->nome_ident;
 
-        if(!strcmp(ident_tabela, identificador)){
+        if(strcmp(ident_tabela, identificador) == 0){
             return(entrada_atual);
         }
         entrada_atual = entrada_atual->prev;
