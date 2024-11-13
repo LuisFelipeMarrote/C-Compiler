@@ -386,12 +386,13 @@ void Analisa_fator(){
         AnalisadorLexical(fp,linha,tk);
         Analisa_expressao(tk);
         if(tk->simbolo == sfecha_parenteses){
-            expressao_infix = adicionar_token(expressao_infix, *tk); //conferindo se precisa dessa
+            expressao_infix = adicionar_token(expressao_infix, *tk); 
             AnalisadorLexical(fp,linha,tk);
         }else{
             sintax_error(28);
         }
-    }else if(strcmp(tk->lexema, "verdadeiro") || strcmp(tk->lexema, "falso")){
+    }else if(tk->simbolo == sverdadeiro || tk->simbolo == sfalso){
+        tk->simbolo = sbooleano;
         expressao_infix = adicionar_token(expressao_infix, *tk);
         AnalisadorLexical(fp,linha,tk);
     }else{
@@ -519,19 +520,23 @@ void Chamada_procedimento(){
 
 }
 
-/// semantico
 void Analisa_chamada_funcao(){
-    printf("Ainda nao implementei analisa chamada de função!");
+    printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
     /*Lembrete: adicionar o seguinte apos qualquer chamada lexical (se envolver o analisa_expressão);
         expressao_infix = adicionar_token(expressao_infix, *tk);*/
 }
 
 enum tipos analisa_tipo_expressao_semantica(){
     Analisa_expressao(tk);
-    expressao_infix = converte_inf_posfix(expressao_infix);
-    enum tipos tipo = semantico_expressao(expressao_infix);
-    expressao_infix = NULL;
-    return tipo;
+        if(expressao_infix != NULL){
+        expressao_infix = converte_inf_posfix(expressao_infix);
+        enum tipos tipo = semantico_expressao(expressao_infix);
+        expressao_infix = NULL;
+        return tipo;
+    }else{
+        semantic_error(0); // nao tenho ctz se chega aqui (acho que o sintatico para antes), mas esperado expressao
+        return serro;
+    }
 }
 
 /// def rótulo inteiro

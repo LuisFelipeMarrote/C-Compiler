@@ -234,9 +234,9 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
         }
     }
     if(pilha->prox != NULL){
-            semantic_error(0);
-            return serro;
-        }
+        semantic_error(0);
+        return serro;
+    }
 
     return (pilha->tk.simbolo);
 }
