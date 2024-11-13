@@ -174,7 +174,10 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     }
 
     //Se terminar a expressão, desempilhar copiando na saída todos os operadores ainda existentes na pilha
-    lista_pos->prox = pilha;
+    if(pilha != NULL){
+        lista_pos->prox = pilha;
+    }
+
     return retorno_pos;
 }
 
