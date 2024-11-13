@@ -76,10 +76,12 @@ void coloca_tipo_tabela(char* ident, enum tipos tipo){
             if(func->tipo == sfuncao){
                 func->tipo = tipo;
             }else{     
-                semantic_error(0); // possivelmente nunca chegue aqui, ms sla
+                //semantic_error(0); // possivelmente nunca chegue aqui, ms sla
+                printf("erro que ainda nao implementei. COMO QUE O CÓDIGO CHEGOU AQUI????");
             }
         }else{
-            semantic_error(0); // possivelmente nunca chegue aqui, ms sla
+            //semantic_error(0); // possivelmente nunca chegue aqui, ms sla
+            printf("erro que ainda nao implementei 2. COMO QUE O CÓDIGO CHEGOU AQUI????");
         }
     }
 }
@@ -125,7 +127,7 @@ int Pesquisa_duplicvar_tabela(char* indent){
     return 1; // não encontrou = true
 }
 
-/// @brief Pesquisa se a variavel ja foi declarada na parte visível da tabela (não limitado por escopo) - SÓ LÊ INTEIRO
+/// @brief Pesquisa se a variavel ja foi declarada na parte visível da tabela (não limitado por escopo) - SÓ LÊ INTEIRO (confirmar se precisa dessa parte)
 /// @param tk 
 /// @return 1 se achou
 int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarada
@@ -134,7 +136,7 @@ int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarad
     while(entrada_atual->tipo != sbase){
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, tk.lexema)){
-            if(entrada_atual->tipo != tk.simbolo){
+            if(entrada_atual->tipo != sinteiro){
                 printf("ver o que fazer sobre esse erro");
                 //semantic_error(0); //achou, mas tipo errado
             }
@@ -161,7 +163,7 @@ int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
     return 1; // não encontrou = verdadeiro (1)
 }
 
-/// @brief Em analisa_leia, procura por uma variável ou função(retorno) para escrever
+/// @brief Em analisa_escreva, procura por uma variável ou função(retorno) para escrever (tipo inteiro)
 /// @param indent nome
 /// @return achou(0) ou nao(1)
 int pesquisa_declvarfunc_tabela(char* indent){ 
