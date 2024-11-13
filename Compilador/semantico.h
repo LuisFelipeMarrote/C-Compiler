@@ -190,15 +190,13 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
         if(lista_posfix->tk.simbolo == sinteiro || lista_posfix->tk.simbolo == sidentificador){ //se for variável, empilha
             if(lista_posfix->tk.simbolo == sidentificador){
                 //procurar tabela
-                if(lista_posfix->tk.simbolo == sidentificador){
-                    entrada_tab_simbolos* entrada_tabela_operador;
-                    entrada_tabela_operador = busca_ident(lista_posfix->tk.lexema);
-                    if(entrada_tabela_operador == NULL){
-                        semantic_error(0);
-                        return serro;
-                    }
-                    lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
+                entrada_tab_simbolos* entrada_tabela_operador;
+                entrada_tabela_operador = busca_ident(lista_posfix->tk.lexema);
+                if(entrada_tabela_operador == NULL){
+                    semantic_error(0);
+                    return serro;
                 }
+                lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
             }
             empilha_token(&pilha, &lista_posfix);
         

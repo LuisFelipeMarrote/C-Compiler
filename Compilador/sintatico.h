@@ -522,13 +522,14 @@ void Chamada_procedimento(){
 
 void Analisa_chamada_funcao(){
     printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
-    /*Lembrete: adicionar o seguinte apos qualquer chamada lexical (se envolver o analisa_expressão);
-        expressao_infix = adicionar_token(expressao_infix, *tk);*/
+    expressao_infix = adicionar_token(expressao_infix, *tk);
+    AnalisadorLexical(fp,linha,tk);
+    ///gera_codigo 
 }
 
 enum tipos analisa_tipo_expressao_semantica(){
     Analisa_expressao(tk);
-        if(expressao_infix != NULL){
+    if(expressao_infix != NULL){
         expressao_infix = converte_inf_posfix(expressao_infix);
         enum tipos tipo = semantico_expressao(expressao_infix);
         expressao_infix = NULL;
