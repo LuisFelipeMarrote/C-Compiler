@@ -266,15 +266,16 @@ void Analisa_declaracao_funcao(){
     if(tk->simbolo == sidentificador){
         if(pesquisa_declfunc_tabela(tk->lexema)){
             //nao encontrou
+            token nome_func = *tk;
             insere_tab_simbolos(tk->lexema,sfuncao,nivel," "/*rótulo*/);
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sdoispontos){
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sinteiro || tk->simbolo == sbooleano){
                     if(tk->simbolo == sinteiro){
-                        coloca_tipo_tabela(tk->lexema, fint);
+                        coloca_tipo_tabela(nome_func.lexema, fint);
                     }else{
-                        coloca_tipo_tabela(tk->lexema, fbool);
+                        coloca_tipo_tabela(nome_func.lexema, fbool);
                     }
                     AnalisadorLexical(fp,linha,tk);
                     if(tk->simbolo == sponto_virgula){
@@ -299,7 +300,7 @@ void Analisa_declaracao_funcao(){
 
 void Analisa_se(){
     AnalisadorLexical(fp,linha,tk);
-    if(analisa_tipo_expressao_semantica() != sbooleano){    
+    if(analisa_tipo_expressao_semantica() == sbooleano){    
         int auxrot1;
         auxrot1 = rotulo;
         Gera("    ","JMPF",itoa(auxrot1,str_aux,10),"    ");

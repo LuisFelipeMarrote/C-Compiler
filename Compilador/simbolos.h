@@ -64,8 +64,8 @@ entrada_tab_simbolos* busca_ident(char identificador[]){
 ///- se 'ident' = "_var", troca o tipo de todas as entradas svar seguidas no tipo passado
 ///- se não, procura o ident na tabela e atribui fbool ou fint (passado no parametro)
 void coloca_tipo_tabela(char* ident, enum tipos tipo){
-    entrada_tab_simbolos* temp = tabela;
     if(!strcmp("_var", ident)){
+        entrada_tab_simbolos* temp = tabela;
         while(temp->tipo == svar){
             temp->tipo = tipo;
             temp = temp->prev;
@@ -81,7 +81,7 @@ void coloca_tipo_tabela(char* ident, enum tipos tipo){
             }
         }else{
             //semantic_error(0); // possivelmente nunca chegue aqui, ms sla
-            printf("erro que ainda nao implementei 2. COMO QUE O CÓDIGO CHEGOU AQUI????");
+            printf("função nao encontrada ao inserir tipo. COMO QUE O CÓDIGO CHEGOU AQUI????");
         }
     }
 }
