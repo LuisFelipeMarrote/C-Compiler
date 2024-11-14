@@ -20,7 +20,7 @@ char str_aux[4] = "";
 int num_var = 0;
 node_lista_token* expressao_infix;
 
-void sintax_error(int n); 
+//void sintax_error(int n); 
 void Analisa_Bloco(); 
 void Analisa_et_variáveis(); 
 void Analisa_subrotinas();  
@@ -63,12 +63,12 @@ void Analisa_comandos(){
                 if(tk->simbolo != sfim)
                     Analisa_comando_simples(tk);
             }else{
-                sintax_error(19);       
+                sintax_error(19, *linha);       
             }
         }
         AnalisadorLexical(fp,linha,tk);
     }else{
-        sintax_error(9);
+        sintax_error(9, *linha);
     }
 }
 
@@ -113,16 +113,16 @@ void Analisa_leia(){
                     //retorno da tabela de simbolos
                     //Gera("    ","STR",rotulo_tab,"    ");          
                 } else{
-                    sintax_error(12);
+                    sintax_error(12, *linha);
                 }
             }else{
-                semantic_error(0); // nao achou
+                semantic_error(0, *linha); // nao achou
             }
         }else{
-            sintax_error(11);
+            sintax_error(11, *linha);
         }
     }else{
-        sintax_error(10);
+        sintax_error(10, *linha);
     }
 }
 
@@ -135,7 +135,7 @@ void Analisa_et_variáveis(){
                 if(tk->simbolo == sponto_virgula){
                     AnalisadorLexical(fp,linha,tk); 
                 }else{
-                    sintax_error(6);
+                    sintax_error(6, *linha);
                 }
             }
         }
@@ -153,15 +153,15 @@ void Analisa_Variaveis(){
                     if(tk->simbolo == svírgula){
                         AnalisadorLexical(fp,linha,tk);
                         if(tk->simbolo == sdoispontos){
-                            sintax_error(7);
+                            sintax_error(7, *linha);
                         }
                     }
                 }else{
-                    sintax_error(0);
+                    sintax_error(0, *linha);
                 }
             }else{
                 //se encontrou duplicidade
-                semantic_error(0);
+                semantic_error(0, *linha);
             }
         }
     }while(tk->simbolo != sdoispontos);
@@ -188,10 +188,10 @@ void Analisa_enquanto(){
             Gera("    ","JMP",itoa(auxrot1,str_aux,10),"    ");
             Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
         }else{
-            sintax_error(20);
+            sintax_error(20, *linha);
         }
     }else{
-        semantic_error(0);
+        semantic_error(0, *linha);
     }
 }
 
@@ -210,13 +210,13 @@ void Analisa_declaracao_procedimento(){
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(tk);
             }else{
-                sintax_error(22);
+                sintax_error(22, *linha);
             }
         }else{
-            semantic_error(0);
+            semantic_error(0, *linha);
         }
     }else{
-        sintax_error(21);
+        sintax_error(21, *linha);
     }
     volta_nivel();
 }
@@ -242,19 +242,19 @@ void Analisa_declaracao_funcao(){
                     if(tk->simbolo == sponto_virgula){
                         Analisa_Bloco(tk);
                     }else{
-                        sintax_error(26);
+                        sintax_error(26, *linha);
                     }
                 }else{
-                    sintax_error(25);
+                    sintax_error(25, *linha);
                 }
             }else{
-                sintax_error(24);
+                sintax_error(24, *linha);
             }
         }else{
-            semantic_error(0); //função ja declarada
+            semantic_error(0, *linha); //função ja declarada
         }
     }else{
-        sintax_error(23);
+        sintax_error(23, *linha);
     }
     volta_nivel();
 }
@@ -289,10 +289,10 @@ void Analisa_se(){
                 Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
             }
         }else{
-            sintax_error(27);
+            sintax_error(27, *linha);
         }
     }else{
-        semantic_error(0);
+        semantic_error(0, *linha);
     }
 }
 
@@ -331,7 +331,7 @@ void Analisa_fator(){
                 AnalisadorLexical(fp,linha,tk);
             }
         }else{
-            semantic_error(0); // ident nao esta na tabela (var nao declarada)
+            semantic_error(0, *linha); // ident nao esta na tabela (var nao declarada)
         }
         //AnalisadorLexical(fp,linha,tk);
     }else if(tk->simbolo == snúmero){
@@ -350,20 +350,20 @@ void Analisa_fator(){
             expressao_infix = adicionar_token(expressao_infix, *tk); 
             AnalisadorLexical(fp,linha,tk);
         }else{
-            sintax_error(28);
+            sintax_error(28, *linha);
         }
     }else if(tk->simbolo == sverdadeiro || tk->simbolo == sfalso){
         tk->simbolo = sbooleano;
         expressao_infix = adicionar_token(expressao_infix, *tk);
         AnalisadorLexical(fp,linha,tk);
     }else{
-        sintax_error(29);
+        sintax_error(29, *linha);
     }
 }
 
 void Analisa_Tipo(){
     if(tk->simbolo != sinteiro && tk->simbolo != sbooleano){
-        sintax_error(8);
+        sintax_error(8, *linha);
     }else{
         coloca_tipo_tabela("_var", tk->simbolo);
     }
@@ -384,18 +384,18 @@ void Analisa_escreva(){
                     AnalisadorLexical(fp,linha,tk);
                 }
                 else{
-                    sintax_error(14);
+                    sintax_error(14, *linha);
                 }
             }else{
-                semantic_error(0);
+                semantic_error(0, *linha);
             }
         }
         else{
-            sintax_error(15);
+            sintax_error(15, *linha);
             }
     }
     else{
-        sintax_error(13);
+        sintax_error(13, *linha);
     }
 }
 
@@ -419,7 +419,7 @@ void Analisa_subrotinas(){
         if(tk->simbolo == sponto_virgula){
             AnalisadorLexical(fp,linha,tk);
         }else{
-            sintax_error(30);
+            sintax_error(30, *linha);
         }
     }
     /*if (flag == 1){
@@ -447,23 +447,23 @@ void Analisa_atribuicao(token ident){
             //retorno de funcao
             if(destino->tipo == fint){
                 if(tipo != sinteiro){
-                    semantic_error(0);
+                    semantic_error(0, *linha);
                 }
             }else{
                 if(tipo != sbooleano){
-                    semantic_error(0);
+                    semantic_error(0, *linha);
                 }
             }
         }else if(destino->tipo == tipo){
             //atribuição de variavel
             if(destino->tipo != tipo){
-                semantic_error(0);
+                semantic_error(0, *linha);
             }
         }else{
-            semantic_error(0); //atribuição com tipo diferente
+            semantic_error(0, *linha); //atribuição com tipo diferente
         }
     }else{
-        semantic_error(0); //identificador não declarado
+        semantic_error(0, *linha); //identificador não declarado
     }
 }
 
@@ -473,10 +473,10 @@ void Chamada_procedimento(token ident){
         if(proc->tipo == sprocedimento){
             AnalisadorLexical(fp,linha,tk);
         }else{
-            semantic_error(0);
+            semantic_error(0, *linha);
         }
     }else{
-        semantic_error(0);
+        semantic_error(0, *linha);
     }
 
 }
@@ -496,7 +496,7 @@ enum tipos analisa_tipo_expressao_semantica(){
         expressao_infix = NULL;
         return tipo;
     }else{
-        semantic_error(0); // nao tenho ctz se chega aqui (acho que o sintatico para antes), mas esperado expressao
+        semantic_error(0, *linha); // nao tenho ctz se chega aqui (acho que o sintatico para antes), mas esperado expressao
         return serro;
     }
 }
@@ -526,19 +526,19 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
                         Gera("    ","HLT","    ","    ");
                         printf("SUCESSO!\n");
                     }else{
-                        sintax_error(5);
+                        sintax_error(5, *linha);
                     }
                 }else{
-                    sintax_error(4);
+                    sintax_error(4, *linha);
                 }
             }else{
-                sintax_error(3);
+                sintax_error(3, *linha);
             }
         }else{
-            sintax_error(2);
+            sintax_error(2, *linha);
         }
     }
     else{
-        sintax_error(1);
+        sintax_error(1, *linha);
     }
 }

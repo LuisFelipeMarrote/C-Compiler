@@ -137,8 +137,7 @@ int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarad
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, tk.lexema)){
             if(entrada_atual->tipo != sinteiro){
-                printf("ver o que fazer sobre esse erro");
-                //semantic_error(0); //achou, mas tipo errado
+                semantic_error(0, *linha); //achou, mas tipo errado
             }
             return 1; // encontrou 
         }

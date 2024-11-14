@@ -181,7 +181,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
                 entrada_tab_simbolos* entrada_tabela_operador;
                 entrada_tabela_operador = busca_ident(lista_posfix->tk.lexema);
                 if(entrada_tabela_operador == NULL){
-                    semantic_error(0);
+                    semantic_error(0, 0);
                     return serro;
                 }
                 if(entrada_tabela_operador->tipo == fint){
@@ -199,7 +199,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
             /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
-                    semantic_error(0);
+                    semantic_error(0, 0);
                     return serro;   
                 }else{
                     node_lista_token* temp_free = pilha;
@@ -226,7 +226,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
         }
     }
     if(pilha->prox != NULL){
-        semantic_error(0);
+        semantic_error(0, 0);
         return serro;
     }
 

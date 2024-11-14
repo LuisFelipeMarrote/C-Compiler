@@ -20,7 +20,6 @@ RVISÕES LUCAS:
 
 Incertezas:
 >   Rever retorno de função em satribuição
->   Possivel Problema Sintatico (verificar obrigatoriedade de virgula final em analisa_comandos)
 >   Confirmar se leia e escreva tem que ser inteiro (se for, adicionar verificação em declvar e declvar func)
 >   rever como remover a necessidade de parametro, e como lidar com erros em decl_var_tabela
     msm coisa com decl_var e pesquisa_declvarfunc_tabela
