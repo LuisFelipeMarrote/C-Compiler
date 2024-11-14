@@ -66,29 +66,29 @@ struct entrada_tab_simbolos{
     entrada_tab_simbolos* prev;
 };
 
-void sintax_error(int n){
+void sintax_error(int n, int linha){
     ///rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
-        "1: Esperado 'programa'",
-        "2: Esperado identificador para escrever",
-        "3: Esperado ';'", 
-        "4: Esperado ponto final",
-        "5: Encontrado ponto final antes do fim do arquivo",
-        "6: Esperado ';' após declaração de variáveis",
-        "7: Esperado um identificador para 'var'",
-        "8: Declaração de variável com tipo inválido",
-        "9: Esperado inicio",
-        "10: Esperado '(' após 'leia'",
-        "11: Esperado identificador para leitura",
-        "12: Esperado ')' para 'leia'",
-        "13: Esperado '(' após 'escreva'",
-        "14: Esperado ')' para 'escreva'",
-        "15: Esperado identificador para escrita",
+        "O código não começa com 'programa'",
+        "O código deve ter um nome para o programa após 'programa'",
+        "Não foi encontrado ';' após declaração de nome do programa", 
+        "Não foi encontrado '.' ao final do código",
+        "O código deve terminar no '.' (não pode ter mais código após o ponto)",
+        "Não foi encontrado ';' após declaração de variáveis",
+        "O código deveria ter um nome de variável entre ',' e ':' (remova ',' caso não queira adicionar mais variaveis)",
+        "Declaração de variável com tipo inválido (deve ser booleano ou inteiro)",
+        "Não foi encontrado 'Inicio' antes dos comandos",
+        "Não foi encontrado '(' após 'leia'",
+        "Esperado identificador para leitura",
+        "Parentesis aberto não é fechado em 'leia('",
+        "Não foi encontrado '(' após 'escreva'",
+        "Parentesis aberto não é fechado em 'escreva('",
+        "Esperado identificador para escrita",
         "16: Esperado identificador de processo",
         "17: Esperado '(' após processo",
         "18: Esperado ')' após processo",
-        "19: Esperado ';' após comando",
-        "20: Esperado 'faca' após enquanto",
+        "Não foi encontrado ';' após um comando",
+        "Não foi encontrado 'faca' após a condição do comando 'enquanto'",
         "21: Esperado identificador para declaração de procedimento",
         "22: Esperado ';' após a declaração de procedimento",
         "23: Esperado identificador para declaração de função",
@@ -101,13 +101,13 @@ void sintax_error(int n){
         "30: Esperado ';' após subrotina",
         };
     
-    printf("Erro na linha %d: %s", *linha);
+    printf("Erro na linha %d: %s", linha);
     printf(" %s ", erros[n]);
     printf("(Código de erro - Sint%d) \n", n);
 
 }
 
-void semantic_error(int n){
+void semantic_error(int n, int linha){
     //rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
         "1: ",
@@ -115,6 +115,6 @@ void semantic_error(int n){
     
     printf("Erro semantico");
     printf(" %s ", erros[n]);
-    printf("na linha %d\n", *linha);
+    printf("na linha %d\n", linha);
 
 }

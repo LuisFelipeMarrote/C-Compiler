@@ -25,19 +25,10 @@ Incertezas:
 >   rever como remover a necessidade de parametro, e como lidar com erros em decl_var_tabela
     msm coisa com decl_var e pesquisa_declvarfunc_tabela
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
+>   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
 >   Precisa colocar erros que em teoria nunca vão acontecer? (var nao declarada ao colocar tipo)
 >   Pode chamar função solta? (se puder, afeta chamada_proc)
->   ponto e virgula no teste semant linha 33:
-    > <comando condicional := se <expressao> entao <comando> [senao <comando>]
-    > <comando> :=  (   <atribuição_chprocedimento>|
-                        <comando condicional> |
-                        <comando enquanto> |
-                        <comando leitura> |
-                        <comando escrita> |
-                        <comandos>)
-    > comandos := inicio <comando> {;<comando>} [;] fim
-    > <atribuição_chprocedimento>::= (<comando atribuicao>|<chamada de procedimento>)
-    > <chamada de procedimento>::= <identificador>
+
