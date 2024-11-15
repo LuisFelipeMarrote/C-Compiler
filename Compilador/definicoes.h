@@ -66,47 +66,6 @@ struct entrada_tab_simbolos{
     entrada_tab_simbolos* prev;
 };
 
-void sintax_error(int n){
-    ///rever todos os rotulos de erro abaixo (placeholders)
-    char* erros[] = {"falta definir",
-        "1: Esperado 'programa'",
-        "2: Esperado identificador para escrever",
-        "3: Esperado ';'", 
-        "4: Esperado ponto final",
-        "5: Encontrado ponto final antes do fim do arquivo",
-        "6: Esperado ';' após declaração de variáveis",
-        "7: Esperado um identificador para 'var'",
-        "8: Declaração de variável com tipo inválido",
-        "9: Esperado inicio",
-        "10: Esperado '(' após 'leia'",
-        "11: Esperado identificador para leitura",
-        "12: Esperado ')' para 'leia'",
-        "13: Esperado '(' após 'escreva'",
-        "14: Esperado ')' para 'escreva'",
-        "15: Esperado identificador para escrita",
-        "16: Esperado identificador de processo",
-        "17: Esperado '(' após processo",
-        "18: Esperado ')' após processo",
-        "19: Esperado ';' após comando",
-        "20: Esperado 'faca' após enquanto",
-        "21: Esperado identificador para declaração de procedimento",
-        "22: Esperado ';' após a declaração de procedimento",
-        "23: Esperado identificador para declaração de função",
-        "24: Esperado ':' para declaração de função",
-        "25: Tipo inválido para a função",
-        "26: Esperado ';' após a declaração de função",
-        "27: Esperado 'entao' após 'se'",
-        "28: Esperado ')'",
-        "29: Encontrado simbolo inesperado para um fator",
-        "30: Esperado ';' após subrotina",
-        };
-    
-    printf("Erro na linha %d: %s", *linha);
-    printf(" %s ", erros[n]);
-    printf("(Código de erro - Sint%d) \n", n);
-
-}
-
 void semantic_error(int n){
     //rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
@@ -115,6 +74,6 @@ void semantic_error(int n){
     
     printf("Erro semantico");
     printf(" %s ", erros[n]);
-    printf("na linha %d\n", *linha);
+    //printf("na linha %d\n", *linha);
 
 }
