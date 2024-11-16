@@ -7,19 +7,22 @@
 
 FILE *new_fp; 
 char nome_arquivo[30];
-int qntd_atual = 0;
+int qntd_var = 0;
+int qntd_rotulo = 0;
+char str_aux_atr1[4], str_aux_atr2[4], str_aux_rot[4], str_aux_inst[8];
 
 void Gera_operador(char op[]);
 void Gera_load_variavel(entrada_tab_simbolos *entrada);
 void Gera_load_const(char num[]);
 void Gera_start_programn();
 void Gera_end_programn();
-void Gera_jmp(char rotulo[]);
-void Gera_jmpf(char rotulo[]);
-void Gera_rotulo(char rotulo[]);
+void Gera_jmp(int rotulo);
+void Gera_jmpf(int rotulo);
+void Gera_rotulo(int rotulo);
+char* new_rotulo (int num_var);
 void Gera_alloc(int num_var);
 void Gera_dalloc(int num_var);
-void Gera_call(char rotulo[]);
+void Gera_call(int rotulo);
 void Gera_return();
 void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]);
 void Cria_arquivo();
@@ -84,55 +87,60 @@ void Gera_start_programn()
 
 void Gera_end_programn()
 {
+    Gera_dalloc(1);
     Gera("    ","HLT","    ","    ");
 }
 
-void Gera_jmp(char rotulo[])
+void Gera_jmp(int rotulo)
 {
-    Gera("    ","JMP",rotulo,"    ");
+    Gera("    ","JMP",itoa(rotulo,str_aux_atr1,10),"    ");
 }
 
-void Gera_jmpf(char rotulo[])
+void Gera_jmpf(int rotulo)
 {
-    Gera("    ","JMPF",rotulo,"    ");
+    Gera("    ","JMPF",itoa(rotulo,str_aux_atr1,10),"    ");
 }
 
-void Gera_rotulo(char rotulo[])
+void Gera_rotulo(int rotulo)
 {
-    Gera(rotulo,"NULL","    ","    ");    
+    Gera(itoa(rotulo,str_aux_rot,10),"NULL","    ","    ");    
+}
+
+char* new_rotulo_var (int num_var)
+{
+    itoa(qntd_var + num_var,str_aux_atr1,10);
+    return str_aux_atr1; 
 }
 
 void Gera_alloc(int num_var)
 {
-    char str_aux1[4], str_aux2[4];
-    Gera("    ","ALLOC",itoa(qntd_atual,str_aux1,10),itoa(num_var,str_aux2,10));
-    qntd_atual = qntd_atual + num_var;
+    Gera("    ","ALLOC",itoa(qntd_var,str_aux_atr1,10),itoa(num_var,str_aux_atr2,10));
+    qntd_var = qntd_var + num_var;
 }
 
 void Gera_dalloc(int num_var)
 {
-    char str_aux1[4], str_aux2[4];
-    Gera("    ","DALLOC",itoa(qntd_atual - 1,str_aux1,10),itoa(num_var,str_aux2,10));
-    qntd_atual = qntd_atual - num_var;
+    Gera("    ","DALLOC",itoa(qntd_var - 1,str_aux_atr1,10),itoa(num_var,str_aux_atr2,10));
+    qntd_var = qntd_var - num_var;
 }
 
-void Gera_leia(char rotulo[])
+void Gera_leia(int rotulo)
 {
     Gera("    ","RD","    ","    ");
     //retorno da tabela de simbolos
-    //Gera("    ","STR",rotulo,"    ");        
+    //Gera("    ","STR",itoa(rotulo,str_aux_atr1,10),"    ");        
 }
 
-void Gera_escreva(char rotulo[])
+void Gera_escreva(int rotulo)
 {
     //retorno da tabela de simbolos pela busca do token.lexema
-    //Gera("    ","LDV",rotulo,"    ");   
+    //Gera("    ","LDV",itoa(rotulo,str_aux_atr1,10),"    ");   
     Gera("    ","PRN","    ","    ");
 }
 
-void Gera_call(char rotulo[])
+void Gera_call(int rotulo)
 {
-    Gera("    ","CALL",rotulo,"    ");
+    Gera("    ","CALL",itoa(rotulo,str_aux_atr1,10),"    ");
 }
 
 void Gera_return()
@@ -153,7 +161,7 @@ void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]){
         //Seta_string(atr1, sizeof(atr1));
         strcat(linha, atr1);
     }
-    else if (strcmp(atr2, "    ") != 0)
+    if (strcmp(atr2, "    ") != 0)
     {
         //Seta_string(atr2, sizeof(atr2));
         strcat(linha, atr2);

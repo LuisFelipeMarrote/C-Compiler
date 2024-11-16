@@ -1,0 +1,24 @@
+    START
+    ALLOC01
+    ALLOC13
+0NULL
+    ALLOC42
+    ALLOC61
+    JMPF1
+1NULL
+    RD
+3NULL
+    JMPF4
+    JMP3
+4NULL
+    PRN
+5NULL
+    RD
+    JMPF6
+    PRN
+    JMP7
+6NULL
+    PRN
+7NULL
+    DALLOC61
+    HLT

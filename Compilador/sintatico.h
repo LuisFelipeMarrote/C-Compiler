@@ -150,9 +150,7 @@ void Analisa_leia(){
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sfecha_parenteses){
                     AnalisadorLexical(fp,linha,tk);
-                    Gera("    ","RD","    ","    ");
-                    //retorno da tabela de simbolos
-                    //Gera("    ","STR",rotulo_tab,"    ");          
+                    Gera_leia(rotulo);         
                 } else{
                     sintax_error(12);
                 }
@@ -183,12 +181,14 @@ void Analisa_et_variáveis(){
     }
 }
 
-void Analisa_Variaveis(){
+void Analisa_Variaveis(){        
+    int num_var = 0;
     do{
         if(tk->simbolo == sidentificador){
             if(Pesquisa_duplicvar_tabela(tk->lexema)){
                 //se nao encontrou duplicidade
-                insere_tab_simbolos(tk->lexema, svar, '-', "-");
+                insere_tab_simbolos(tk->lexema, svar, '-', new_rotulo_var(num_var));
+                num_var++;
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == svírgula || tk->simbolo == sdoispontos){
                     if(tk->simbolo == svírgula){
@@ -208,26 +208,28 @@ void Analisa_Variaveis(){
     }while(tk->simbolo != sdoispontos);
     AnalisadorLexical(fp,linha,tk);
     Analisa_Tipo(tk);
+    Gera_alloc(num_var);
 }
 
 ///def auxrot1,auxrot2 inteiro
 /// gera código
 void Analisa_enquanto(){
     int auxrot1 = rotulo;
-    Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
+    Gera_rotulo(auxrot1);
     rotulo = rotulo+1;
     AnalisadorLexical(fp,linha,tk);
     if(analisa_tipo_expressao_semantica() == sbooleano){
         if(tk->simbolo == sfaca){
+            
             int auxrot2 = rotulo;
-            Gera("    ","JMPF",itoa(auxrot2,str_aux,10),"    ");
+            Gera_jmpf(auxrot2);
             rotulo = rotulo+1;
 
             AnalisadorLexical(fp,linha,tk);
             Analisa_comando_simples(tk);
 
-            Gera("    ","JMP",itoa(auxrot1,str_aux,10),"    ");
-            Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
+            Gera_jmp(auxrot1);
+            Gera_rotulo(auxrot2);
         }else{
             sintax_error(20);
         }
@@ -244,9 +246,9 @@ void Analisa_declaracao_procedimento(){
         if(pesquisa_declfunc_tabela(tk->lexema)){
             insere_tab_simbolos(tk->lexema,sprocedimento,nivel, " "/*rótulo*/);
             /*{guarda na TabSimb}
-            Gera(rotulo,NULL,´ ´,´ ´)
-            {CALL irá buscar este rótulo na TabSimb}
-            rotulo:= rotulo+1*/
+            {CALL irá buscar este rótulo na TabSimb}*/
+            Gera_rotulo(rotulo);            
+            rotulo = rotulo+1;
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(tk);
@@ -305,8 +307,8 @@ void Analisa_se(){
     if(analisa_tipo_expressao_semantica() == sbooleano){    
         int auxrot1;
         auxrot1 = rotulo;
-        Gera("    ","JMPF",itoa(auxrot1,str_aux,10),"    ");
         rotulo = rotulo+1;
+        Gera_jmpf(auxrot1);
 
         if(tk->simbolo == sentao){
 
@@ -315,19 +317,18 @@ void Analisa_se(){
         
             int auxrot2;   
             auxrot2 = rotulo;
+            rotulo = rotulo+1;  
 
             if(tk->simbolo == ssenao){ //remendo para ele no colocar um jmp caso nao tenha um ssenao         
-                Gera("    ","JMP",itoa(auxrot2,str_aux,10),"    ");
+                Gera_jmp(auxrot2);
             }
 
-            rotulo = rotulo+1;    
-            Gera(itoa(auxrot1,str_aux,10),"NULL","    ","    ");
+            Gera_rotulo(auxrot1);
 
             if(tk->simbolo == ssenao){
                 AnalisadorLexical(fp,linha,tk);
-                Analisa_comando_simples(tk);            
-        
-                Gera(itoa(auxrot2,str_aux,10),"NULL","    ","    ");
+                Analisa_comando_simples(tk);      
+                Gera_rotulo(auxrot2);
             }
         }else{
             sintax_error(27);
@@ -421,7 +422,8 @@ void Analisa_escreva(){
                 if(tk->simbolo == sfecha_parenteses){                    
                     //retorno da tabela de simbolos pela busca do token.lexema
                     //Gera("    ","LDV",rotulo_tab,"    ");   
-                    Gera("    ","PRN","    ","    ");
+                    //Gera("    ","PRN","    ","    ");
+                    Gera_escreva(rotulo);
                     AnalisadorLexical(fp,linha,tk);
                 }
                 else{
@@ -553,10 +555,10 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
 
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sprograma){
-        Cria_arquivo(tk);
-        Gera("    ", "START", "    ",  "    ");
         AnalisadorLexical(fp,linha,tk);
-        if(tk->simbolo == sidentificador){
+        if(tk->simbolo == sidentificador){        
+            Cria_arquivo(tk);
+            Gera_start_programn();
             insere_tab_simbolos(tk->lexema, snomeprog, '-', "-");
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
@@ -564,7 +566,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
                 if(tk->simbolo == sponto){
                     AnalisadorLexical(fp,linha,tk);
                     if(feof(fp)){
-                        Gera("    ","HLT","    ","    ");
+                        Gera_end_programn();
                         printf("SUCESSO!\n");
                     }else{
                         sintax_error(5);
