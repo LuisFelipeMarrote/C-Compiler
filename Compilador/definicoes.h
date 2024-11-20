@@ -101,7 +101,7 @@ void sintax_error(int n, int linha){
         "Era Esperado ';' após o 'fim' de uma subrotina (procedimento ou função)",
         };
     
-    printf("Erro na linha %d: %s", linha, erros[n]);
+    printf("Erro na linha %d:", linha);
     printf(" %s ", erros[n]);
     printf("(Código de erro - Sint%d) \n", n);
 
@@ -113,8 +113,8 @@ void semantic_error(int n, int linha){
         "1: ",
         };
     
-    printf("Erro semantico");
+    printf("Erro na linha %d:", linha);
     printf(" %s ", erros[n]);
-    printf("na linha %d\n", linha);
+    printf("(Código de erro - Sem%d) \n", n);
 
 }

@@ -266,7 +266,7 @@ void lexical_error(int n, token *tk){
     printf(" %s ", erros[n]);
     printf("na linha %d\n", *linha);*/
 
-    printf("Erro na linha %d: %s", linha, erros[n]);
+    printf("Erro na linha %d:", linha);
     printf(" %s ", erros[n]);
     printf("(Código de erro - Lex%d) \n", n);
     
