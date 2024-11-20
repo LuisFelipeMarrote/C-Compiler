@@ -89,19 +89,19 @@ void sintax_error(int n, int linha){
         "18: Esperado ')' após processo",
         "Não foi encontrado ';' após um comando",
         "Não foi encontrado 'faca' após a condição do comando 'enquanto'",
-        "21: Esperado identificador para declaração de procedimento",
-        "22: Esperado ';' após a declaração de procedimento",
-        "23: Esperado identificador para declaração de função",
-        "24: Esperado ':' para declaração de função",
-        "25: Tipo inválido para a função",
-        "26: Esperado ';' após a declaração de função",
-        "27: Esperado 'entao' após 'se'",
-        "28: Esperado ')'",
-        "29: Encontrado simbolo inesperado para um fator",
-        "30: Esperado ';' após subrotina",
+        "Esperado identificador para declaração de procedimento (seu procedimento precisa ter nome)",
+        "Não foi encontrado ';' após a declaração de procedimento",
+        "Esperado identificador para declaração de função (sua função precisa ter nome)",
+        "Não foi encontrado ':' para declaração de tipo da função (formato esperado: 'nome_da_funcao : tipo_da_funcao;')",
+        "Tipo inválido para a função (deve ser 'inteiro' ou 'booleano')",
+        "Não foi encontrado ';' após a declaração de função",
+        "Esperado 'entao' após a condição do comando 'se'",
+        "Parêntesis não foi fechado corretamente (era esperado ')')",
+        "Foi Encontrado um simbolo inesperado dentro da expressao",
+        "Era Esperado ';' após o 'fim' de uma subrotina (procedimento ou função)",
         };
     
-    printf("Erro na linha %d: %s", linha);
+    printf("Erro na linha %d: %s", linha, erros[n]);
     printf(" %s ", erros[n]);
     printf("(Código de erro - Sint%d) \n", n);
 

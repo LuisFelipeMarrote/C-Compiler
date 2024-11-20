@@ -21,25 +21,27 @@ void empilha_token(node_lista_token** pilha, node_lista_token** lista){
 
 int prioridade(enum tipos tipo){
     switch(tipo){
-        case se:
         case sou:
-        case snao:
             return(1);
+        case se:
+            return(2);
+        case snao:
+            return(3);
         case sdif:
         case smaior:
         case smenor:
         case smenorig:
         case smaiorig:
         case sig:
-            return(2);
+            return(4);
         case smais:
         case smenos:
-            return(3);
+            return(5);
         case smult:
         case sdiv:
-            return(4);
+            return(6);
         case ssinalu:
-            return(5);
+            return(7);
         default: 
             return(0);
     }
@@ -110,8 +112,8 @@ operacao formato_operacao(enum tipos tipo){
             break;
         case ssinalu:
             retorno.qtd_operadores = 1;
-            retorno.qtd_operadores = sinteiro;
-            retorno.qtd_operadores = sinteiro;
+            retorno.tipos_operadores = sinteiro;
+            retorno.tipo_resultado = sinteiro;
     }
     return(retorno);
 }

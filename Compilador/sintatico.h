@@ -482,7 +482,7 @@ void Chamada_procedimento(token ident){
 }
 
 void Analisa_chamada_funcao(){
-    printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
+    //printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
     expressao_infix = adicionar_token(expressao_infix, *tk);
     AnalisadorLexical(fp,linha,tk);
     ///gera_codigo 

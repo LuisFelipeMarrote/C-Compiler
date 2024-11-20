@@ -2,18 +2,11 @@ LEMBRAR QUE IMPLEMENTEI MEIA BOCA AS ULTIMAS 3
 
 O CODIGO TESTE NAO TEM EXPRESSOES MUITO ELABORADAS, MAS JA FOI UTILIZADO COMO TESTE FINAL
 A GALERA COSTUMA ERRAR MTT EXPRESSOES ELABORADAS, ENTAO CUIDADO
-
-pesquisar biblioteca qd (acho) de interface grafica no C
-
-possivel fonte de erro: entrada da tabela de simbolos pode ter lixo! (nome_ident)
-
 ======================================================================================================================================================================================
 RVISÕES LUCAS:
 
 >   rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
     conferir _error(0) tbm (tem de varios tipos)
-
->   testar inverte sinal
 
 >   verdadeiro ou falso
 
@@ -25,8 +18,7 @@ Incertezas:
     msm coisa com decl_var e pesquisa_declvarfunc_tabela
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
->   rever a prioridade da posfix (confirmar se diferencia e, ou e não)
-
+ 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
 >   Precisa colocar erros que em teoria nunca vão acontecer? (var nao declarada ao colocar tipo)
