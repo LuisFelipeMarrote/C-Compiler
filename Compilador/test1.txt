@@ -1,24 +1,35 @@
     START
     ALLOC01
     ALLOC13
-0NULL
+    JMP0
+1NULL
     ALLOC42
     ALLOC61
-    JMPF1
-1NULL
+    JMPF2
+    STR5  
+2NULL
     RD
-3NULL
-    JMPF4
-    JMP3
+    STR6  
 4NULL
-    PRN
+    JMPF5
+    JMP4
 5NULL
-    RD
-    JMPF6
+    LDV4  
     PRN
-    JMP7
 6NULL
+    RD
+    STR1  
+    STR2  
+0NULL
+    CALL1  
+    CALL6  
+    JMPF7
+    LDV2  
     PRN
+    JMP8
 7NULL
+    LDV3  
+    PRN
+8NULL
     DALLOC61
     HLT

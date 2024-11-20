@@ -147,10 +147,11 @@ void Analisa_leia(){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
             if(pesquisa_declvar_tabela(*tk)){
+                entrada_tab_simbolos* tab_simb = busca_ident(tk->lexema);
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sfecha_parenteses){
                     AnalisadorLexical(fp,linha,tk);
-                    Gera_leia(rotulo);         
+                    Gera_leia(tab_simb->rotulo);         
                 } else{
                     sintax_error(12);
                 }
@@ -244,7 +245,7 @@ void Analisa_declaracao_procedimento(){
     char nivel = 'L'; //(marca ou novo galho)
     if(tk->simbolo == sidentificador){
         if(pesquisa_declfunc_tabela(tk->lexema)){
-            insere_tab_simbolos(tk->lexema,sprocedimento,nivel, " "/*rótulo*/);
+            insere_tab_simbolos(tk->lexema,sprocedimento,nivel, new_rotulo(rotulo));
             /*{guarda na TabSimb}
             {CALL irá buscar este rótulo na TabSimb}*/
             Gera_rotulo(rotulo);            
@@ -271,7 +272,7 @@ void Analisa_declaracao_funcao(){
         if(pesquisa_declfunc_tabela(tk->lexema)){
             //nao encontrou
             token nome_func = *tk;
-            insere_tab_simbolos(tk->lexema,sfuncao,nivel," "/*rótulo*/);
+            insere_tab_simbolos(tk->lexema,sfuncao,nivel,new_rotulo(rotulo));
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sdoispontos){
                 AnalisadorLexical(fp,linha,tk);
@@ -413,17 +414,19 @@ void Analisa_Tipo(){
 }
 
 void Analisa_escreva(){
+    token *ajuda = tk;
     AnalisadorLexical(fp,linha,tk);
     if(tk->simbolo == sabre_parenteses){
         AnalisadorLexical(fp,linha,tk);
         if(tk->simbolo == sidentificador){
-            AnalisadorLexical(fp,linha,tk);
-            if(pesquisa_declvarfunc_tabela(tk->lexema)){
+            if(pesquisa_declvarfunc_tabela(tk->lexema) == 0){            
+                entrada_tab_simbolos* tab_simb = busca_ident(tk->lexema);
+                AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo == sfecha_parenteses){                    
                     //retorno da tabela de simbolos pela busca do token.lexema
                     //Gera("    ","LDV",rotulo_tab,"    ");   
                     //Gera("    ","PRN","    ","    ");
-                    Gera_escreva(rotulo);
+                    Gera_escreva(tab_simb->rotulo);
                     AnalisadorLexical(fp,linha,tk);
                 }
                 else{
@@ -444,14 +447,15 @@ void Analisa_escreva(){
 
 /// gera codigo
 void Analisa_subrotinas(){
-    /*int flag = 0;        
+    int flag = 0;        
     int auxrot = rotulo;
-    if(tk->simbolo == sprocedimento && tk->simbolo == sfuncao)
+    token *th = tk;
+    if(tk->simbolo == sprocedimento || tk->simbolo == sfuncao)
     {
-        Gera("    ", "JMP",itoa(rotulo,str_aux,10),"");
+        Gera_jmp(auxrot);
         rotulo = rotulo + 1;
         flag = 1;
-    }*/
+    }
 
     while((tk->simbolo == sprocedimento) || (tk->simbolo == sfuncao)){
         if(tk->simbolo == sprocedimento){
@@ -465,9 +469,9 @@ void Analisa_subrotinas(){
             sintax_error(30);
         }
     }
-    /*if (flag == 1){
-        Gera(itoa(auxrot,str_aux,10),"NULL","    ","    ");
-    }*/
+    if (flag == 1){
+        Gera_rotulo(auxrot);
+    }
 }
 
 void Analisa_termo(){
@@ -499,7 +503,8 @@ void Analisa_atribuicao(token ident){
             }
         }else if(destino->tipo == tipo){
             //atribuição de variavel
-            if(destino->tipo != tipo){
+            Gera_str(destino->rotulo);
+            if(destino->tipo != tipo){ // faz sentido essa linha? pq se entrou aqui quer dizer que destino->tipo == tipo
                 semantic_error(0);
             }
         }else{
@@ -514,6 +519,7 @@ void Chamada_procedimento(token ident){
     entrada_tab_simbolos* proc = busca_ident(ident.lexema);
     if(proc != NULL){
         if(proc->tipo == sprocedimento){
+            Gera_call(proc->rotulo);
             AnalisadorLexical(fp,linha,tk);
         }else{
             semantic_error(0);

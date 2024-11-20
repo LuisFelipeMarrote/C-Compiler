@@ -1,3 +1,8 @@
+/*
+FALTANDO COLOCAR OS RETURNS NOS PROCS E FUNCS 
+NOS FUNCS TENHO QUE COLOCAR O RESULTADO NO ROTULO 0
+
+*/
 #pragma once
 #include <stdlib.h> 
 #include <stdio.h> 
@@ -11,6 +16,7 @@ int qntd_var = 0;
 int qntd_rotulo = 0;
 char str_aux_atr1[4], str_aux_atr2[4], str_aux_rot[4], str_aux_inst[8];
 
+void Seta_string(char *str, int size, int filled);
 void Gera_operador(char op[]);
 void Gera_load_variavel(entrada_tab_simbolos *entrada);
 void Gera_load_const(char num[]);
@@ -22,17 +28,18 @@ void Gera_rotulo(int rotulo);
 char* new_rotulo (int num_var);
 void Gera_alloc(int num_var);
 void Gera_dalloc(int num_var);
-void Gera_call(int rotulo);
+void Gera_leia(char rotulo[4]);
+void Gera_escreva(char rotulo[4]);
+void Gera_call(char rotulo[4]);
 void Gera_return();
+void Gera_str(char rotulo[4]);
 void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]);
 void Cria_arquivo();
 
-// essa função vou implementar dps, mas ela é so para formatar
-// void Seta_string(char str[], int size){
-//     char ajuda[size];
-//     memset(ajuda,' ', size);
-//     str[0] = 'a';
-// }
+//essa função vou implementar dps, mas ela é so para formatar
+void Seta_string(char *str, int size, int filled){
+    memset(str,' ', size-filled-1);
+}
 
 void Gera_operador(char op[])
 {
@@ -109,6 +116,14 @@ void Gera_rotulo(int rotulo)
 char* new_rotulo_var (int num_var)
 {
     itoa(qntd_var + num_var,str_aux_atr1,10);
+    Seta_string(&(str_aux_atr1[strlen(str_aux_atr1)]), sizeof(str_aux_atr1) / sizeof(str_aux_atr1[0]), strlen(str_aux_atr1));
+    return str_aux_atr1; 
+}
+
+char* new_rotulo (int rotulo)
+{
+    itoa(rotulo,str_aux_atr1,10);
+    Seta_string(&(str_aux_atr1[strlen(str_aux_atr1)]), sizeof(str_aux_atr1) / sizeof(str_aux_atr1[0]), strlen(str_aux_atr1));
     return str_aux_atr1; 
 }
 
@@ -124,23 +139,23 @@ void Gera_dalloc(int num_var)
     qntd_var = qntd_var - num_var;
 }
 
-void Gera_leia(int rotulo)
+void Gera_leia(char rotulo[4])
 {
     Gera("    ","RD","    ","    ");
     //retorno da tabela de simbolos
-    //Gera("    ","STR",itoa(rotulo,str_aux_atr1,10),"    ");        
+    Gera("    ","STR",rotulo,"    ");        
 }
 
-void Gera_escreva(int rotulo)
+void Gera_escreva(char rotulo[4])
 {
     //retorno da tabela de simbolos pela busca do token.lexema
-    //Gera("    ","LDV",itoa(rotulo,str_aux_atr1,10),"    ");   
+    Gera("    ","LDV",rotulo,"    ");   
     Gera("    ","PRN","    ","    ");
 }
 
-void Gera_call(int rotulo)
+void Gera_call(char rotulo[4])
 {
-    Gera("    ","CALL",itoa(rotulo,str_aux_atr1,10),"    ");
+    Gera("    ","CALL",rotulo,"    ");
 }
 
 void Gera_return()
@@ -148,6 +163,12 @@ void Gera_return()
     Gera("    ","RETURN","    ","    ");
 }
 
+void Gera_str(char rotulo[4])
+{
+    Gera("    ","STR",rotulo,"    ");
+}
+
+ 
 void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]){
     //redeclara isso, pois ele ta passando como string literal, ou seja, so da para ler
     //entao eu so preciso declarar variaveis aux e copiar a informaçao paraa laa
