@@ -22,25 +22,27 @@ void empilha_token(node_lista_token** pilha, node_lista_token** lista){
 
 int prioridade(enum tipos tipo){
     switch(tipo){
-        case se:
         case sou:
-        case snao:
             return(1);
+        case se:
+            return(2);
+        case snao:
+            return(3);
         case sdif:
         case smaior:
         case smenor:
         case smenorig:
         case smaiorig:
         case sig:
-            return(2);
+            return(4);
         case smais:
         case smenos:
-            return(3);
+            return(5);
         case smult:
         case sdiv:
-            return(4);
+            return(6);
         case ssinalu:
-            return(5);
+            return(7);
         default: 
             return(0);
     }
@@ -111,8 +113,8 @@ operacao formato_operacao(enum tipos tipo){
             break;
         case ssinalu:
             retorno.qtd_operadores = 1;
-            retorno.qtd_operadores = sinteiro;
-            retorno.qtd_operadores = sinteiro;
+            retorno.tipos_operadores = sinteiro;
+            retorno.tipo_resultado = sinteiro;
     }
     return(retorno);
 }
@@ -171,7 +173,7 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
 }
 
 //recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
-enum tipos semantico_expressao(node_lista_token* lista_posfix){
+enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
     // percorre a lista empilhando os valores, e desempilhando conforme encontra operadores
     node_lista_token* pilha = NULL;
 
@@ -182,7 +184,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
                 entrada_tab_simbolos* entrada_tabela_operador;
                 entrada_tabela_operador = busca_ident(lista_posfix->tk.lexema);
                 if(entrada_tabela_operador == NULL){
-                    semantic_error(0);
+                    semantic_error(17, linha);
                     return serro;
                 }
                 if(entrada_tabela_operador->tipo == fint){
@@ -203,7 +205,11 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
             /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
-                    semantic_error(0);
+                    printf("Erro na linha %d:", linha);
+                    printf("Tipo de operando inválido para a operação '%s'", 
+                    lista_posfix->tk.lexema);
+                    printf(" (encontrado %s = %s, e o tipo esperado é %s", pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo) ,print_tipo_erros(analisando.tipos_operadores));
+                    printf("[Código de erro - Sem%d] \n", 18);
                     return serro;   
                 }else{
                     node_lista_token* temp_free = pilha;
@@ -228,7 +234,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix){
         }
     }
     if(pilha->prox != NULL){
-        semantic_error(0);
+        semantic_error(19, linha);
         return serro;
     }
 

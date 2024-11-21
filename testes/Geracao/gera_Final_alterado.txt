@@ -18,7 +18,7 @@ var a,b,s: inteiro;
  funcao soma: inteiro;
  var c,a,s: inteiro;                   
      z: booleano;                    
-  procedimento ler;
+  procedimento ler;          
   inicio
      leia (c);
      leia (a);
@@ -40,7 +40,9 @@ var a,b,s: inteiro;
                                       
 
 inicio      {corpo principal}
-  s:= soma;                              
+  s:= soma;   
+  s:= s * a - ( b - s ) + (-3);                           
   escreva(s)
-fim.     
+fim.                               
+
 
