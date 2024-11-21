@@ -125,22 +125,29 @@ char* str_rotulo_var (int rotulo)
 
 char* str_rotulo (int rotulo)
 {    
-    char *str = str_aux_atr1;
     itoa(rotulo,str_aux_atr1,10);
     Seta_string(&(str_aux_atr1[strlen(str_aux_atr1)]), sizeof(str_aux_atr1) / sizeof(str_aux_atr1[0]), strlen(str_aux_atr1));
     return str_aux_atr1;     
 }
 
+//A função str_rotulo2 precisa existir, pois o alloc precisaa de 2 parametros e a funçao str_rotulo estava devolvendo a mesma posição de memoria
+char* str_rotulo2 (int rotulo)
+{    
+    itoa(rotulo,str_aux_atr2,10);
+    Seta_string(&(str_aux_atr2[strlen(str_aux_atr2)]), sizeof(str_aux_atr2) / sizeof(str_aux_atr2[0]), strlen(str_aux_atr2));
+    return str_aux_atr2;     
+}
+
 void Gera_alloc(int num_var)
 {
-    Gera("    ","ALLOC   ",str_rotulo(qntd_var),str_rotulo(num_var));
+    Gera("    ","ALLOC   ",str_rotulo(qntd_var),str_rotulo2(num_var));
     qntd_var = qntd_var + num_var;
 }
 
 // vou tirar daqui a variavel qntd_var e passar como parametro dps.
 void Gera_dalloc(int num_var)
 {
-    Gera("    ","DALLOC  ",str_rotulo(qntd_var - 1),str_rotulo(num_var));
+    Gera("    ","DALLOC  ",str_rotulo(qntd_var - 1),str_rotulo2(num_var));
     qntd_var = qntd_var - num_var;
 }
 
