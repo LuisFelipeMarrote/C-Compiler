@@ -268,7 +268,7 @@ void lexical_error(int n, token *tk){
 
     printf("Erro na linha %d:", linha);
     printf(" %s ", erros[n]);
-    printf("(Código de erro - Lex%d) \n", n);
+    printf("[Código de erro - Lex%d] \n", n);
     
     set_token_s(tk, "Erro");
     tk->simbolo = serro;

@@ -137,13 +137,13 @@ int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarad
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, tk.lexema)){
             if(entrada_atual->tipo != sinteiro){
-                semantic_error(0, *linha); //achou, mas tipo errado
+                semantic_error(16, *linha); //achou, mas tipo errado
             }
             return 1; // encontrou 
         }
         entrada_atual = entrada_atual->prev;
     };
-    return 0; 
+    return 0;  // nao encontrou
 }
 
 /// @brief durante a declaração verifica se a função/procedimento já foi declarada antes (tabela inteira)
@@ -170,9 +170,9 @@ int pesquisa_declvarfunc_tabela(char* indent){
     while(entrada_atual->tipo != sbase){
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, indent)){
-            return 0; // encontrou = false (0)
+            return 1; // encontrou = false (1)
         }
         entrada_atual = entrada_atual->prev;
     };
-    return 1; // não encontrou = verdadeiro (1)
+    return 0; // não encontrou = verdadeiro (0)
 }

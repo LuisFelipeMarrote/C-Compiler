@@ -103,18 +103,46 @@ void sintax_error(int n, int linha){
     
     printf("Erro na linha %d:", linha);
     printf(" %s ", erros[n]);
-    printf("(Código de erro - Sint%d) \n", n);
+    printf("[Código de erro - Sint%d] \n", n);
 
 }
 
 void semantic_error(int n, int linha){
     //rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
-        "1: ",
+        "A variável não foi declarada antes de 'leia(variavel)'",
+        "Tentou declarar uma variável já declarada! (nomes devem ser únicos dentro de um mesmo escopo)",
+        "Tipo de expressão errado após 'enquanto' (esperado uma expressão com resultado booleano)",
+        "Nome do procedimento já usado em outra declaração (nomes devem ser únicos dentro de um mesmo escopo)",
+        "Nome do procedimento já usado em outra declaração (nomes devem ser únicos dentro de um mesmo escopo)",
+        "Tipo de expressão errado após 'se' (esperado uma expressão com resultado booleano)",
+        "Tentando usar uma variável não declarada na expressão (nome não encontrado no escopo)",
+        "Tentando escrever uma variável não declarada",
+        "Tipo incorreto na atribuição de retorno da função (esperado inteiro e recebeu booleano)",
+        "Tipo incorreto na atribuição de retorno da função (esperado booleano e recebeu inteiro)",
+        "Tipo incorreto na atribuição para uma variável (o que está sendo atribuído deve ser do mesmo tipo da variável)",
+        "Tentando atribuir valor para um identificador não declarado (uma atribuição deve ser feita para uma variável já declarada ou para o nome da função onde se encontra, funcionando como retorno)",
+        "Tentativa falha de chamada de procedimento - o identificador chamado não é um procedimento (ao usar um identificador fora de uma expressão, o código tenta chamar este como procedimento)",
+        "Tentativa falha de chamada de procedimento - o procedimento não foi declarado (nome de procedimento não encontrado no escopo)",
+        "{Confirmar se é possível chegar aqui sem que o sintático pare o programa antes} Tentando analisar uma expressão inexistente!",
+        "Variável de tipo incorreto (em 'leia()', a variável deve ser do tipo inteiro)",
+        "Nome não declarado encontrado durante a análise da expressão (a variável ou função deve ser declarada antes de ser utilizada)",
+        "18 - erro na propria função (analise exppressao)",
+        "Expressão Incompleta (não é possível chegar a um resultado final)",
         };
     
     printf("Erro na linha %d:", linha);
     printf(" %s ", erros[n]);
-    printf("(Código de erro - Sem%d) \n", n);
+    printf("[Código de erro - Sem%d] \n", n);
 
+}
+
+char* print_tipo_erros(enum tipos simbolo){ //alterei os tipos na lista conforme a utilização (essa função imprime algo intuitivo como sinteiro = Inteiro)
+    char* tipo[] = {"smais", "smenos", "smult", "Numero", "satribuicao", "sdoispontos", "svírgula",
+            "sabre_parenteses", "sfecha_parenteses", "sponto_virgula", "sprograma", "sse", "sentao",
+            "ssenao", "senquanto", "sfaca", "sinício", "sfim", "sescreva", "sleia", "svar", "Inteiro", "Booleano", 
+            "sverdadeiro", "sfalso", "sprocedimento", "sfuncao", "sdiv", "se", "sou", "snao", "sidentificador",
+            "sdif", "smenorig", "smenor", "smaiorig", "smaior", "sponto", "sig", "serro", "sbase", "snull", "fint", 
+            "fbool", "snomeprog", "ssinalu"}; 
+    return tipo[simbolo];       
 }

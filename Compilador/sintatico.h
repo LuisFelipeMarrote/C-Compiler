@@ -116,7 +116,7 @@ void Analisa_leia(){
                     sintax_error(12, *linha);
                 }
             }else{
-                semantic_error(0, *linha); // nao achou
+                semantic_error(1, *linha);
             }
         }else{
             sintax_error(11, *linha);
@@ -161,7 +161,7 @@ void Analisa_Variaveis(){
                 }
             }else{
                 //se encontrou duplicidade
-                semantic_error(0, *linha);
+                semantic_error(2, *linha);
             }
         }
     }while(tk->simbolo != sdoispontos);
@@ -191,7 +191,7 @@ void Analisa_enquanto(){
             sintax_error(20, *linha);
         }
     }else{
-        semantic_error(0, *linha);
+        semantic_error(3, *linha);
     }
 }
 
@@ -213,7 +213,7 @@ void Analisa_declaracao_procedimento(){
                 sintax_error(22, *linha);
             }
         }else{
-            semantic_error(0, *linha);
+            semantic_error(4, *linha);
         }
     }else{
         sintax_error(21, *linha);
@@ -251,7 +251,7 @@ void Analisa_declaracao_funcao(){
                 sintax_error(24, *linha);
             }
         }else{
-            semantic_error(0, *linha); //função ja declarada
+            semantic_error(5, *linha); //função ja declarada
         }
     }else{
         sintax_error(23, *linha);
@@ -292,7 +292,7 @@ void Analisa_se(){
             sintax_error(27, *linha);
         }
     }else{
-        semantic_error(0, *linha);
+        semantic_error(6, *linha);
     }
 }
 
@@ -331,7 +331,7 @@ void Analisa_fator(){
                 AnalisadorLexical(fp,linha,tk);
             }
         }else{
-            semantic_error(0, *linha); // ident nao esta na tabela (var nao declarada)
+            semantic_error(7, *linha); // ident nao esta na tabela (var nao declarada)
         }
         //AnalisadorLexical(fp,linha,tk);
     }else if(tk->simbolo == snúmero){
@@ -387,7 +387,7 @@ void Analisa_escreva(){
                     sintax_error(14, *linha);
                 }
             }else{
-                semantic_error(0, *linha);
+                semantic_error(8, *linha);
             }
         }
         else{
@@ -447,23 +447,20 @@ void Analisa_atribuicao(token ident){
             //retorno de funcao
             if(destino->tipo == fint){
                 if(tipo != sinteiro){
-                    semantic_error(0, *linha);
+                    semantic_error(9, *linha);
                 }
             }else{
                 if(tipo != sbooleano){
-                    semantic_error(0, *linha);
+                    semantic_error(10, *linha);
                 }
             }
         }else if(destino->tipo == tipo){
             //atribuição de variavel
-            if(destino->tipo != tipo){
-                semantic_error(0, *linha);
-            }
         }else{
-            semantic_error(0, *linha); //atribuição com tipo diferente
+            semantic_error(11, *linha); //atribuição com tipo diferente
         }
     }else{
-        semantic_error(0, *linha); //identificador não declarado
+        semantic_error(12, *linha); //identificador não declarado
     }
 }
 
@@ -473,16 +470,16 @@ void Chamada_procedimento(token ident){
         if(proc->tipo == sprocedimento){
             AnalisadorLexical(fp,linha,tk);
         }else{
-            semantic_error(0, *linha);
+            semantic_error(13, *linha);
         }
     }else{
-        semantic_error(0, *linha);
+        semantic_error(14, *linha);
     }
 
 }
 
 void Analisa_chamada_funcao(){
-    //printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
+    printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
     expressao_infix = adicionar_token(expressao_infix, *tk);
     AnalisadorLexical(fp,linha,tk);
     ///gera_codigo 
@@ -492,11 +489,11 @@ enum tipos analisa_tipo_expressao_semantica(){
     Analisa_expressao(tk);
     if(expressao_infix != NULL){
         expressao_infix = converte_inf_posfix(expressao_infix);
-        enum tipos tipo = semantico_expressao(expressao_infix);
+        enum tipos tipo = semantico_expressao(expressao_infix, linha);
         expressao_infix = NULL;
         return tipo;
     }else{
-        semantic_error(0, *linha); // nao tenho ctz se chega aqui (acho que o sintatico para antes), mas esperado expressao
+        semantic_error(15, *linha); // nao tenho ctz se chega aqui (acho que o sintatico para antes), mas esperado expressao
         return serro;
     }
 }
