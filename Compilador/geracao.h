@@ -80,7 +80,7 @@ void Gera_operador(enum tipos op)
 
 void Gera_load_variavel(char rotulo[4])
 {
-    Gera("    ","LDVAR",rotulo,"    ");
+    Gera("    ","LDV",rotulo,"    ");
 }
 
 void Gera_load_const(char num[])
