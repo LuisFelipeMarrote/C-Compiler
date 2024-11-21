@@ -1,12 +1,4 @@
-LEMBRAR QUE IMPLEMENTEI MEIA BOCA AS ULTIMAS 3
-
-O CODIGO TESTE NAO TEM EXPRESSOES MUITO ELABORADAS, MAS JA FOI UTILIZADO COMO TESTE FINAL
-A GALERA COSTUMA ERRAR MTT EXPRESSOES ELABORADAS, ENTAO CUIDADO
-======================================================================================================================================================================================
 RVISÕES LUCAS:
-
->   rever mensagens de erro (exemplo5: tem mais codigo após o ponto final)
-    conferir _error(0) tbm (tem de varios tipos)
 
 >   verdadeiro ou falso
 
@@ -19,6 +11,7 @@ Incertezas:
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 >   confirmar semantico chamada de função
 >   confirmar semantic_error(15, *linha)
+>   rever erro(0) em coloca_tipo_tabela()
 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
