@@ -17,7 +17,6 @@ Incertezas:
     msm coisa com decl_var e pesquisa_declvarfunc_tabela
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
->   confirmar retorno pesquisa_declvarfunc_tabela (1 e 0) 
 >   confirmar semantico chamada de função
 >   confirmar semantic_error(15, *linha)
 

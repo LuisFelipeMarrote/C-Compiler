@@ -170,9 +170,9 @@ int pesquisa_declvarfunc_tabela(char* indent){
     while(entrada_atual->tipo != sbase){
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, indent)){
-            return 1; // encontrou = false (1)
+            return 0; // encontrou = false (0)
         }
         entrada_atual = entrada_atual->prev;
     };
-    return 0; // não encontrou = verdadeiro (0)
+    return 1; // não encontrou = verdadeiro (1)
 }
