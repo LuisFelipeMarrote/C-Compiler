@@ -1,35 +1,62 @@
-    START
+    START        
     ALLOC01
     ALLOC13
-    JMP0
-1NULL
+    JMP0      
+1  NULL        
     ALLOC42
     ALLOC61
-    JMPF2
-    STR5  
-2NULL
-    RD
-    STR6  
-4NULL
-    JMPF5
-    JMP4
-5NULL
-    LDV4  
-    PRN
-6NULL
-    RD
-    STR1  
-    STR2  
-0NULL
-    CALL1  
-    CALL6  
-    JMPF7
-    LDV2  
-    PRN
-    JMP8
-7NULL
-    LDV3  
-    PRN
-8NULL
+    LDVAR5      
+    LDC1    
+    CME        
+    JMPF2      
+    LDC0    
+    STR5      
+2  NULL        
+    RD        
+    STR6      
+4  NULL        
+    LDVAR4      
+    LDC89    
+    CDIF        
+    LDVAR4      
+    LDC1000    
+    CMEQ        
+    AND        
+    JMPF5      
+    LDVAR5      
+    LDVAR6      
+    JMP4      
+5  NULL        
+    LDV4      
+    PRN        
+6  NULL        
+    RD        
+    STR1      
+    LDVAR1      
+    LDVAR1      
+    MULT        
+    LDVAR3      
+    LDVAR2      
+    DIVI        
+    ADD        
+    STR2      
+0  NULL        
+    CALL1      
+    CALL6      
+    LDVAR2      
+    LDVAR3      
+    LDVAR1      
+    LDVAR1      
+    MULT        
+    ADD        
+    CME        
+    JMPF7      
+    LDV2      
+    PRN        
+    JMP8      
+7  NULL        
+    LDV3      
+    PRN        
+8  NULL        
     DALLOC61
-    HLT
+    HLT        
