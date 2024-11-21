@@ -162,6 +162,7 @@ int pesquisa_declfunc_tabela(char* indent){ ///precisa ser inteiro ou booleano
     return 1; // não encontrou = verdadeiro (1)
 }
 
+// rever essa funçao acho que o return ta invertido, onde era para ser 1 é 0.
 /// @brief Em analisa_escreva, procura por uma variável ou função(retorno) para escrever (tipo inteiro)
 /// @param indent nome
 /// @return achou(0) ou nao(1)

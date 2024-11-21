@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include "definicoes.h"
 #include "simbolos.h"
+#include "geracao.h"
 
 //empilha primeiro token de uma lista
 void empilha_token(node_lista_token** pilha, node_lista_token** lista){
@@ -191,8 +192,11 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
                 }else if(entrada_tabela_operador->tipo == fbool){
                     lista_posfix->tk.simbolo = sbooleano;
                 }else{
+                    Gera_load_variavel(entrada_tabela_operador->rotulo);
                     lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
                 }
+            } else {
+                Gera_load_const(lista_posfix->tk.lexema);
             }
             empilha_token(&pilha, &lista_posfix);
         
@@ -214,9 +218,6 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
                 }
             } 
 
-            ///gera código (?) - exemplo: c b div -> manda (em diferentes funções) c, b, div, nessa ordem - entrada da tabela inteira (se for numero, manda só o numero).
-            ///lembrar de colocar um if vendo se é numero ou identificador para mandar pela funcao certa. 
-
             //empilha resultado
             token temp_token;
             temp_token.simbolo = analisando.tipo_resultado;
@@ -228,6 +229,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
             //tira o operador da lista
             temp_node = lista_posfix;
             lista_posfix = lista_posfix->prox;
+            Gera_operador(temp_node->tk.simbolo);
             free(temp_node);
         }
     }
