@@ -16,7 +16,7 @@ FILE *fp;
 token *tk;
 int *linha;
 int rotulo;
-char str_aux[4] = "";
+char str_aux[5] = "";
 int num_var_total = 1;
 node_lista_token* expressao_infix;
 

@@ -13,7 +13,7 @@ inicio
   leia(z);
   enquanto (a != 89) e (a<= 1000)  {condicao de parada}
   faca inicio
-           a:= x+z
+           a:= x+z {era para dar erro e para o programa aqui}
        fim;
   escreva(a)
 fim;

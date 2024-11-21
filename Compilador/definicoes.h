@@ -62,7 +62,7 @@ struct entrada_tab_simbolos{
     char nome_ident[lexema_size_max];
     char escopo;
     enum tipos tipo;
-    char rotulo[4]; //end de memoria
+    char rotulo[5]; //end de memoria
     entrada_tab_simbolos* prev;
 };
 

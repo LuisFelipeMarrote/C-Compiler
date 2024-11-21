@@ -1,9 +1,8 @@
 /*
  FALTANDO COLOCAR OS RETURNS NOS PROCS E FUNCS.
  NOS FUNCS TENHO QUE COLOCAR O RESULTADO NO ROTULO 0.
- CHECAR O TAMANHO DA CONSTANTE QUE CHEGA NA FUNÇAO Gera_load_const.
- REVER O TAMANHO DAS STRINGS, ACHO QUE VOU TER QUE PASSAR PARA 5,9,5,5 POR CAUSA DO
-/0 QUE TEM QUE TER NO FINAL.
+ CHECAR O TAMANHO DA CONSTANTE QUE CHEGA NA FUNÇAO Gera_load_const e tem que passar para o formato.
+ 
 */
 #pragma once
 #include <stdlib.h> 
@@ -16,27 +15,27 @@ FILE *new_fp;
 char nome_arquivo[30];
 int qntd_var = 0;
 int qntd_rotulo = 0;
-char str_aux_atr1[4], str_aux_atr2[4], str_aux_rot[4], str_aux_inst[8];
+char str_aux_atr1[5], str_aux_atr2[5], str_aux_rot[5], str_aux_inst[9];
 
 void Seta_string(char *str, int size, int filled);
 void Gera_operador(enum tipos op);
-void Gera_load_variavel(char rotulo[4]);
+void Gera_load_variavel(char rotulo[5]);
 void Gera_load_const(char num[]);
 void Gera_start_programn();
 void Gera_end_programn();
-void Gera_jmp(char rotulo[4]);
-void Gera_jmpf(char rotulo[4]);
-void Gera_rotulo(char rotulo[4]);
+void Gera_jmp(char rotulo[5]);
+void Gera_jmpf(char rotulo[5]);
+void Gera_rotulo(char rotulo[5]);
 char* str_rotulo_var (int rotulo);
 char* str_rotulo (int num_var);
 void Gera_alloc(int num_var);
 void Gera_dalloc(int num_var);
-void Gera_leia(char rotulo[4]);
-void Gera_escreva(char rotulo[4]);
-void Gera_call(char rotulo[4]);
+void Gera_leia(char rotulo[5]);
+void Gera_escreva(char rotulo[5]);
+void Gera_call(char rotulo[5]);
 void Gera_return();
-void Gera_str(char rotulo[4]);
-void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]);
+void Gera_str(char rotulo[5]);
+void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]);
 void Cria_arquivo();
 
 //essa função vou implementar dps, mas ela é so para formatar
@@ -48,71 +47,72 @@ void Seta_string(char *str, int size, int filled){
 void Gera_operador(enum tipos op)
 {
     if (op == smais) {
-        Gera("    ","ADD","    ","    ");
+        Gera("    ","ADD     ","    ","    ");
     } else if (op == smenos) {
-        Gera("    ","SUB","    ","    ");
+        Gera("    ","SUB     ","    ","    ");
     }else if (op == smult) {
-        Gera("    ","MULT","    ","    "); 
+        Gera("    ","MULT    ","    ","    "); 
     } else if (op == sdiv) {
-        Gera("    ","DIVI","    ","    ");
+        Gera("    ","DIVI    ","    ","    ");
     } else if (op == ssinalu) { // conferir qual é o operador
-        Gera("    ","INV","    ","    ");
+        Gera("    ","INV     ","    ","    ");
     } else if (op == se) {
-        Gera("    ","AND","    ","    ");
+        Gera("    ","AND     ","    ","    ");
     } else if (op == sou) {
-        Gera("    ","OR","    ","    ");
+        Gera("    ","OR      ","    ","    ");
     } else if (op == snull) { //revisar esse tbm
-        Gera("    ","NEG","    ","    ");
+        Gera("    ","NEG     ","    ","    ");
     }else if (op == smaior) {
-        Gera("    ","CME","    ","    ");
+        Gera("    ","CME     ","    ","    ");
     }else if (op == smenor) {
-        Gera("    ","CMA","    ","    ");
+        Gera("    ","CMA     ","    ","    ");
     }else if (op == sig) {
-        Gera("    ","CEQ","    ","    ");
+        Gera("    ","CEQ     ","    ","    ");
     }else if (op == sdif) {
-        Gera("    ","CDIF","    ","    ");
+        Gera("    ","CDIF    ","    ","    ");
     }else if (op == smenorig) {
-        Gera("    ","CMEQ","    ","    ");
+        Gera("    ","CMEQ    ","    ","    ");
     }else if (op == smaiorig) {
-        Gera("    ","CMAQ","    ","    ");
+        Gera("    ","CMAQ    ","    ","    ");
     }
 }
 
-void Gera_load_variavel(char rotulo[4])
+void Gera_load_variavel(char rotulo[5])
 {
-    Gera("    ","LDV",rotulo,"    ");
+    Gera("    ","LDV     ",rotulo,"    ");
 }
 
-void Gera_load_const(char num[])
+void Gera_load_const(char num[5])
 {
-    Gera("    ","LDC",num,"    ");
+    //Seta_string(&(num[strlen(num)]), sizeof(num) / sizeof(num[0]), strlen(num));
+    Gera("    ","LDC     ",num,"    ");
 }
 
 void Gera_start_programn()
 {
-    Gera("    ","START","    ","    ");
+    Gera("    ","START   ","    ","    ");
     Gera_alloc(1);
 }
 
 void Gera_end_programn()
 {
     Gera_dalloc(1);
-    Gera("    ","HLT","    ","    ");
+    Gera("    ","HLT     ","    ","    ");
 }
 
-void Gera_jmp(char rotulo[4])
+void Gera_jmp(char rotulo[5])
 {
-    Gera("    ","JMP",rotulo,"    ");
+    Gera("    ","JMP     ",rotulo,"    ");
 }
 
-void Gera_jmpf(char rotulo[4])
+void Gera_jmpf(char rotulo[5])
 {
-    Gera("    ","JMPF",rotulo,"    ");
+    Gera("    ","JMPF    ",rotulo,"    ");
 }
 
-void Gera_rotulo(char rotulo[4])
+void Gera_rotulo(char rotulo[5])
 {
-    Gera(rotulo,"NULL","    ","    ");    
+    Gera(rotulo,"NULL    ","    ","    ");    
 }
 
 char* str_rotulo_var (int rotulo)
@@ -133,51 +133,51 @@ char* str_rotulo (int rotulo)
 
 void Gera_alloc(int num_var)
 {
-    Gera("    ","ALLOC",itoa(qntd_var,str_aux_atr1,10),itoa(num_var,str_aux_atr2,10));
+    Gera("    ","ALLOC   ",str_rotulo(qntd_var),str_rotulo(num_var));
     qntd_var = qntd_var + num_var;
 }
 
 // vou tirar daqui a variavel qntd_var e passar como parametro dps.
 void Gera_dalloc(int num_var)
 {
-    Gera("    ","DALLOC",itoa(qntd_var - 1,str_aux_atr1,10),itoa(num_var,str_aux_atr2,10));
+    Gera("    ","DALLOC  ",str_rotulo(qntd_var - 1),str_rotulo(num_var));
     qntd_var = qntd_var - num_var;
 }
 
-void Gera_leia(char rotulo[4])
+void Gera_leia(char rotulo[5])
 {
-    Gera("    ","RD","    ","    ");
+    Gera("    ","RD      ","    ","    ");
     //retorno da tabela de simbolos
-    Gera("    ","STR",rotulo,"    ");        
+    Gera("    ","STR     ",rotulo,"    ");        
 }
 
-void Gera_escreva(char rotulo[4])
+void Gera_escreva(char rotulo[5])
 {
     //retorno da tabela de simbolos pela busca do token.lexema
-    Gera("    ","LDV",rotulo,"    ");   
-    Gera("    ","PRN","    ","    ");
+    Gera("    ","LDV     ",rotulo,"    ");   
+    Gera("    ","PRN     ","    ","    ");
 }
 
-void Gera_call(char rotulo[4])
+void Gera_call(char rotulo[5])
 {
-    Gera("    ","CALL",rotulo,"    ");
+    Gera("    ","CALL    ",rotulo,"    ");
 }
 
 void Gera_return()
 {
-    Gera("    ","RETURN","    ","    ");
+    Gera("    ","RETURN  ","    ","    ");
 }
 
-void Gera_str(char rotulo[4])
+void Gera_str(char rotulo[5])
 {
-    Gera("    ","STR",rotulo,"    ");
+    Gera("    ","STR     ",rotulo,"    ");
 }
 
  
-void Gera(char rotulo[4], char instrucao[8], char atr1[4], char atr2[4]){
+void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
     //redeclara isso, pois ele ta passando como string literal, ou seja, so da para ler
     //entao eu so preciso declarar variaveis aux e copiar a informaçao paraa laa
-    char linha[20] = {}; //ver como inicializa a lista vazia 
+    char linha[22] = {}; //ver como inicializa a lista vazia 
     //Seta_string(rotulo, 4);
     strcat(linha, rotulo);
     //Seta_string(instrucao, sizeof(instrucao));
