@@ -250,10 +250,13 @@ void Analisa_declaracao_procedimento(){
             /*{guarda na TabSimb}
             {CALL irá buscar este rótulo na TabSimb}*/
             Gera_rotulo(str_rotulo(rotulo));            
-            rotulo = rotulo+1;
+            rotulo++;
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(tk);
+                // função para rodar a tab de simbolos e retornar quantas variaveis tem até a marca.
+                // Gera_dalloc(num_var)
+                Gera_return();
             }else{
                 sintax_error(22);
             }
@@ -274,6 +277,8 @@ void Analisa_declaracao_funcao(){
             //nao encontrou
             token nome_func = *tk;
             insere_tab_simbolos(tk->lexema,sfuncao,nivel,str_rotulo(rotulo));
+            Gera_rotulo(str_rotulo(rotulo));            
+            rotulo++;
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sdoispontos){
                 AnalisadorLexical(fp,linha,tk);
@@ -286,6 +291,9 @@ void Analisa_declaracao_funcao(){
                     AnalisadorLexical(fp,linha,tk);
                     if(tk->simbolo == sponto_virgula){
                         Analisa_Bloco(tk);
+                        // função para rodar a tab de simbolos e retornar quantas variaveis tem até a marca.
+                        // Gera_dalloc(num_var)
+                        Gera_return();
                     }else{
                         sintax_error(26);
                     }
@@ -528,10 +536,13 @@ void Chamada_procedimento(token ident){
 }
 
 void Analisa_chamada_funcao(){
+    Gera_call(str_rotulo(rotulo));
+    rotulo++;
     printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
     expressao_infix = adicionar_token(expressao_infix, *tk);
     AnalisadorLexical(fp,linha,tk);
-    ///gera_codigo 
+    // tem que fazer uma condição em que se tiver dentro do escopo da função, toda vez que o nome da função e referenciado,
+    // para fazer uma atribuição, a gente joga para a variavel 0.
 }
 
 enum tipos analisa_tipo_expressao_semantica(){

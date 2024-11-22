@@ -1,8 +1,16 @@
 /*
  FALTANDO COLOCAR OS RETURNS NOS PROCS E FUNCS.
+ COLOCAR UM ROTULO CASO ENTRE EM FUNCS
  NOS FUNCS TENHO QUE COLOCAR O RESULTADO NO ROTULO 0.
- CHECAR O TAMANHO DA CONSTANTE QUE CHEGA NA FUNÇAO Gera_load_const e tem que passar para o formato.
- 
+ CHECAR O TAMANHO DA CONSTANTE QUE CHEGA NA FUNÇAO Gera_load_const e tem que passar para o formato. - TA FEITO ACHO, CHECAR A SOLUÇÃO, POIS ELA É ESQUISITA
+ O LIMITE PARA LOAD CONSTANTE É 23 POR ALGUM MOTIVO, DESCOBRIR.
+ ANALISAR SOBRE A NECESSIDADE DE MANTER AAQUI E LA AS VARIAVEIS QUE CONTAM OS ROTULO E ROTULOS DE VAR. EXCLUIR EM ALGUM DO LUGARES.
+ PARA SOLUCIONAR O PROBLEMA DA FORMATAÇÃO TAMBÉM DA PARA SETAR AS VARIAAVEIS AAUX COM ESPAÇO E DEPOIS DAR MEMCPY DO CONTEUDO NELAS,
+AI EU SEMPRE USO AS VARIÁVEIS GLOBAIS E AS FUNÇOES SO SETAM E QUANDO VOLTAR SO LIMPAM ONDE USARAM. SOLUÇÃO BOA ESSA.  
+ CRIAR UM FUNÇÃO PARA RETORNAR O NUMERO DE VARIAVEIS (INT) ATÉ A MARCA, PARA FAZER O DALLOC. 
+ FAZER UMA FUNÇÃO QUE RETORNE (BOOL) CASO ESTEJA SENDO FEITA UMA ATRIBUIÇÃO PARA O UMA FUNÇÃO, ELA SO É PERMITIDA CASO ESTEJA DENTRO DELA E POSSUA O MESMO NOME.
+CASO ISSO FOR VERDADE EU VOU FAZER UM STR 0. 
+
 */
 #pragma once
 #include <stdlib.h> 
@@ -40,7 +48,7 @@ void Cria_arquivo();
 
 //essa função vou implementar dps, mas ela é so para formatar
 void Seta_string(char *str, int size, int filled){
-    int tam = size-filled-1;
+    int tam = size-filled-1; // -1 POIS TEM QUE CONTAR COM O \0 NO FINAL.
     memset(str,' ', tam);
 }
 
@@ -54,13 +62,13 @@ void Gera_operador(enum tipos op)
         Gera("    ","MULT    ","    ","    "); 
     } else if (op == sdiv) {
         Gera("    ","DIVI    ","    ","    ");
-    } else if (op == ssinalu) { // conferir qual é o operador
+    } else if (op == ssinalu) {
         Gera("    ","INV     ","    ","    ");
     } else if (op == se) {
         Gera("    ","AND     ","    ","    ");
     } else if (op == sou) {
         Gera("    ","OR      ","    ","    ");
-    } else if (op == snull) { //revisar esse tbm
+    } else if (op == snao) { 
         Gera("    ","NEG     ","    ","    ");
     }else if (op == smaior) {
         Gera("    ","CME     ","    ","    ");
@@ -84,8 +92,15 @@ void Gera_load_variavel(char rotulo[5])
 
 void Gera_load_const(char num[5])
 {
-    //Seta_string(&(num[strlen(num)]), sizeof(num) / sizeof(num[0]), strlen(num));
-    Gera("    ","LDC     ",num,"    ");
+    printf("\n oi%d\n", strlen(num));
+    printf("\n AQUI%d\n", sizeof(str_aux_atr1) / sizeof(str_aux_atr1[0]));
+    if(strlen(num) > 4){
+        memcpy(str_aux_atr1, num, 4);
+        Gera("    ","LDC     ",str_aux_atr1,"    ");
+    } else {    
+        Seta_string(&(num[strlen(num)]), 5, strlen(num));
+        Gera("    ","LDC     ",num,"    ");
+    }
 }
 
 void Gera_start_programn()
@@ -154,13 +169,11 @@ void Gera_dalloc(int num_var)
 void Gera_leia(char rotulo[5])
 {
     Gera("    ","RD      ","    ","    ");
-    //retorno da tabela de simbolos
     Gera("    ","STR     ",rotulo,"    ");        
 }
 
 void Gera_escreva(char rotulo[5])
 {
-    //retorno da tabela de simbolos pela busca do token.lexema
     Gera("    ","LDV     ",rotulo,"    ");   
     Gera("    ","PRN     ","    ","    ");
 }
@@ -182,27 +195,19 @@ void Gera_str(char rotulo[5])
 
  
 void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
-    //redeclara isso, pois ele ta passando como string literal, ou seja, so da para ler
-    //entao eu so preciso declarar variaveis aux e copiar a informaçao paraa laa
+
+    //Seta_string(&(instrucao[strlen(instrucao)]), 9, strlen(instrucao));
+    // Isso daqui so nao da certo, pois eu nao posso alterar essa regiao de memoria que foraam passados por parametros, pois passei como string literal,
+    // ou seja, so da para ler.
+    // Um jeito de consetar é copiar para outra string auxiliar. 
+
     char linha[22] = {}; //ver como inicializa a lista vazia 
-    //Seta_string(rotulo, 4);
+
     strcat(linha, rotulo);
-    //Seta_string(instrucao, sizeof(instrucao));
     strcat(linha, instrucao);
-    if (strcmp(atr1, "    ") != 0)
-    {
-        //Seta_string(atr1, sizeof(atr1));
-        strcat(linha, atr1);
-    } else {
-        strcat(linha, "    ");
-    }
-    if (strcmp(atr2, "    ") != 0)
-    {
-        //Seta_string(atr2, sizeof(atr2));
-        strcat(linha, atr2);
-    } else {
-        strcat(linha, "    ");
-    }
+    strcat(linha, atr1);
+    strcat(linha, atr2);    
+
     strcat(linha, "\n");
     fputs(linha, new_fp);
 }
