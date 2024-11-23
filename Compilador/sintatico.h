@@ -584,3 +584,15 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
         sintax_error(1, *linha);
     }
 }
+
+void limpa_memoria(){
+    //libera tabela
+    deleta_tabela();
+    
+    //libera expressao 
+    while(expressao_infix!=NULL){
+        node_lista_token* temp = expressao_infix;
+        expressao_infix = expressao_infix->prox;
+        free(temp);
+    }
+}

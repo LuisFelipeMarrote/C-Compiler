@@ -256,8 +256,8 @@ void pega_token(token *tk){
 
 void lexical_error(int n, token *tk){
     char* erros[] = {"",
-        "Chaves Abertas ('{') sem chaves fechadas depois (não foi encontrado '}' no código)",
-        "Chaves Fechadas ('}') sem chaves abertas antes (era esperado '{' antes no código)",
+        "Comentário não foi encerrado corretamente - Chaves Abertas ('{') sem chaves fechadas depois (não foi encontrado '}' no código)",
+        "Chaves Fechadas ('}') sem chaves abertas antes (era esperado '{' antes no código para iniciar comentário)",
         "Caractere Inválido",
         "Foi encontrado um caractere de Exclamação ('!') sem Sinal de Igual ('=') depois (símbolo inválido)" 
     };
@@ -266,14 +266,15 @@ void lexical_error(int n, token *tk){
     printf(" %s ", erros[n]);
     printf("na linha %d\n", *linha);*/
 
-    printf("Erro na linha %d:", linha);
+    printf("Erro na linha %d:", *linha);
     printf(" %s ", erros[n]);
     printf("[Código de erro - Lex%d] \n", n);
     
     set_token_s(tk, "Erro");
     tk->simbolo = serro;
 
-    ler();
+    //ler();
+    exit(1);
 }
 
 void AnalisadorLexicalN1()

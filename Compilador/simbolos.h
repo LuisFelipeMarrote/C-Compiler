@@ -90,7 +90,8 @@ void coloca_tipo_tabela(char* ident, enum tipos tipo){
 void nova_tabela(){
     entrada_tab_simbolos* base = (entrada_tab_simbolos*) malloc(sizeof(entrada_tab_simbolos));
     popula_entrada(base, "base_da_pilha", 'L', sbase, "-");
-    tabela = base;    
+    tabela = base;
+    tabela->prev = NULL;    
 }
 
 void deleta_tabela(){

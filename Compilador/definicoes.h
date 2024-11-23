@@ -105,6 +105,7 @@ void sintax_error(int n, int linha){
     printf(" %s ", erros[n]);
     printf("[Código de erro - Sint%d] \n", n);
 
+    exit(1);
 }
 
 void semantic_error(int n, int linha){
@@ -135,6 +136,7 @@ void semantic_error(int n, int linha){
     printf(" %s ", erros[n]);
     printf("[Código de erro - Sem%d] \n", n);
 
+    exit(1);
 }
 
 char* print_tipo_erros(enum tipos simbolo){ //alterei os tipos na lista conforme a utilização (essa função imprime algo intuitivo como sinteiro = Inteiro)
