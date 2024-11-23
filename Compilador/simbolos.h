@@ -177,3 +177,14 @@ int pesquisa_declvarfunc_tabela(char* indent){
     };
     return 1; // não encontrou = verdadeiro (1)
 }
+
+/// @brief conta quantas variáveis tem em um escopo para auxiliar na geração de instruções dalloc
+/// @return quantidade de variáveis até a primeira marca de escopo
+int qtde_variaveis_escopo(){
+    entrada_tab_simbolos* entrada_atual = tabela;
+    int count = 0;
+    while(entrada_atual->escopo != 'L'){
+        count++;
+    }
+    return count;
+}
