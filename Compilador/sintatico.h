@@ -45,7 +45,7 @@ void Analisa_chamada_funcao();
 enum tipos analisa_tipo_expressao_semantica();
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
 
-void sintax_error(int n){
+/*void sintax_error(int n){
     ///rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
         "1: Esperado 'programa'",
@@ -85,7 +85,7 @@ void sintax_error(int n){
     printf("(Código de erro - Sint%d) \n", n);
 
 }
-
+*/
 void Analisa_Bloco(){
     AnalisadorLexical(fp,linha,tk);
     Analisa_et_variáveis(tk);
@@ -499,11 +499,7 @@ void Analisa_atribuicao(token ident){
                 }
             }
         }else if(destino->tipo == tipo){
-
             Gera_str(destino->rotulo);
-            if(destino->tipo != tipo){ // faz sentido essa linha? pq se entrou aqui quer dizer que destino->tipo == tipo
-                semantic_error(0);
-            }
         }else{
             semantic_error(11, *linha); //atribuição com tipo diferente
         }
@@ -538,7 +534,7 @@ enum tipos analisa_tipo_expressao_semantica(){
     Analisa_expressao(tk);
     if(expressao_infix != NULL){
         expressao_infix = converte_inf_posfix(expressao_infix);
-        enum tipos tipo = semantico_expressao(expressao_infix, linha);
+        enum tipos tipo = semantico_expressao(expressao_infix, *linha);
         expressao_infix = NULL;
         return tipo;
     }else{
