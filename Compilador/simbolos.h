@@ -191,4 +191,15 @@ int qtde_variaveis_escopo(){
     return count;
 }
 
-
+/// @brief função que verifica qual função ou procedimento está sendo analisada atualmente
+/// @return a primeira entrada da tabela de símbolos com a marca de escopo
+entrada_tab_simbolos* func_proc_atual(){
+    entrada_tab_simbolos* atual = tabela;
+    while (atual->tipo !=sbase){
+        if(atual->escopo == 'L'){
+            return atual;
+        }
+        atual = atual->prev;
+    }
+    return NULL;
+}
