@@ -5,18 +5,17 @@ RVISÕES LUCAS:
 
 Incertezas:
 >   Rever retorno de função em satribuição
->   rever como remover a necessidade de parametro, e como lidar com erros em decl_var_tabela
-    msm coisa com decl_var e pesquisa_declvarfunc_tabela
+>   confirmar semantico chamada de função
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
->   confirmar semantico chamada de função
->   confirmar semantic_error(15, *linha)
->   rever erro(0) em coloca_tipo_tabela()
+
 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
 >   Precisa colocar erros que em teoria nunca vão acontecer? (var nao declarada ao colocar tipo)
->   Pode chamar função solta? (se puder, afeta chamada_proc)
+    >   confirmar semantic_error(15, *linha)
+    >   rever erro(0) em coloca_tipo_tabela()
+>   Pode chamar função solta, sem atribuição? (se puder, afeta chamada_proc)
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos

@@ -17,6 +17,7 @@ int pesquisa_declfunc_tabela(char* indent);
 void volta_nivel();
 int pesquisa_declvar_tabela(token tk);
 int pesquisa_declvarfunc_tabela(char* indent);
+int qtde_variaveis_escopo();
 
 //ponteiro para o topo da tabela
 entrada_tab_simbolos* tabela = NULL; 
@@ -189,3 +190,5 @@ int qtde_variaveis_escopo(){
     }
     return count;
 }
+
+

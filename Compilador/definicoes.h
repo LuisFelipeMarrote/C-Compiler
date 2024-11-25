@@ -99,6 +99,7 @@ void sintax_error(int n, int linha){
         "Parêntesis não foi fechado corretamente (era esperado ')')",
         "Foi Encontrado um simbolo inesperado dentro da expressao",
         "Era Esperado ';' após o 'fim' de uma subrotina (procedimento ou função)",
+        "Era esperado um símbolo separando as palavras na declaração (se quiser declarar várias variáveis, separe-as por vírgulas. Se quiser colocar o tipo, coloque ':' antes do tipo escolhido)",        
         };
     
     printf("Erro na linha %d:", linha);
