@@ -27,6 +27,16 @@ Perguntas para o Freitas:
     >   procedimento
     > fim
 > o que ele prefere: criar programa com nome do .txt ou com o nome do programa (no codigo)
+> conferir observações no código gerado
+
+Observações no código gerado:
+> Allocs precisam ser do jeito que ele deu de exemplo?
+    > no nosso ele separa allocs por tipo (ex.: var a,b: int; z: bool;  gera 2 allocs diferentes)
+    > no dele gera um alloc só no declvar inteiro
+> conferir CME / CMA - no dele tá LDV8 LDC10 CME, no nosso tá LDV8 LDC10 CMA
+> Dallocs
+> str0 antes d return em função
+
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
