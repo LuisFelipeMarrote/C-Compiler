@@ -187,6 +187,7 @@ int qtde_variaveis_escopo(){
     int count = 0;
     while(entrada_atual->escopo != 'L'){
         count++;
+        entrada_atual = entrada_atual->prev;
     }
     return count;
 }
