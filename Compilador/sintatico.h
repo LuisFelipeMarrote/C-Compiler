@@ -15,8 +15,8 @@
 FILE *fp; 
 token *tk;
 int *linha;
-int rotulo;
 char str_aux[5] = "";
+int rotulo = 1;
 int num_var_total = 1;
 node_lista_token* expressao_infix;
 
@@ -254,8 +254,9 @@ void Analisa_declaracao_procedimento(){
             AnalisadorLexical(fp,linha,tk);
             if(tk->simbolo == sponto_virgula){
                 Analisa_Bloco(tk);
-                // função para rodar a tab de simbolos e retornar quantas variaveis tem até a marca.
-                // Gera_dalloc(num_var)
+                int num_var = qtde_variaveis_escopo();
+                if(num_var > 0)
+                    Gera_dalloc(num_var);
                 Gera_return();
             }else{
                 sintax_error(22, *linha);
@@ -291,8 +292,9 @@ void Analisa_declaracao_funcao(){
                     AnalisadorLexical(fp,linha,tk);
                     if(tk->simbolo == sponto_virgula){
                         Analisa_Bloco(tk);
-                        // função para rodar a tab de simbolos e retornar quantas variaveis tem até a marca.
-                        // Gera_dalloc(num_var)
+                        int num_var = qtde_variaveis_escopo();
+                        if(num_var > 0)
+                            Gera_dalloc(num_var);
                         Gera_return();
                     }else{
                         sintax_error(26, *linha);
@@ -561,7 +563,6 @@ enum tipos analisa_tipo_expressao_semantica(){
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
     nova_tabela(); // inicializa a tabela de simbolos
     expressao_infix = NULL; // inicializa end de memoria para analise de expressoes
-    ///rotulo := 1
     fp = fp_main;
     tk = token_main;
     linha = linha_main;
