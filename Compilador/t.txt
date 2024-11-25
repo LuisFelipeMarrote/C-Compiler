@@ -4,7 +4,6 @@ RVISÕES LUCAS:
 
 
 Incertezas:
->   Rever retorno de função em satribuição
 >   confirmar semantico chamada de função
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
@@ -33,13 +32,11 @@ Observações no código gerado:
 > Allocs precisam ser do jeito que ele deu de exemplo?
     > no nosso ele separa allocs por tipo (ex.: var a,b: int; z: bool;  gera 2 allocs diferentes)
     > no dele gera um alloc só no declvar inteiro
-> conferir CME / CMA - no dele tá LDV8 LDC10 CME, no nosso tá LDV8 LDC10 CMA
-> Dallocs
-> str0 antes d return em função
+> str0 antes do return d funcao
 
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
 
 Testes:
-    > declarar uma função dentro de procedimento dentro de função com o nome da função
+> declarar uma função dentro de procedimento dentro de função com o nome da função
