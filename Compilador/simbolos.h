@@ -186,7 +186,9 @@ int qtde_variaveis_escopo(){
     entrada_tab_simbolos* entrada_atual = tabela;
     int count = 0;
     while(entrada_atual->escopo != 'L'){
-        count++;
+        if(entrada_atual->tipo == sinteiro || entrada_atual->tipo == sbooleano){
+            count++;
+        }
         entrada_atual = entrada_atual->prev;
     }
     return count;
