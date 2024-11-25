@@ -497,14 +497,19 @@ void Analisa_atribuicao(token ident){
         enum tipos tipo = analisa_tipo_expressao_semantica();
         if(destino->tipo == fint || destino->tipo == fbool){
             //retorno de funcao
-            if(destino->tipo == fint){
-                if(tipo != sinteiro){
-                    semantic_error(9, *linha);
+            entrada_tab_simbolos* func_atual = func_proc_atual();
+            if(func_atual != NULL && strcmp(func_atual->nome_ident, destino->nome_ident) == 0){
+                if(destino->tipo == fint){
+                    if(tipo != sinteiro){
+                        semantic_error(9, *linha);
+                    }
+                }else{
+                    if(tipo != sbooleano){
+                        semantic_error(10, *linha);
+                    }
                 }
             }else{
-                if(tipo != sbooleano){
-                    semantic_error(10, *linha);
-                }
+                semantic_error(21, *linha);
             }
         }else if(destino->tipo == tipo){
             Gera_str(destino->rotulo);
@@ -533,12 +538,10 @@ void Chamada_procedimento(token ident){
 
 void Analisa_chamada_funcao(){
     Gera_call(str_rotulo(rotulo));
+    Gera_load_variavel(str_rotulo_var(0));
     rotulo++;
-    printf("Ainda nao implementei analisa chamada de função! - provavelmente geração de código");
     expressao_infix = adicionar_token(expressao_infix, *tk);
     AnalisadorLexical(fp,linha,tk);
-    // tem que fazer uma condição em que se tiver dentro do escopo da função, toda vez que o nome da função e referenciado,
-    // para fazer uma atribuição, a gente joga para a variavel 0.
 }
 
 enum tipos analisa_tipo_expressao_semantica(){

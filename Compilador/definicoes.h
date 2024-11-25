@@ -131,7 +131,8 @@ void semantic_error(int n, int linha){
         "Nome não declarado encontrado durante a análise da expressão (a variável ou função deve ser declarada antes de ser utilizada)",
         "18 - erro na propria função (analise exppressao)",
         "Expressão Incompleta (não é possível chegar a um resultado final)",
-        "Tentando atribuir retorno fora da função (o nome do destino da atribuição é o nome de outra)"
+        "Tentando atribuir retorno fora da função (o nome do destino da atribuição é o nome de outra)",
+        "Tentando atribuir retorno a uma função diferente da atual (declare outra variável com este nome neste escopo ou mude a atribuição)",
         };
     
     printf("Erro na linha %d:", linha);

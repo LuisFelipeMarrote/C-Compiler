@@ -26,7 +26,7 @@ Perguntas para o Freitas:
     > inicio
     >   procedimento
     > fim
-
+> o que ele prefere: criar programa com nome do .txt ou com o nome do programa (no codigo)
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
