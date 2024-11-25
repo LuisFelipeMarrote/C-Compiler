@@ -18,11 +18,12 @@ var a,b,s: inteiro;
  funcao soma: inteiro;
  var c,a,s: inteiro;                   
      z: booleano;                    
-  procedimento ler;
+  procedimento ler;          
   inicio
      leia (c);
      leia (a);
-     s:= soma;                  
+     s:= soma;  
+     soma := 2;               
      escreva (s);
   fim;
   procedimento loop;         
@@ -42,5 +43,6 @@ var a,b,s: inteiro;
 inicio      {corpo principal}
   s:= soma;                              
   escreva(s)
-fim.     
+fim.                               
+
 

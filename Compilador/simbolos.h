@@ -17,6 +17,7 @@ int pesquisa_declfunc_tabela(char* indent);
 void volta_nivel();
 int pesquisa_declvar_tabela(token tk);
 int pesquisa_declvarfunc_tabela(char* indent);
+int qtde_variaveis_escopo();
 
 //ponteiro para o topo da tabela
 entrada_tab_simbolos* tabela = NULL; 
@@ -90,7 +91,8 @@ void coloca_tipo_tabela(char* ident, enum tipos tipo){
 void nova_tabela(){
     entrada_tab_simbolos* base = (entrada_tab_simbolos*) malloc(sizeof(entrada_tab_simbolos));
     popula_entrada(base, "base_da_pilha", 'L', sbase, "-");
-    tabela = base;    
+    tabela = base;
+    tabela->prev = NULL;    
 }
 
 void deleta_tabela(){
@@ -137,14 +139,13 @@ int pesquisa_declvar_tabela(token tk){ // pesquisa se a variavel ja foi declarad
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, tk.lexema)){
             if(entrada_atual->tipo != sinteiro){
-                printf("ver o que fazer sobre esse erro");
-                //semantic_error(0); //achou, mas tipo errado
+                semantic_error(16, *linha); //achou, mas tipo errado
             }
             return 1; // encontrou 
         }
         entrada_atual = entrada_atual->prev;
     };
-    return 0; 
+    return 0;  // nao encontrou
 }
 
 /// @brief durante a declaração verifica se a função/procedimento já foi declarada antes (tabela inteira)
@@ -177,4 +178,28 @@ int pesquisa_declvarfunc_tabela(char* indent){
         entrada_atual = entrada_atual->prev;
     };
     return 1; // não encontrou = verdadeiro (1)
+}
+
+/// @brief conta quantas variáveis tem em um escopo para auxiliar na geração de instruções dalloc
+/// @return quantidade de variáveis até a primeira marca de escopo
+int qtde_variaveis_escopo(){
+    entrada_tab_simbolos* entrada_atual = tabela;
+    int count = 0;
+    while(entrada_atual->escopo != 'L'){
+        count++;
+    }
+    return count;
+}
+
+/// @brief função que verifica qual função ou procedimento está sendo analisada atualmente
+/// @return a primeira entrada da tabela de símbolos com a marca de escopo
+entrada_tab_simbolos* func_proc_atual(){
+    entrada_tab_simbolos* atual = tabela;
+    while (atual->tipo !=sbase){
+        if(atual->escopo == 'L'){
+            return atual;
+        }
+        atual = atual->prev;
+    }
+    return NULL;
 }
