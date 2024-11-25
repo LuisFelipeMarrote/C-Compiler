@@ -16,6 +16,19 @@ Perguntas para o Freitas:
     >   confirmar semantic_error(15, *linha)
     >   rever erro(0) em coloca_tipo_tabela()
 >   Pode chamar função solta, sem atribuição? (se puder, afeta chamada_proc)
+>   confirmar a situação:
+    > função soma
+    >   proc procedimento
+    >   inicio
+    >       soma := 0
+    >   fim
+    > inicio
+    >   procedimento
+    > fim
+
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
+
+Testes:
+    > declarar uma função dentro de procedimento dentro de função com o nome da função

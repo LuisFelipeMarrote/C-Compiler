@@ -22,8 +22,8 @@ var a,b,s: inteiro;
   inicio
      leia (c);
      leia (a);
-     s:= soma;
-     soma:=s;                  
+     s:= soma;  
+     soma := 2;               
      escreva (s);
   fim;
   procedimento loop;         
