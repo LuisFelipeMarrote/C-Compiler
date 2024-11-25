@@ -8,8 +8,8 @@ int main(){
 
     FILE *fp; 
     //char* filename = "../testes/Sintatico/sint1.txt";
-    //char* filename = "../testes/Geracao/gera_Final.txt";
-    char* filename = "../testes/pessoal.txt";
+    char* filename = "../testes/Geracao/gera_Final.txt";
+    //char* filename = "../testes/pessoal.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");

@@ -16,6 +16,7 @@ Perguntas para o Freitas:
     >   confirmar semantic_error(15, *linha)
     >   rever erro(0) em coloca_tipo_tabela()
 >   Pode chamar função solta, sem atribuição? (se puder, afeta chamada_proc)
+>   Confirmar se precisa dar erro ou só pegar os 4 primeiros em números > 9999
 >   confirmar a situação:
     > função soma
     >   proc procedimento

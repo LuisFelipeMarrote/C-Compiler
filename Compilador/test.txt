@@ -21,7 +21,7 @@
     RD              
     STR     8       
     LDV     8       
-    LDC     1000    
+    LDC     10      
     CMA             
     JMPF    6       
     CALL    3       
@@ -32,6 +32,7 @@
     LDV     4       
     LDV     5       
     ADD             
+    RETURN          
 0   NULL            
     CALL    8       
     STR     3       
