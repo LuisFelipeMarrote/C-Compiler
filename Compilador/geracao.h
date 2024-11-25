@@ -71,9 +71,9 @@ void Gera_operador(enum tipos op)
     } else if (op == snao) { 
         Gera("    ","NEG     ","    ","    ");
     }else if (op == smaior) {
-        Gera("    ","CME     ","    ","    ");
-    }else if (op == smenor) {
         Gera("    ","CMA     ","    ","    ");
+    }else if (op == smenor) {
+        Gera("    ","CME     ","    ","    ");
     }else if (op == sig) {
         Gera("    ","CEQ     ","    ","    ");
     }else if (op == sdif) {

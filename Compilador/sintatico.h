@@ -41,7 +41,7 @@ void Analisa_declaracao_funcao();
 void Analisa_expressao_simples();
 void Analisa_expressao();
 void Analisa_fator();
-void Analisa_chamada_funcao();
+void Analisa_chamada_funcao(entrada_tab_simbolos* tab_simb);
 enum tipos analisa_tipo_expressao_semantica();
 void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token);
 
@@ -379,7 +379,7 @@ void Analisa_fator(){
         entrada_tab_simbolos* tab_simb = busca_ident(tk->lexema);
         if(tab_simb != NULL){
             if(tab_simb->tipo == fint || tab_simb->tipo == fbool){
-                Analisa_chamada_funcao();
+                Analisa_chamada_funcao(tab_simb); //<-
             }else{
                 expressao_infix = adicionar_token(expressao_infix, *tk);
                 AnalisadorLexical(fp,linha,tk);
@@ -505,6 +505,7 @@ void Analisa_atribuicao(token ident){
                     if(tipo != sinteiro){
                         semantic_error(9, *linha);
                     }
+                    
                 }else{
                     if(tipo != sbooleano){
                         semantic_error(10, *linha);
@@ -513,6 +514,7 @@ void Analisa_atribuicao(token ident){
             }else{
                 semantic_error(21, *linha);
             }
+            Gera_str(str_rotulo_var(0));
         }else if(destino->tipo == tipo){
             Gera_str(destino->rotulo);
         }else{
@@ -538,10 +540,9 @@ void Chamada_procedimento(token ident){
 
 }
 
-void Analisa_chamada_funcao(){
-    Gera_call(str_rotulo(rotulo));
+void Analisa_chamada_funcao(entrada_tab_simbolos* tab_simb){
+    Gera_call(tab_simb->rotulo);
     Gera_load_variavel(str_rotulo_var(0));
-    rotulo++;
     expressao_infix = adicionar_token(expressao_infix, *tk);
     AnalisadorLexical(fp,linha,tk);
 }
@@ -580,6 +581,9 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
                 if(tk->simbolo == sponto){
                     AnalisadorLexical(fp,linha,tk);
                     if(feof(fp)){
+                        int num_var = qtde_variaveis_escopo();
+                        if(num_var > 0)
+                            Gera_dalloc(num_var);
                         Gera_end_programn();
                         printf("SUCESSO!\n");
                     }else{
