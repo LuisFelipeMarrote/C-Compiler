@@ -44,6 +44,7 @@ void Gera_call(char rotulo[5]);
 void Gera_return();
 void Gera_str(char rotulo[5]);
 void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]);
+void Gera_final(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]);
 void Cria_arquivo();
 
 //essa função vou implementar dps, mas ela é so para formatar
@@ -112,7 +113,7 @@ void Gera_start_programn()
 void Gera_end_programn()
 {
     Gera_dalloc(1);
-    Gera("    ","HLT     ","    ","    ");
+    Gera_final("    ","HLT     ","    ","    ");
 }
 
 void Gera_jmp(char rotulo[5])
@@ -209,6 +210,23 @@ void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
     strcat(linha, atr2);    
 
     strcat(linha, "\n");
+    fputs(linha, new_fp);
+}
+
+//feio, mas resolve.
+void Gera_final(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
+
+    //Seta_string(&(instrucao[strlen(instrucao)]), 9, strlen(instrucao));
+    // Isso daqui so nao da certo, pois eu nao posso alterar essa regiao de memoria que foraam passados por parametros, pois passei como string literal,
+    // ou seja, so da para ler.
+    // Um jeito de consetar é copiar para outra string auxiliar. 
+
+    char linha[22] = {}; //ver como inicializa a lista vazia 
+
+    strcat(linha, rotulo);
+    strcat(linha, instrucao);
+    strcat(linha, atr1);
+    strcat(linha, atr2);    
     fputs(linha, new_fp);
 }
 
