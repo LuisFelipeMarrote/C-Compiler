@@ -162,7 +162,7 @@ void Gera_alloc(int num_var)
 // vou tirar daqui a variavel qntd_var e passar como parametro dps.
 void Gera_dalloc(int num_var)
 {
-    Gera("    ","DALLOC  ",str_rotulo(qntd_var - 1),str_rotulo2(num_var));
+    Gera("    ","DALLOC  ",str_rotulo(qntd_var - num_var),str_rotulo2(num_var));
     qntd_var = qntd_var - num_var;
 }
 
