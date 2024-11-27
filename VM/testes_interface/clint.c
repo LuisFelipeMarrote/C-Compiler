@@ -10,7 +10,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 // Global variables
 HINSTANCE g_hInst;
 HWND g_hListView, g_hMemoryListView, g_hOutputEdit;
-HWND g_hNormalRadio, g_hStepByStepRadio;
+HWND g_hNormalRadio, g_hStepByStepRadio,hGrpButtons;
 HWND g_hExecuteButton, g_hStopButton;
 HMENU g_hMainMenu;
 
@@ -103,32 +103,37 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             int memorylistY = hlistviewY;
 
             //saída de dados:
-            int outputWidth = parent_Width * 0.6;
+            int outputWidth = parent_Width * 0.57;
             int outputHeight = parent_height * 0.22;
             int outputX = hlistviewX;
             int outputY = hlistviewY + hlistViewHeight + 5;
 
-            //botoes 
-                //normalX, normalY, normalWidth, normalHeight,
-            int normalWidth = 100;
+            //botoes radio: 
+            int caixaWidth = 200;
+            int caixaHeight = 90;
+            int caixaX = outputX + outputWidth + 10;
+            int caixaY = outputY + ((outputHeight/2) - (caixaHeight/2));
+
+            int normalWidth = caixaWidth - 20;
             int normalHeight = 30;
-            int normalX = 320;
-            int normalY = 320;
+            int normalX = caixaX + 10;
+            int normalY = caixaY + 20;
             
-            int passoWidth = 100;
+            int passoWidth = normalWidth;
             int passoHeight = 30;
-            int passoX = 320;
-            int passoY = 350;
+            int passoX = caixaX + 10;
+            int passoY = normalY + normalHeight;
             
+            //botoes execução:
             int executarWidth = 100;
             int executarHeight = 30;
-            int executarX = 440;
-            int executarY = 320;
+            int executarX = caixaX + caixaWidth + 10;
+            int executarY = caixaY + 15;
             
             int pararWidth = 100;
             int pararHeight = 30;
-            int pararX = 440;
-            int pararY = 360;
+            int pararX = executarX;
+            int pararY = executarY + executarHeight + 10;
 
             // Menu
             g_hMainMenu = CreateMenu();
@@ -209,18 +214,29 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             g_hOutputEdit = CreateWindowEx(
                 WS_EX_CLIENTEDGE,
                 "EDIT",
-                "",
+                "Saída",
                 WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL,
                 outputX, outputY, outputWidth, outputHeight,
                 hwnd, NULL, g_hInst, NULL
             );
             
             // Create Radio buttons
+            
+            hGrpButtons=CreateWindowEx(
+                WS_EX_WINDOWEDGE,
+                "BUTTON",
+                "Select Process Mode:", 
+                WS_VISIBLE | WS_CHILD|BS_GROUPBOX,
+                caixaX,caixaY,
+                caixaWidth,caixaHeight, 
+                hwnd, /*(HMENU)IDC_GRPBUTTONS*/ NULL, g_hInst, NULL
+            );
+
             g_hNormalRadio = CreateWindowEx(
                 0,
                 "BUTTON",
                 "Normal",
-                WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
+                WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP,
                 normalX, normalY, normalWidth, normalHeight,
                 hwnd, NULL, g_hInst, NULL
             );
@@ -266,18 +282,84 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             return 0;
         }
         
+        /*case WM_SIZE:
+        {
+            // Get new window dimensions
+            int width = LOWORD(lParam);
+            int height = HIWORD(lParam);
+
+            // Reposition and resize controls proportionally
+            RECT parentRect;
+            GetClientRect(hwnd, &parentRect);
+
+            // Code ListView
+            int hlistViewWidth = width * 0.76;
+            int hlistViewHeight = height * 0.7;
+            MoveWindow(g_hListView, 10, 10, hlistViewWidth, hlistViewHeight, TRUE);
+
+            // Memory ListView
+            int memoryListWidth = width * 0.2;
+            int memorylistX = 10 + hlistViewWidth + 14;
+            MoveWindow(g_hMemoryListView, memorylistX, 10, memoryListWidth, hlistViewHeight, TRUE);
+
+            // Output Edit box
+            int outputWidth = width * 0.6;
+            int outputHeight = height * 0.22;
+            MoveWindow(g_hOutputEdit, 10, 10 + hlistViewHeight + 5, outputWidth, outputHeight, TRUE);
+
+            // Adjust radio buttons and other controls as needed
+            // You'll want to calculate new positions based on width and height
+            MoveWindow(g_hNormalRadio, 320, height * 0.6, 100, 30, TRUE);
+            MoveWindow(g_hStepByStepRadio, 320, height * 0.6 + 30, 100, 30, TRUE);
+            MoveWindow(g_hExecuteButton, 440, height * 0.6, 100, 30, TRUE);
+            MoveWindow(g_hStopButton, 440, height * 0.6 + 40, 100, 30, TRUE);
+
+            return 0;
+        }*/
+
         case WM_COMMAND:
             // Handle button clicks and other commands here
             //rever isso tudo! (placeholder)
             switch (LOWORD(wParam))
                 {
-                    case 1000: // "Abrir"
-                        // Adicione o código para abrir um arquivo aqui
+                    case 1000: // ID para "Abrir"
+                    {
+                        OPENFILENAME ofn;
+                        char szFile[260] = {0};
+
+                        ZeroMemory(&ofn, sizeof(ofn));
+                        ofn.lStructSize = sizeof(ofn);
+                        ofn.hwndOwner = hwnd;
+                        ofn.lpstrFile = szFile;
+                        ofn.nMaxFile = sizeof(szFile);
+                        ofn.lpstrFilter = "Arquivos de Texto (*.txt)\0*.txt\0Todos os Arquivos (*.*)\0*.*\0";
+                        ofn.nFilterIndex = 1;
+                        ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
+
+                        if (GetOpenFileName(&ofn)==TRUE) 
+                        {
+                            // Aqui você pode adicionar código para processar o arquivo aberto
+                            // Por exemplo, ler o conteúdo do arquivo
+                            FILE *file = fopen(ofn.lpstrFile, "r");
+                            if (file) 
+                            {
+                                // Limpa o conteúdo anterior do EditControl
+                                SetWindowText(g_hOutputEdit, "");
+
+                                /*char buffer[256];
+                                while (fgets(buffer, sizeof(buffer), file)) 
+                                {
+                                    // Adiciona cada linha ao EditControl
+                                    SendMessage(g_hOutputEdit, EM_REPLACESEL, 0, (LPARAM)buffer);
+                                }
+                                fclose(file);*/
+                            }
+                        }
                         break;
-                    case 1001: // "Sair"
-                        DestroyWindow(hwnd);
+                    }
+                    case 1001: // ID para "Sair"
+                        PostMessage(hwnd, WM_CLOSE, 0, 0);
                         break;
-                    // Outros casos de comando aqui
                 }
             break;
             
