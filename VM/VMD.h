@@ -73,6 +73,11 @@ void empilhar(Pilha *p, int atributo) {
 
     p->M[++(p->s)] = atributo;
     printf("Elemento %d empilhado.\n", atributo);
+    printf("Estado atual da pilha: ");
+    for (int i = 0; i <= p->s; i++) {
+        printf("%d ", p->M[i]);
+    }
+    printf("\n");
 }
  
 
@@ -308,11 +313,13 @@ void resolveInst(Pilha *p, FILE *file, int* count, struct Inst lista[MAX_INST]){
             break;
         
         case 17: // JMP p (Desviar sempre)
-            for (int i = 0; i < MAX_INST; i++) {
+            for (int i = -1; i < MAX_INST; i++) {
                 // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                 if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
+                    printf("\n rotulo = %s, instrucao = %s, atr1 = %s",lista[i].rotulo, lista[*count].instrucao, lista[*count].atr1);
                     // Se for igual, você pode executar a ação desejada
                     *count = i;
+                    return;
                     // Faça o que for necessário quando o rótulo for encontrado
                 }
             };
@@ -320,7 +327,7 @@ void resolveInst(Pilha *p, FILE *file, int* count, struct Inst lista[MAX_INST]){
 
         case 18: // JMPF p (Desviar se falso)
             if(desempilhar(p) == 0){
-                for (int i = 0; i < MAX_INST; i++) {
+                for (int i = -1; i < MAX_INST; i++) {
                     // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                     if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
                         // Se for igual, você pode executar a ação desejada
@@ -338,25 +345,28 @@ void resolveInst(Pilha *p, FILE *file, int* count, struct Inst lista[MAX_INST]){
  
         case 20: // RD (Leitura)
             printf("Digite o próximo valor de entrada: ");
-            char* entrada;
-            scanf("%d", entrada);
-            empilhar(p, atoi(entrada));
+            int entrada;
+            fflush(stdin);
+            scanf("%d", &entrada);
+            printf("\n Entrada = %d", entrada);
+            empilhar(p, entrada);
             break;
 
         case 21: // PRN (Impressão)
             printf("%d\n", desempilhar(p));
             break;
 
-        case 23: // ALLOC m (Alocar memória)
+        case 23: // ALLOC (Alocar memória)
             n = atoi(lista[*count].atr2);
             for (int k = 0; k < n; k++){
-                int m = atoi(lista[*count].atr1);
+                m = atoi(lista[*count].atr1);
                 empilhar(p, p->M[m+k]);
             }
             break;
 
         case 24: // DALLOC m (Liberar memória)
-            for (int k = (*(int*)lista[*count].atr2) - 1; k >= 0; k--) {
+            n = atoi(lista[*count].atr2);
+            for (int k = n - 1; k >= 0; k--) {
                 int m = atoi(lista[*count].atr1);
                 p->M[m+k] = p->M[p->s];
                 p->s = p->s - 1;                 // Decrementa o topo da pilha
@@ -364,14 +374,17 @@ void resolveInst(Pilha *p, FILE *file, int* count, struct Inst lista[MAX_INST]){
             break;
 
         case 25: // CALL p (Chamar procedimento ou função)
+            empilhar(p, ((*count)+1));
             for (int i = 0; i < MAX_INST; i++) {
-                empilhar(p, (*count+1));
+                
                 // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                 if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
                     // Se for igual, você pode executar a ação desejada
                     *count = i;
+                    return;
                     // Faça o que for necessário quando o rótulo for encontrado
                 }
+            }
             break;
 
         case 26: // Return
@@ -380,16 +393,11 @@ void resolveInst(Pilha *p, FILE *file, int* count, struct Inst lista[MAX_INST]){
         default:
             printf("Instrução inválida: \n");
             break;
-        }
     }
 }
 
 // Início da MVD
-void MVD(Pilha *p, FILE *file) {
-    struct Inst lista[MAX_INST];
-    int countres = 0;
-    lerInstrucoes(file, lista);
-    char *result = lista[0].instrucao;
+void MVD(Pilha *p, struct Inst lista[], int countres, FILE *file) {
     if (strcmp(lista[0].instrucao, "START   ") != 0) {
         printf("Erro: A primeira instrução deve ser 'START'.\n");
         return;
@@ -399,4 +407,6 @@ void MVD(Pilha *p, FILE *file) {
             resolveInst(p, file, &countres, lista);
     }
     printf("\nHLT - FIM DO PROGRAMA");
+    
+    liberarPilha(p);
 }
