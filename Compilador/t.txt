@@ -1,19 +1,17 @@
-RVISÕES LUCAS:
-
->   verdadeiro ou falso
-
-
 Incertezas:
 >   confirmar semantico chamada de função
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 >   ver alocação dinâmica em instruções
+>   rever jmpf e jmp
 >   ver a verificação de start e hlt no passo-a-passo
 >   colocar erros como pop-up
 >   ver o que fazer caso o usuario cancele o input
 >   ver comportamento da vm:
     > return(1) apos inicializar pilha
     > fechar a janela caso clique outro botao fora dela
+    > Executar varias vezes
+    > ele ta fechando aleatoriamente (nao tá mtt estável acho)
 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
@@ -34,12 +32,12 @@ Perguntas para o Freitas:
 > o que ele prefere: criar programa com nome do .txt ou com o nome do programa (no codigo)
 > conferir observações no código gerado
 > precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
+> precisamos converter rótulos p linhas?
 
 Observações no código gerado:
 > Allocs precisam ser do jeito que ele deu de exemplo?
     > no nosso ele separa allocs por tipo (ex.: var a,b: int; z: bool;  gera 2 allocs diferentes)
     > no dele gera um alloc só no declvar inteiro
-> str0 antes do return d funcao
 
 
 Melhorias opcionais:
