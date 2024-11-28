@@ -10,7 +10,11 @@
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
-            "externalConsole": true
+            "externalConsole": false,
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+            }
         }
     ]
 }

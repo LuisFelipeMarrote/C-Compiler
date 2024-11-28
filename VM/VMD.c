@@ -151,13 +151,13 @@ void ExecutarPrograma() {
 
 // Função para parar a execução
 void PararExecucao() {
-    OutputDebugString("Programa entrou na parada de execução\n");
+    printf("Programa entrou na parada de execução\n");
     // Limpar a pilha
     if (p != NULL) {
         liberarPilha();
         p = NULL;
     }
-    OutputDebugString("liberou a pilha\n");
+    printf("liberou a pilha\n");
 
     // Limpar contadores e estados
     countres = 0;
@@ -281,11 +281,14 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
     LPSTR lpCmdLine, int nCmdShow) {
-    
-    setlocale(LC_ALL, "pt_BR.UTF-8"); // Configura o idioma para português (Brasil)
+    setlocale(LC_ALL, "Portuguese_Brazil.1252");
+    SetConsoleOutputCP(1252);
+    AllocConsole();
+    freopen("CONOUT$", "w", stdout);
+    system("chcp 65001");  // UTF-8
     
     g_hInst = hInstance;
-    
+
     // Register window class
     WNDCLASSEX wc = {0};
     wc.cbSize = sizeof(WNDCLASSEX);
@@ -618,7 +621,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         break;
 
                     case ID_STOP_BUTTON:
-                        OutputDebugString("apertou o botao de parar\n");
+                        printf("apertou o botao de parar\n");
                         if (HIWORD(wParam) == BN_CLICKED)
                         {
                             PararExecucao();

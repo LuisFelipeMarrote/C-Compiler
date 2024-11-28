@@ -1,4 +1,5 @@
 Incertezas:
+>   implementar 'verdadeiro' e 'falso' no compilador 
 >   confirmar semantico chamada de função
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
@@ -13,6 +14,14 @@ Incertezas:
     > Executar varias vezes
     > ele ta fechando aleatoriamente (nao tá mtt estável acho)
 > scrolls (memoria sempre em baixo, codigo sempre na linha)
+
+UI Compilador:
+> scrolls horizontais
+> colocar formato ao salvar txt e obj ao Compilador
+> menu fechar
+> rever se file intermediaria é criada e fechada
+> Resetar rótulos após compilação
+> implementar erros
 
 
 Perguntas para o Freitas:
@@ -44,3 +53,5 @@ call 5 -> 33
 call 4 -> 28
 call 2 -> 14
 call 5 -> 33
+
+....................llllll
