@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "windowsx.h": "c",
+        "windows.h": "c"
+    }
+}

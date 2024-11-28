@@ -1,18 +1,19 @@
 {
+    "version": "2.0.0",
     "tasks": [
         {
-            "type": "cppbuild",
-            "label": "C/C++: gcc.exe arquivo de build ativo",
-            "command": "E:\\msys64\\ucrt64\\bin\\gcc.exe",
+            "type": "process",
+            "label": "gcc build active file",
+            "command": "gcc",
             "args": [
-                "-fdiagnostics-color=always",
-                "-g",
-                "${file}",
                 "-o",
-                "${fileDirname}\\${fileBasenameNoExtension}.exe"
+                "VMD.exe",
+                "VM/VMD.c",
+                "-lcomctl32",
+                "-mwindows"
             ],
             "options": {
-                "cwd": "${fileDirname}"
+                "cwd": "${workspaceFolder}"
             },
             "problemMatcher": [
                 "$gcc"
@@ -20,9 +21,7 @@
             "group": {
                 "kind": "build",
                 "isDefault": true
-            },
-            "detail": "Tarefa gerada pelo Depurador."
+            }
         }
-    ],
-    "version": "2.0.0"
+    ]
 }
