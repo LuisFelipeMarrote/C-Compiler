@@ -864,21 +864,21 @@ void resolveInst(int* count){
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n + m; // m[s-1] + m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 4: // SUB (Subtrair)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n - m; // m[s-1] - m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 5: // MULT (Multiplicar)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n * m; // m[s-1] * m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 6: // DIVI (Dividir)
@@ -886,7 +886,7 @@ void resolveInst(int* count){
             n = desempilhar(); //m[s-1]
             if (m != 0){
                 resultado = n / m; // m[s-1] div m[s]
-                p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+                p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             }
             else
                 printf("Erro: Divisão por zero!\n");
@@ -900,14 +900,14 @@ void resolveInst(int* count){
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n && m; // m[s-1] and m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 9: // OR (Disjunção)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n || m; // m[s-1] OU m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
             
         case 10: // NEG (Negação)
@@ -918,42 +918,43 @@ void resolveInst(int* count){
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n < m; // m[s-1] < m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            char* teste;
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 12: // CMA (Comparar maior)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n > m; // m[s-1] > m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 13: // CEQ (Comparar igual)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n == m; // m[s-1] = m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 14: // CDIF (Comparar desigual)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n != m; // m[s-1] != m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 15: // CMEQ (Comparar menor ou igual)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n <= m; // m[s-1] <= m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 16: // CMAQ (Comparar maior ou igual)
             m = desempilhar(); //m[s]
             n = desempilhar(); //m[s-1]
             resultado = n >= m; // m[s-1] >= m[s]
-            p->M[(p->s)--] = resultado; //m[s-1] = res; s = s-1
+            p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
         
         case 17: // JMP p (Desviar sempre)
