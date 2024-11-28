@@ -13,7 +13,7 @@ Incertezas:
 >   ver o que fazer caso o usuario cancele o input
 >   ver comportamento da vm:
     > return(1) apos inicializar pilha
-    > clicar executar antes de fechar janela de entrada
+    > fechar a janela caso clique outro botao fora dela
 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
@@ -33,6 +33,7 @@ Perguntas para o Freitas:
     > fim
 > o que ele prefere: criar programa com nome do .txt ou com o nome do programa (no codigo)
 > conferir observações no código gerado
+> precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
 
 Observações no código gerado:
 > Allocs precisam ser do jeito que ele deu de exemplo?

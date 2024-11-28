@@ -17,8 +17,6 @@
 #define IDOK 1
 #define IDCANCEL 2
 
-
-
 // Window procedure declaration
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -170,60 +168,37 @@ void PararExecucao() {
     SetWindowText(g_hOutputEdit, "Execução interrompida.");
 }
 
-INT_PTR CALLBACK InputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
-    switch (message) {
-    case WM_INITDIALOG:
-        // Salva o buffer para o valor de entrada no lParam
-        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
-        return TRUE;
-
-    case WM_COMMAND:
-        switch (LOWORD(wParam)) {
-        case IDOK: {
-            char* entradaStr = (char*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
-            // Obtém o texto do campo de entrada
-            GetDlgItemText(hDlg, IDC_INPUT_FIELD, entradaStr, 256);
-            EndDialog(hDlg, IDOK);
-            return TRUE;
-        }
-        case IDCANCEL:
-            EndDialog(hDlg, IDCANCEL);
-            return TRUE;
-        }
-        break;
-    }
-    return FALSE;
-}
-
 LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
     static char* entradaStr;
 
     switch (message) {
-    case WM_CREATE:
-        entradaStr = NULL;
-        return 0;
+        case WM_INITDIALOG:
+            entradaStr = (char*)lParam; // Armazena o buffer
+            return TRUE;
 
-    case WM_INITDIALOG:
-        entradaStr = (char*)lParam; // Armazena o buffer
-        return TRUE;
-
-    case WM_COMMAND:
-        switch (LOWORD(wParam)) {
-        case IDOK: {
-            char buffer[256];
-            // Obtém o texto digitado no campo
-            GetDlgItemText(hDlg, IDC_INPUT_FIELD, buffer, sizeof(buffer));
-            if (entradaStr) strcpy(entradaStr, buffer); // Salva no buffer
-            DestroyWindow(hDlg); // Fecha o diálogo
-            PostQuitMessage(0);  // Finaliza o loop de mensagens
-            return 0;
-        }
-        case IDCANCEL:
-            DestroyWindow(hDlg); // Fecha o diálogo
-            PostQuitMessage(0);  // Finaliza o loop de mensagens
-            return 0;
-        }
-        break;
+        case WM_COMMAND:
+            switch (LOWORD(wParam)) {
+            case IDOK: {
+                char buffer[256];
+                // Obtém o texto digitado no campo
+                GetDlgItemText(hDlg, IDC_INPUT_FIELD, buffer, sizeof(buffer));
+                if (entradaStr != NULL){
+                    strcpy(entradaStr, buffer); // Salva no buffer
+                    char* str = buffer;
+                    SetWindowText(g_hOutputEdit, str);
+                }else{
+                    SetWindowText(g_hOutputEdit, "--------------------");
+                }
+                DestroyWindow(hDlg); // Fecha o diálogo
+                PostQuitMessage(0);  // Finaliza o loop de mensagens
+                return 0;
+            }
+            case IDCANCEL:
+                DestroyWindow(hDlg); // Fecha o diálogo
+                PostQuitMessage(0);  // Finaliza o loop de mensagens
+                return 0;
+            }
+            break;
     }
 
     return DefWindowProc(hDlg, message, wParam, lParam);
@@ -704,12 +679,16 @@ Pilha* inicializarPilha(int capacidadeInicial) {
         return NULL;
     }
     
-    p->M = (int*)malloc(capacidadeInicial * sizeof(int));
+    //p->M = (int*)malloc(capacidadeInicial * sizeof(int));
+    p->M = calloc(capacidadeInicial, sizeof(int));
     if (p->M == NULL) {
         free(p);
         printf("Erro ao alocar memória para a pilha.\n");
         exit(1);
     }
+    /*for(int i = 0; i< capacidadeInicial; i++){
+        p->M[i] = 0;
+    }*/
     p->s = -1;
     p->capacidade = capacidadeInicial;
     AtualizarListViewMemoria();
@@ -878,7 +857,7 @@ void resolveInst(int* count){
             break;
 
         case 2: // LDV n (Carregar variavel)
-            empilhar(atoi(lista[*count].atr1));
+            empilhar(p->M[atoi(lista[*count].atr1)]);
             break;
 
         case 3: // ADD (Somar)
