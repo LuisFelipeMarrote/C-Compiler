@@ -14,22 +14,6 @@ Incertezas:
     > ele ta fechando aleatoriamente (nao tá mtt estável acho)
 
 Perguntas para o Freitas:
->   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
->   Precisa colocar erros que em teoria nunca vão acontecer? (var nao declarada ao colocar tipo)
-    >   confirmar semantic_error(15, *linha)
-    >   rever erro(0) em coloca_tipo_tabela()
->   Pode chamar função solta, sem atribuição? (se puder, afeta chamada_proc)
->   Confirmar se precisa dar erro ou só pegar os 4 primeiros em números > 9999
->   confirmar a situação:
-    > função soma
-    >   proc procedimento
-    >   inicio
-    >       soma := 0
-    >   fim
-    > inicio
-    >   procedimento
-    > fim
-> o que ele prefere: criar programa com nome do .txt ou com o nome do programa (no codigo)
 > conferir observações no código gerado
 > precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
 > precisamos converter rótulos p linhas?

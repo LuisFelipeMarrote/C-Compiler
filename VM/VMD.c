@@ -46,6 +46,7 @@ Pilha *p;
 int i = 0;
 struct Inst lista[MAX_INST];
 int countres = -1;
+int *rotulos;
 
 Pilha* inicializarPilha(int capacidadeInicial);
 int pilhaVazia(); 
@@ -173,21 +174,30 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
 
     switch (message) {
         case WM_INITDIALOG:
-            entradaStr = (char*)lParam; // Armazena o buffer
+            //entradaStr = (char*)lParam; // Armazena o buffer
             return TRUE;
 
         case WM_COMMAND:
             switch (LOWORD(wParam)) {
             case IDOK: {
-                char buffer[256];
+                char buffer[12];
+                //sprintf(buffer, "%d", (sizeof(entradaStr) / sizeof(entradaStr[0])));
                 // Obtém o texto digitado no campo
+                //itoa((sizeof(entradaStr) / sizeof(entradaStr[0])), buffer,10);
+                //memcpy(entradaStr,buffer,(sizeof(entradaStr) / sizeof(entradaStr[0])));
                 GetDlgItemText(hDlg, IDC_INPUT_FIELD, buffer, sizeof(buffer));
-                if (entradaStr != NULL){
-                    strcpy(entradaStr, buffer); // Salva no buffer
-                    char* str = buffer;
-                    SetWindowText(g_hOutputEdit, str);
+                if (!entradaStr){
+                    //SetWindowText(g_hOutputEdit, "str");
+                    //char* str = buffer;
+                    SetWindowText(g_hOutputEdit, buffer);
+                    int entrada = atoi(buffer);
+                    empilhar(entrada);
+                    
                 }else{
-                    SetWindowText(g_hOutputEdit, "--------------------");
+                    //char str[30] = "--------------------";
+                    //char* ajuda = "///////";
+                    //strcat(str, ajuda);
+                    SetWindowText(g_hOutputEdit, "buffer");
                 }
                 DestroyWindow(hDlg); // Fecha o diálogo
                 PostQuitMessage(0);  // Finaliza o loop de mensagens
@@ -997,8 +1007,7 @@ void resolveInst(int* count){
             empilhar(entrada);*/
             char entradaStr[256] = "";
             if (ShowCustomDialog(g_hInst, NULL, entradaStr)) {
-                int entrada = atoi(entradaStr);
-                empilhar(entrada);
+                printf("Entrada emilhada\n");
             } else {
                 printf("Entrada cancelada pelo usuário.\n");
             }
