@@ -615,3 +615,12 @@ void limpa_memoria(){
         free(temp);
     }
 }
+
+void compilar(FILE *fp, char* erro){
+    atexit(limpa_memoria);
+
+    token main_tk;
+    int linha_main = 1;
+    caractere = fgetc(fp); 
+    AnalisadorSintatico(fp,&linha_main,&main_tk);
+}
