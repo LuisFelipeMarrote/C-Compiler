@@ -12,17 +12,11 @@ Incertezas:
     > fechar a janela caso clique outro botao fora dela
     > Executar varias vezes
     > ele ta fechando aleatoriamente (nao tá mtt estável acho)
+> scrolls (memoria sempre em baixo, codigo sempre na linha)
+
 
 Perguntas para o Freitas:
-> conferir observações no código gerado
 > precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
-> precisamos converter rótulos p linhas?
-
-Observações no código gerado:
-> Allocs precisam ser do jeito que ele deu de exemplo?
-    > no nosso ele separa allocs por tipo (ex.: var a,b: int; z: bool;  gera 2 allocs diferentes)
-    > no dele gera um alloc só no declvar inteiro
-
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
@@ -30,3 +24,23 @@ Melhorias opcionais:
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função
 
+allocs: 
+-> pilha
+-> memoria da pilha
+-> 
+
+fontes de crash: 
+> botão parar
+> read (as vezes)
+> 
+
+
+retornos: 
+call 2 -> 41
+call 5 -> 33
+call 4 -> 28
+call 2 -> 14
+call 5 -> 33
+call 4 -> 28
+call 2 -> 14
+call 5 -> 33

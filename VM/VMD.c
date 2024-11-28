@@ -7,7 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_INST 100
+#define MAX_INST 50
 
 #define ID_NORMAL_RADIO    201
 #define ID_STEP_RADIO      202
@@ -151,11 +151,13 @@ void ExecutarPrograma() {
 
 // Função para parar a execução
 void PararExecucao() {
+    OutputDebugString("Programa entrou na parada de execução\n");
     // Limpar a pilha
     if (p != NULL) {
         liberarPilha();
         p = NULL;
     }
+    OutputDebugString("liberou a pilha\n");
 
     // Limpar contadores e estados
     countres = 0;
@@ -517,10 +519,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 pararX, pararY, pararWidth, pararHeight,
                 hwnd, (HMENU)ID_STOP_BUTTON, g_hInst, NULL
             );
-            
-            char str1[12] = " ", str2[12] = " ";
-            sprintf(str1, "%d", parent_height);
-            sprintf(str2, "%d", parent_Width);
+
 
             // Set default radio button
             SendMessage(g_hStepByStepRadio, BM_SETCHECK, BST_CHECKED, 0);
@@ -619,6 +618,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         break;
 
                     case ID_STOP_BUTTON:
+                        OutputDebugString("apertou o botao de parar\n");
                         if (HIWORD(wParam) == BN_CLICKED)
                         {
                             PararExecucao();
@@ -670,6 +670,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
             
         case WM_DESTROY:
+            liberarPilha();
             PostQuitMessage(0);
             return 0;
     }
@@ -688,8 +689,7 @@ Pilha* inicializarPilha(int capacidadeInicial) {
         printf("Erro: Falha na alocação da pilha\n");
         return NULL;
     }
-    
-    //p->M = (int*)malloc(capacidadeInicial * sizeof(int));
+
     p->M = calloc(capacidadeInicial, sizeof(int));
     if (p->M == NULL) {
         free(p);
@@ -1025,12 +1025,12 @@ void resolveInst(int* count){
             }
             break;
 
-        case 24: // DALLOC m (Liberar memória)
+        case 24: // DALLOC m, n (Liberar memória)
             n = atoi(lista[*count].atr2);
-            for (int k = n - 1; k >= 0; k--) {
-                int m = atoi(lista[*count].atr1);
+            int m = atoi(lista[*count].atr1);
+            for (int k = (n - 1); k >= 0; k--) {
                 p->M[m+k] = p->M[p->s];
-                p->s = p->s - 1;                 // Decrementa o topo da pilha
+                p->s = (p->s) - 1;                 // Decrementa o topo da pilha
             }
             break;
 
@@ -1071,3 +1071,4 @@ void MVD() {
     
     liberarPilha(p);
 }
+
