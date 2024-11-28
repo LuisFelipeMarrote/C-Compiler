@@ -1,0 +1,134 @@
+
+INT_PTR CALLBACK InputDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+    switch (message) {
+    case WM_INITDIALOG:
+        // Salva o buffer para o valor de entrada no lParam
+        SetWindowLongPtr(hDlg, GWLP_USERDATA, lParam);
+        return TRUE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDOK: {
+            char* entradaStr = (char*)GetWindowLongPtr(hDlg, GWLP_USERDATA);
+            // Obtém o texto do campo de entrada
+            GetDlgItemText(hDlg, IDC_INPUT_FIELD, entradaStr, 256);
+            EndDialog(hDlg, IDOK);
+            return TRUE;
+        }
+        case IDCANCEL:
+            EndDialog(hDlg, IDCANCEL);
+            return TRUE;
+        }
+        break;
+    }
+    return FALSE;
+}
+
+LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
+    static char* entradaStr;
+
+    switch (message) {
+    case WM_CREATE:
+        entradaStr = NULL;
+        return 0;
+
+    case WM_INITDIALOG:
+        entradaStr = (char*)lParam; // Armazena o buffer
+        return TRUE;
+
+    case WM_COMMAND:
+        switch (LOWORD(wParam)) {
+        case IDOK: {
+            char buffer[256];
+            // Obtém o texto digitado no campo
+            GetDlgItemText(hDlg, IDC_INPUT_FIELD, buffer, sizeof(buffer));
+            if (entradaStr) strcpy(entradaStr, buffer); // Salva no buffer
+            DestroyWindow(hDlg); // Fecha o diálogo
+            PostQuitMessage(0);  // Finaliza o loop de mensagens
+            return 0;
+        }
+        case IDCANCEL:
+            DestroyWindow(hDlg); // Fecha o diálogo
+            PostQuitMessage(0);  // Finaliza o loop de mensagens
+            return 0;
+        }
+        break;
+    }
+
+    return DefWindowProc(hDlg, message, wParam, lParam);
+}
+
+int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
+    WNDCLASS wc = { 0 };
+    wc.lpfnWndProc = CustomDialogProc;  // Associar a função de procedimento
+    wc.hInstance = hInst;
+    wc.lpszClassName = "CustomDialog";
+
+    // Registra a classe da janela
+    RegisterClass(&wc);
+
+    // Cria a janela do diálogo
+    HWND hDlg = CreateWindowEx(
+        WS_EX_DLGMODALFRAME,
+        "CustomDialog",            // Classe da janela
+        "Entrada de Dados",        // Título da janela
+        WS_POPUP | WS_CAPTION | WS_SYSMENU,
+        CW_USEDEFAULT, CW_USEDEFAULT, 300, 150,  // Posição e tamanho
+        hWndParent, NULL, hInst, entradaStr); // Passa entradaStr no lParam
+
+    if (!hDlg) return 0;
+
+    // Campo de texto
+    CreateWindowEx(
+        0, "EDIT", "",
+        WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
+        20, 40, 260, 20,
+        hDlg, (HMENU)IDC_INPUT_FIELD, hInst, NULL);
+
+    // Botão OK
+    CreateWindowEx(
+        0, "BUTTON", "OK",
+        WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
+        50, 80, 80, 25,
+        hDlg, (HMENU)IDOK, hInst, NULL);
+
+    // Botão Cancelar
+    CreateWindowEx(
+        0, "BUTTON", "Cancelar",
+        WS_CHILD | WS_VISIBLE,
+        150, 80, 80, 25,
+        hDlg, (HMENU)IDCANCEL, hInst, NULL);
+
+    // Exibe a janela do diálogo
+    ShowWindow(hDlg, SW_SHOW);
+    UpdateWindow(hDlg);
+
+    // Loop de mensagens
+    MSG msg;
+    BOOL result;
+    while ((result = GetMessage(&msg, NULL, 0, 0)) != 0) {
+        if (result == -1) {
+            break; // Erro na leitura das mensagens
+        }
+
+        // Verifica se a mensagem é para o diálogo
+        if (!IsDialogMessage(hDlg, &msg)) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        }
+    }
+
+    return 1; // Retorna sucesso
+}
+
+
+---------------------
+case 20
+            /*if (ShowCustomDialog(g_hInst, NULL, entradaStr)) {
+                int entrada = atoi(entradaStr);
+                empilhar(entrada);
+            } else {
+                printf("Entrada cancelada pelo usuário.\n");
+            }*/
+
+

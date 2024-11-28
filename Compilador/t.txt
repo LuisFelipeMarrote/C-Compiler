@@ -7,7 +7,13 @@ Incertezas:
 >   confirmar semantico chamada de função
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
-
+>   ver alocação dinâmica em instruções
+>   ver a verificação de start e hlt no passo-a-passo
+>   colocar erros como pop-up
+>   ver o que fazer caso o usuario cancele o input
+>   ver comportamento da vm:
+    > return(1) apos inicializar pilha
+    > clicar executar antes de fechar janela de entrada
 
 Perguntas para o Freitas:
 >   Ao conferir duplicidade de procedimento ou função, precisa conferir se é um tipo? (ex.: declfunc conferir se é função ou só achar o nome)
@@ -40,3 +46,4 @@ Melhorias opcionais:
 
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função
+
