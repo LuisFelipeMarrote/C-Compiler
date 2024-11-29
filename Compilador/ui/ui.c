@@ -23,6 +23,8 @@ void AbrirArquivo(HWND hwnd);
 void SalvarArquivo(HWND hwnd);
 void SalvarArquivoOriginal(HWND hwnd);
 void Compilacao(HWND hwnd);
+void SetCursorToLine(HWND hEdit, int lineNumber);
+void HighlightLine(HWND hEdit, int lineNumber);
 void CloseFile(HWND hwnd);
 HWND hArquivo, hCodigo, hErros, hStatus, hCompile;
 
