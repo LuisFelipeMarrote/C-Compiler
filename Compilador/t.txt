@@ -16,8 +16,6 @@ Incertezas:
     > ele ta fechando aleatoriamente (nao tá mtt estável acho)
 > scrolls (memoria sempre em baixo, codigo sempre na linha)
 
-UI Compilador:
-> colocar em portugês
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos

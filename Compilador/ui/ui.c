@@ -17,6 +17,7 @@
 #define ID_FILE_CLOSE 1011
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+wchar_t* utf8_to_wchar(const char* str);
 void AddControls(HWND hwnd);
 void AddMenus(HWND hwnd);
 void AbrirArquivo(HWND hwnd);
@@ -52,6 +53,13 @@ int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdsho
         DispatchMessage(&msg);
     }
     return 0;
+}
+
+wchar_t* utf8_to_wchar(const char* str) {
+    int size_needed = MultiByteToWideChar(CP_UTF8, 0, str, -1, NULL, 0);
+    wchar_t* wstr = (wchar_t*)malloc(size_needed * sizeof(wchar_t));
+    MultiByteToWideChar(CP_UTF8, 0, str, -1, wstr, size_needed);
+    return wstr;
 }
 
 void AddMenus(HWND hwnd) {
@@ -292,8 +300,10 @@ void Compilacao(HWND hwnd){
 
     // Verificar se há erros
     if (strlen(erro) > 0) {
-        // Exibir erros no controle de erros
-        SetWindowTextA(hErros, erro);
+        wchar_t* werro = utf8_to_wchar(erro);
+        SetWindowTextW(hErros, werro);
+        free(werro);
+        
         if (linha_erro > 0) {
             HighlightLine(hCodigo, linha_erro);
             SetFocus(hCodigo);
@@ -301,7 +311,7 @@ void Compilacao(HWND hwnd){
         }
     } else {
         // Se não houver erros, mostrar mensagem de sucesso
-        SetWindowTextA(hErros, "Compilação concluída com sucesso!");
+        SetWindowTextW(hErros, L"Compilação concluída com sucesso!");
     }
 }
 
