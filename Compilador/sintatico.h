@@ -620,7 +620,7 @@ void limpa_memoria(){
     qntd_rotulo = 0;
 }
 
-void compilar(FILE *fp, char* erro){
+int compilar(FILE *fp, char* erro){
     atexit(limpa_memoria);
     
     error_buffer[0] = '\0';
@@ -630,10 +630,12 @@ void compilar(FILE *fp, char* erro){
         caractere = fgetc(fp); 
         AnalisadorSintatico(fp, &linha_main, &main_tk);
         strcpy(erro, "SUCESSO!\n");
+        return 0;
     } else {
         // Copy error message if an error occurred
         strcpy(erro, error_buffer);
         // Clean up
         limpa_memoria();
+        return *linha;
     }
 }

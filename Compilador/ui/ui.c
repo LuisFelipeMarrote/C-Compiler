@@ -1,6 +1,7 @@
 #include <windows.h>
 #include <commctrl.h>
 #include <stdio.h>
+#include <richedit.h>
 #include "../sintatico.h"
 
 #define ID_EDIT_ARQUIVO 1001
@@ -203,6 +204,16 @@ void CloseFile(HWND hwnd){
 
 }
 
+void SetCursorToLine(HWND hEdit, int lineNumber) {
+    int lineIndex = SendMessage(hEdit, EM_LINEINDEX, lineNumber - 1, 0);
+    int nextLineIndex = SendMessage(hEdit, EM_LINEINDEX, lineNumber, 0);
+    if (nextLineIndex == -1) {
+        nextLineIndex = GetWindowTextLength(hEdit);
+    }
+    SendMessage(hEdit, EM_SETSEL, lineIndex, lineIndex);
+    SendMessage(hEdit, EM_SCROLLCARET, 0, 0);
+}
+
 void Compilacao(HWND hwnd){
     // Limpar mensagens de erro anteriores
     SetWindowTextA(hErros, "");
@@ -244,7 +255,7 @@ void Compilacao(HWND hwnd){
     // Preparar variáveis para análise sintática
     char erro[1024] = {0};
     
-    compilar(fp, erro);
+    int linha_erro = compilar(fp, erro);;
 
     // Fechar arquivo
     fclose(fp);
@@ -255,6 +266,9 @@ void Compilacao(HWND hwnd){
     if (strlen(erro) > 0) {
         // Exibir erros no controle de erros
         SetWindowTextA(hErros, erro);
+        if (linha_erro > 0) {
+            SetCursorToLine(hCodigo, linha_erro);
+        }
     } else {
         // Se não houver erros, mostrar mensagem de sucesso
         SetWindowTextA(hErros, "Compilação concluída com sucesso!");
