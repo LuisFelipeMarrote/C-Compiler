@@ -233,6 +233,14 @@ void HighlightLine(HWND hEdit, int lineNumber) {
 }
 
 void Compilacao(HWND hwnd){
+    CHARFORMAT2 cf;
+    ZeroMemory(&cf, sizeof(cf));
+    cf.cbSize = sizeof(cf);
+    cf.dwMask = CFM_BACKCOLOR;
+    cf.crBackColor = RGB(255, 255, 255);  // Branco
+    SendMessage(hCodigo, EM_SETSEL, 0, -1);
+    SendMessage(hCodigo, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
+    
     // Limpar mensagens de erro anteriores
     SetWindowTextA(hErros, "");
 
