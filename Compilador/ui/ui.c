@@ -365,23 +365,23 @@ void AddControls(HWND hwnd) {
                            ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
                            10, 40, 760, 400,
                            hwnd, (HMENU)ID_EDIT_CODIGO, NULL, NULL);
-
+    /*
     // Status da linha e coluna
     hStatus = CreateWindowW(L"Static", L"Ln 1, Col 1",
                            WS_VISIBLE | WS_CHILD,
                            10, 450, 100, 20,
-                           hwnd, (HMENU)ID_STATUSBAR, NULL, NULL);
+                           hwnd, (HMENU)ID_STATUSBAR, NULL, NULL);*/
 
     // Label Erros
-    CreateWindowW(L"Static", L"Erros:",
+    CreateWindowW(L"Static", L"Erro:",
                  WS_VISIBLE | WS_CHILD,
-                 10, 480, 50, 20,
+                 10, 450, 50, 20,
                  hwnd, NULL, NULL, NULL);
 
     // Área de erros
     hErros = CreateWindowW(L"Edit", L"",
-                          WS_VISIBLE | WS_CHILD | WS_BORDER | ES_READONLY | ES_AUTOHSCROLL,
-                          10, 500, 650, 40,
+                          WS_VISIBLE | WS_CHILD | WS_BORDER | ES_READONLY | ES_MULTILINE ,
+                          10, 470, 650, 70,
                           hwnd, (HMENU)ID_EDIT_ERROS, NULL, NULL);
 
     // Botão Compilar

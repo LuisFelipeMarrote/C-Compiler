@@ -1,5 +1,6 @@
 Incertezas:
 >   implementar 'verdadeiro' e 'falso' no compilador 
+>   confirmar se noe de arquivo pode ter acento
 >   confirmar semantico chamada de função
 >   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
 >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
@@ -24,6 +25,7 @@ Melhorias opcionais:
 > perguntar se quer salvar ao abrir um arquivo em cima de outro
 > colocar formato ao salvar txt ao Compilador
 > scroll mais bonito em erro
+> redimencionar automaticamente
 
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função
