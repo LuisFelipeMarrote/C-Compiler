@@ -20,7 +20,6 @@ UI Compilador:
 > colocar o cursor na linha do erro
 > erro semantico 18
 > colocar em portugês
-> perdi acesso ao editor
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
