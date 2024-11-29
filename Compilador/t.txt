@@ -20,6 +20,7 @@ UI Compilador:
 > colocar o cursor na linha do erro
 > erro semantico 18
 > colocar em portugês
+> confirmar se um arquivo é fechado ao abrir outro
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos

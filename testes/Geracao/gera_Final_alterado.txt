@@ -21,7 +21,7 @@ var a,b,s: inteiro;
   procedimento ler;          
   inicio
      leia (c);
-     leia (a);
+     leia (z);
      s:= soma;                  
      escreva (s);
   fim;

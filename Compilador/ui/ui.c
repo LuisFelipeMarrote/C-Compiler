@@ -27,6 +27,8 @@ void CloseFile(HWND hwnd);
 HWND hArquivo, hCodigo, hErros, hStatus, hCompile;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow) {
+    LoadLibraryW(L"Msftedit.dll");
+    
     WNDCLASSW wc = {0};
     wc.hbrBackground = (HBRUSH)COLOR_WINDOW;
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
@@ -214,6 +216,22 @@ void SetCursorToLine(HWND hEdit, int lineNumber) {
     SendMessage(hEdit, EM_SCROLLCARET, 0, 0);
 }
 
+void HighlightLine(HWND hEdit, int lineNumber) {
+    CHARFORMAT2 cf;
+    ZeroMemory(&cf, sizeof(cf));
+    cf.cbSize = sizeof(cf);
+    cf.dwMask = CFM_BACKCOLOR;
+    cf.crBackColor = RGB(255, 200, 200);  // Cor de fundo rosa claro
+
+    int lineStart = SendMessage(hEdit, EM_LINEINDEX, lineNumber - 1, 0);
+    int lineEnd = SendMessage(hEdit, EM_LINEINDEX, lineNumber, 0);
+    if (lineEnd == -1) lineEnd = GetWindowTextLength(hEdit);
+
+    SendMessage(hEdit, EM_SETSEL, lineStart, lineEnd);
+    SendMessage(hEdit, EM_SETCHARFORMAT, SCF_SELECTION, (LPARAM)&cf);
+    SendMessage(hEdit, EM_SETSEL, lineStart, lineStart);
+}
+
 void Compilacao(HWND hwnd){
     // Limpar mensagens de erro anteriores
     SetWindowTextA(hErros, "");
@@ -267,6 +285,8 @@ void Compilacao(HWND hwnd){
         // Exibir erros no controle de erros
         SetWindowTextA(hErros, erro);
         if (linha_erro > 0) {
+            HighlightLine(hCodigo, linha_erro);
+            SetFocus(hCodigo);
             SetCursorToLine(hCodigo, linha_erro);
         }
     } else {
@@ -329,7 +349,7 @@ void AddControls(HWND hwnd) {
                             hwnd, (HMENU)ID_EDIT_ARQUIVO, NULL, NULL);
 
     // Área de código
-    hCodigo = CreateWindowW(L"Edit", L"",
+    hCodigo = CreateWindowW(L"RICHEDIT50W", L"",
                            WS_VISIBLE | WS_CHILD | WS_BORDER | 
                            WS_VSCROLL | WS_HSCROLL | 
                            ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
