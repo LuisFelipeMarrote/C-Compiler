@@ -92,6 +92,17 @@ char error_buffer[1024];
 // Declare jmp_buf global para controle de fluxo
 jmp_buf error_jump;
 
+
+
+void semantico18(int line, char lexema[], char* tipo1, char* tipo2){
+    snprintf(error_buffer, sizeof(error_buffer), 
+            "Erro na linha %d: Tipo de operando inválido (%s) para a operação. (encontrado %s = %s, e o tipo esperado é %s) [Código de erro - SEM18]\n",
+            line, lexema, lexema, tipo1, tipo2);
+
+    // Jump back to the compilation start point
+    longjmp(error_jump, 1);
+}
+
 // Function to handle errors
 void handle_error(ErrorType type, int code, int line) {
     const char* type_str;
@@ -141,16 +152,6 @@ void sintax_error(int code, int line) {
 
 void semantic_error(int code, int line) {
     handle_error(ERROR_SEMANTIC, code, line);
-}
-
-void semantico18(int code, int line, char lexema[], char* tipo1, char* tipos2){
-/*
-                    printf("Erro na linha %d:", linha);
-                    printf("Tipo de operando inválido para a operação '%s'", 
-                    lista_posfix->tk.lexema);
-                    printf(" (encontrado %s = %s, e o tipo esperado é %s", pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo) ,print_tipo_erros(analisando.tipos_operadores));
-                    printf("[Código de erro - Sem%d] \n", 18);// Jump back to the compilation start point
-                    longjmp(error_jump, 1);*/
 }
 
 // Function to get the last error message

@@ -16,14 +16,14 @@ Incertezas:
 > scrolls (memoria sempre em baixo, codigo sempre na linha)
 
 UI Compilador:
-> colocar formato ao salvar txtao Compilador
-> erro semantico 18
 > colocar em portugês
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
 > fecahr arquivo obj sem fechar o compilador
 > perguntar se quer salvar ao abrir um arquivo em cima de outro
+> colocar formato ao salvar txt ao Compilador
+> scroll mais bonito em erro
 
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função

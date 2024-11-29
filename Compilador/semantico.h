@@ -205,7 +205,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
             /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
-                    semantico18(0, 0, "", "", "");
+                    semantico18(linha, pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
                     return serro;   
                 }else{
                     node_lista_token* temp_free = pilha;
