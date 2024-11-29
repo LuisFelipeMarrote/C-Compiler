@@ -615,6 +615,9 @@ void limpa_memoria(){
         free(temp);
     }
 
+    memset (nome_arquivo,'\0',30);
+    qntd_var = 0;
+    qntd_rotulo = 0;
 }
 
 void compilar(FILE *fp, char* erro){

@@ -20,7 +20,7 @@ CASO ISSO FOR VERDADE EU VOU FAZER UM STR 0.
 #include "definicoes.h"
 
 FILE *new_fp; 
-char nome_arquivo[30];
+char nome_arquivo[30] = "";
 int qntd_var = 0;
 int qntd_rotulo = 0;
 char str_aux_atr1[5], str_aux_atr2[5], str_aux_rot[5], str_aux_inst[9];
@@ -215,7 +215,7 @@ void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
 void Cria_arquivo(token *tk){
 
     strcat(nome_arquivo, tk->lexema);
-    strcat(nome_arquivo, ".txt");
+    strcat(nome_arquivo, ".obj");
 
     new_fp = fopen(nome_arquivo, "r");
 
