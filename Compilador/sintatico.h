@@ -614,13 +614,23 @@ void limpa_memoria(){
         expressao_infix = expressao_infix->prox;
         free(temp);
     }
+
 }
 
 void compilar(FILE *fp, char* erro){
     atexit(limpa_memoria);
-
-    token main_tk;
-    int linha_main = 1;
-    caractere = fgetc(fp); 
-    AnalisadorSintatico(fp,&linha_main,&main_tk);
+    
+    error_buffer[0] = '\0';
+    if (setjmp(error_jump) == 0) {
+        token main_tk;
+        int linha_main = 1;
+        caractere = fgetc(fp); 
+        AnalisadorSintatico(fp, &linha_main, &main_tk);
+        strcpy(erro, "SUCESSO!\n");
+    } else {
+        // Copy error message if an error occurred
+        strcpy(erro, error_buffer);
+        // Clean up
+        limpa_memoria();
+    }
 }

@@ -177,6 +177,29 @@ void SalvarArquivoOriginal(HWND hwnd) {
 }
 
 void CloseFile(HWND hwnd){
+    // Verificar se há alterações não salvas
+    int length = GetWindowTextLengthA(hCodigo);
+    if (length > 0) {
+        int result = MessageBoxW(hwnd, 
+            L"Deseja salvar as alterações antes de fechar o arquivo?", 
+            L"Fechar Arquivo", 
+            MB_YESNOCANCEL | MB_ICONQUESTION);
+        
+        switch(result) {
+            case IDYES:
+                // Tenta salvar o arquivo
+                SalvarArquivo(hwnd);
+                break;
+            case IDCANCEL:
+                // Cancela a operação de fechar
+                return;
+        }
+    }
+    
+    // Limpa os campos de arquivo e código
+    SetWindowTextW(hArquivo, L"");
+    SetWindowTextA(hCodigo, "");
+    SetWindowTextA(hErros, "");
 
 }
 
@@ -225,6 +248,8 @@ void Compilacao(HWND hwnd){
 
     // Fechar arquivo
     fclose(fp);
+
+    limpa_memoria();
 
     // Verificar se há erros
     if (strlen(erro) > 0) {
@@ -285,13 +310,15 @@ void AddControls(HWND hwnd) {
 
     // Campo de arquivo
     hArquivo = CreateWindowW(L"Edit", L"",
-                            WS_VISIBLE | WS_CHILD | WS_BORDER,
+                            WS_VISIBLE | WS_CHILD | WS_BORDER | ES_AUTOHSCROLL,
                             70, 10, 600, 20,
                             hwnd, (HMENU)ID_EDIT_ARQUIVO, NULL, NULL);
 
     // Área de código
     hCodigo = CreateWindowW(L"Edit", L"",
-                           WS_VISIBLE | WS_CHILD | WS_BORDER | WS_VSCROLL | ES_MULTILINE | ES_AUTOVSCROLL,
+                           WS_VISIBLE | WS_CHILD | WS_BORDER | 
+                           WS_VSCROLL | WS_HSCROLL | 
+                           ES_MULTILINE | ES_AUTOVSCROLL | ES_AUTOHSCROLL,
                            10, 40, 760, 400,
                            hwnd, (HMENU)ID_EDIT_CODIGO, NULL, NULL);
 
@@ -309,7 +336,7 @@ void AddControls(HWND hwnd) {
 
     // Área de erros
     hErros = CreateWindowW(L"Edit", L"",
-                          WS_VISIBLE | WS_CHILD | WS_BORDER | ES_READONLY,
+                          WS_VISIBLE | WS_CHILD | WS_BORDER | ES_READONLY | ES_AUTOHSCROLL,
                           10, 500, 650, 40,
                           hwnd, (HMENU)ID_EDIT_ERROS, NULL, NULL);
 

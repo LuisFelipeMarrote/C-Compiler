@@ -16,16 +16,11 @@ Incertezas:
 > scrolls (memoria sempre em baixo, codigo sempre na linha)
 
 UI Compilador:
-> scrolls horizontais
 > colocar formato ao salvar txt e obj ao Compilador
-> menu fechar
-> rever se file intermediaria é criada e fechada
+> fecahr arquivo obj sem fechar o compilador
 > Resetar rótulos após compilação
-> implementar erros
-
-
-Perguntas para o Freitas:
-> precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
+> colocar o cursor na linha do erro
+> erro semantico 18
 
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
@@ -54,4 +49,4 @@ call 4 -> 28
 call 2 -> 14
 call 5 -> 33
 
-....................llllll
+

@@ -3,6 +3,7 @@
 #include <stdio.h> 
 #include <string.h> 
 #include <ctype.h> 
+#include "error_handling.h"
 #define lexema_size_max 30
 
 enum tipos {smais, smenos, smult, snúmero, satribuicao, sdoispontos,svírgula, 
@@ -66,7 +67,7 @@ struct entrada_tab_simbolos{
     entrada_tab_simbolos* prev;
 };
 
-void sintax_error(int n, int linha){
+/*void sintax_error(int n, int linha){
     ///rever todos os rotulos de erro abaixo (placeholders)
     char* erros[] = {"falta definir",
         "O código não começa com 'programa'",
@@ -141,6 +142,7 @@ void semantic_error(int n, int linha){
 
     exit(1);
 }
+*/
 
 char* print_tipo_erros(enum tipos simbolo){ //alterei os tipos na lista conforme a utilização (essa função imprime algo intuitivo como sinteiro = Inteiro)
     char* tipo[] = {"smais", "smenos", "smult", "Numero", "satribuicao", "sdoispontos", "svírgula",

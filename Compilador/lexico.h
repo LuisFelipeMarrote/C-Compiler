@@ -27,7 +27,7 @@ void trata_relacional(token *tk);
 void print_token(token *tk);
 void pega_token(token *tk);
 void AnalisadorLexicalN1();
-void lexical_error(int n, token *tk);
+//void lexical_error(int n, token *tk);
 void AnalisadorLexical(FILE *fp_main, int *linha_main, token *token);
 void print_linhas();
 
@@ -188,7 +188,7 @@ void trata_relacional(token *tk){
             }
             else{
                 ungetc(caractere, fp);
-                lexical_error(4, tk);
+                lexical_error(4, *linha);
             }
             break;
         case '<':
@@ -245,7 +245,7 @@ void pega_token(token *tk){
                         if(caractere == ';' || caractere == ','|| caractere == '('|| caractere == ')'|| caractere == '.'){ 
                             trata_pontuacao(tk); 
                         }else{ 
-                            lexical_error(3, tk); 
+                            lexical_error(3, *linha); 
                         } 
                     } 
                 } 
@@ -253,29 +253,6 @@ void pega_token(token *tk){
         } 
     }
 } 
-
-void lexical_error(int n, token *tk){
-    char* erros[] = {"",
-        "Comentário não foi encerrado corretamente - Chaves Abertas ('{') sem chaves fechadas depois (não foi encontrado '}' no código)",
-        "Chaves Fechadas ('}') sem chaves abertas antes (era esperado '{' antes no código para iniciar comentário)",
-        "Caractere Inválido",
-        "Foi encontrado um caractere de Exclamação ('!') sem Sinal de Igual ('=') depois (símbolo inválido)" 
-    };
-    
-    /*printf("Erro lexical");
-    printf(" %s ", erros[n]);
-    printf("na linha %d\n", *linha);*/
-
-    printf("Erro na linha %d:", *linha);
-    printf(" %s ", erros[n]);
-    printf("[Código de erro - Lex%d] \n", n);
-    
-    set_token_s(tk, "Erro");
-    tk->simbolo = serro;
-
-    //ler();
-    exit(1);
-}
 
 void AnalisadorLexicalN1()
 {
@@ -305,14 +282,14 @@ void AnalisadorLexicalN1()
                     }            
                     if(caractere == EOF) 
                     { 
-                        lexical_error(1, tk_main);
+                        lexical_error(1, *linha);
                         return;
                     } 
                     ler(); 
             } 
 
             if(caractere == '}'){
-                lexical_error(2, tk_main);
+                lexical_error(2, *linha);
                 return;
             }
 

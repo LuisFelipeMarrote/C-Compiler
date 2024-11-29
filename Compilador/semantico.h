@@ -205,11 +205,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
             /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
-                    printf("Erro na linha %d:", linha);
-                    printf("Tipo de operando inválido para a operação '%s'", 
-                    lista_posfix->tk.lexema);
-                    printf(" (encontrado %s = %s, e o tipo esperado é %s", pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo) ,print_tipo_erros(analisando.tipos_operadores));
-                    printf("[Código de erro - Sem%d] \n", 18);
+                    semantico18(0, 0, "", "", "");
                     return serro;   
                 }else{
                     node_lista_token* temp_free = pilha;
