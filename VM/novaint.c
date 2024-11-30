@@ -4,6 +4,11 @@
 #include <richedit.h>
 #include "novaVMD.h"
 
+#define MAX_INST 256
+#define PILHA_TAM_INICIAL    64    
+#define PILHA_TAM_MAXIMO    1024 
+#define MAX_ROTULOS    256 
+
 #define ID_LISTVIEW_CODE 1001
 #define ID_LISTVIEW_MEMORY 1002
 #define ID_EDIT_OUTPUT 1003
@@ -32,7 +37,7 @@ void ExecuteStep(HWND hwnd);
 void UpdateMemoryView();
 void UpdateOutputText(const char* text);
 void LimparRecursosIntermediarios();
-
+BOOL ValidateInstructionCount(int count);
 
 HWND hListCode, hListMemory, hOutput, hRadioNormal, hRadioStep, hExecute, hStop;
 HMENU hMenuBar = NULL;
@@ -153,25 +158,26 @@ void AddIntructionItem(const char* linha, const char* rotulo, const char* instru
 
 void lerInstrucoes(FILE *file) {
     int count = -1;
-    while (strcmp(lista[count].instrucao, "HLT     ") != 0){
+    if (!file) return;
+
+    while (!feof(file)){
+        if (!ValidateInstructionCount(count)) {
+            break;
+        }
         (count)++;
 
         // Analisa e preenche os campos da estrutura
-        fgets(lista[count].rotulo, sizeof(lista[count].rotulo), file);
-        fgets(lista[count].instrucao, sizeof(lista[count].instrucao), file);
-        fgets(lista[count].atr1, sizeof(lista[count].atr1), file);
-        fgets(lista[count].atr2, sizeof(lista[count].atr2), file);
- 
+        if (fgets(lista[count].rotulo, sizeof(lista[count].rotulo), file) == NULL) break;
+        if (fgets(lista[count].instrucao, sizeof(lista[count].instrucao), file) == NULL) break;
+        if (fgets(lista[count].atr1, sizeof(lista[count].atr1), file) == NULL) break;
+        if (fgets(lista[count].atr2, sizeof(lista[count].atr2), file) == NULL) break;
+
         char buffer[12];
         snprintf(buffer, sizeof(buffer), "%d", count);
         AddIntructionItem(buffer, lista[count].rotulo, lista[count].instrucao, lista[count].atr1, lista[count].atr2, " ");
         
-        // Imprime as informações lidas (opcional)
-        /*printf("%4s %8s %4s %4s\n",
-               lista[count].rotulo,
-               lista[count].instrucao,
-               lista[count].atr1,
-               lista[count].atr2);*/
+        if (strcmp(lista[count].instrucao, "HLT     ") == 0) break;
+        count++;
     }
 }
 
@@ -227,6 +233,7 @@ void execucao_normal(HWND hwnd) {
         EnableWindow(hExecute, TRUE);
         return;
     }
+    countres = 0;
     while (isExecuting && strcmp(lista[countres].instrucao, "HLT     ") != 0) {
         //resolveInst(&countres);
         countres++; //teste apenas
@@ -268,8 +275,8 @@ void ExecuteStep(HWND hwnd) {
     }
 
     // Execute single instruction
+    countres++ ;
     //resolveInst(&countres);
-    countres++ ;// teste apenas
 
     // Update the interface
     UpdateMemoryView();
@@ -289,9 +296,8 @@ void UpdateOutputText(const char* text) {
 }
 
 void UpdateMemoryView() {
-    ListView_DeleteAllItems(hListMemory);
-    
     if(p == NULL){
+        ListView_DeleteAllItems(hListMemory);
         return;
     }
     // Add current stack contents to memory view
@@ -310,6 +316,37 @@ void UpdateMemoryView() {
         
         ListView_SetItemText(hListMemory, i, 1, valor);
     }
+}
+
+void ExecutarPrograma(HWND hwnd) {
+    // Verificar se há instruções carregadas
+    if (countres == -1) {
+        MessageBox(NULL, "Nenhum programa carregado.", "Erro", MB_OK | MB_ICONERROR);
+        return;
+    }
+
+    // Reinicializar a pilha se necessário
+    if (p == NULL) {
+        p = inicializarPilha(PILHA_TAM_INICIAL);
+    }
+
+    if (!isExecuting) {
+        isExecuting = TRUE;
+        if (isStepMode) {
+            ExecuteStep(hwnd);  
+        } else {
+            EnableWindow(hExecute, FALSE);  // Disable execute button
+            execucao_normal(hwnd);
+        }
+    }
+}
+
+BOOL ValidateInstructionCount(int count) {
+    if (count >= MAX_INST) {
+        MessageBoxW(NULL, L"Número máximo de instruções excedido", L"Erro", MB_OK | MB_ICONERROR);
+        return FALSE;
+    }
+    return TRUE;
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -336,16 +373,7 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
                     isStepMode = TRUE;
                     break;
                 case ID_BTN_EXECUTE:
-                    if (!isExecuting) {
-                        isExecuting = TRUE;
-                        EnableWindow(hExecute, FALSE);  // Disable execute button
-                        if (isStepMode) {
-                            ExecuteStep(hwnd);
-                            //MessageBoxW(hwnd, L"ainda nao implementei execucao passo a passo", L"Erro", MB_OK | MB_ICONERROR);  
-                        } else {
-                            execucao_normal(hwnd);
-                        }
-                    }
+                    ExecutarPrograma(hwnd);
                     break;
                 case ID_BTN_STOP:
                     isExecuting = FALSE;

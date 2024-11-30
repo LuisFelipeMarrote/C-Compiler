@@ -7,7 +7,11 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_INST 50
+#define MAX_INST 256
+#define PILHA_TAM_INICIAL    64    
+#define PILHA_TAM_MAXIMO    1024 
+#define MAX_ROTULOS    256 
+
 
 #define ID_NORMAL_RADIO    201
 #define ID_STEP_RADIO      202
@@ -24,6 +28,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 HINSTANCE g_hInst;
 HWND g_hListView, g_hMemoryListView, g_hOutputEdit;
 HWND g_hNormalRadio, g_hStepByStepRadio,hGrpButtons;
+HWND hwnd;
 HWND g_hExecuteButton, g_hStopButton;
 HMENU g_hMainMenu;
 int g_executionMode  = 1;
@@ -33,6 +38,7 @@ typedef struct {
     int* M; //Memória da pilha
     int s; //Topo da pilha
     int capacidade; // capacidade atual da pilha
+    int max_capacidade; // capacidade máxima para evitar ovelflow
 } Pilha;
 
 struct Inst {
@@ -41,6 +47,26 @@ struct Inst {
     char atr1[5];
     char atr2[6];
 };
+
+// Tabela hash para rótulos - evita busca linear
+typedef struct RotuloEntry {
+    char rotulo[5];
+    int linha;
+    struct RotuloEntry* next;
+} RotuloEntry;
+
+typedef struct {
+    RotuloEntry* table[MAX_ROTULOS];
+    int size;
+} RotuloHash;
+
+typedef struct {
+    Pilha* pilha;
+    RotuloHash* rotulos;
+    int executing;
+    int error_state;
+    char last_error[256];
+} ExecutionContext;
 
 Pilha *p;
 int i = 0;
@@ -51,15 +77,18 @@ int *rotulos;
 Pilha* inicializarPilha(int capacidadeInicial);
 int pilhaVazia(); 
 int pilhaCheia();
-void empilhar(int atributo);
-int desempilhar();
+int empilhar(int atributo);
+int desempilhar(int *valor);
 int topo();
-void redimensionarPilha();
+int redimensionarPilha();
 void liberarPilha();
 int analisaInst(struct Inst *lista);
 void lerInstrucoes(FILE *file);
 void resolveInst(int* count);
 void MVD();
+void LimparRecursosIntermediarios();
+void LimparRecursos();
+
 
 void AddIntructionItem(const char* linha, const char* rotulo, const char* instrucao, 
                 const char* attr1, const char* attr2, const char* comentario) {
@@ -121,7 +150,7 @@ void ExecutarPrograma() {
 
     // Reinicializar a pilha se necessário
     if (p == NULL) {
-        p = inicializarPilha(8);
+        p = inicializarPilha(PILHA_TAM_INICIAL);
     }
 
     // Zerar o contador de instruções
@@ -149,18 +178,28 @@ void ExecutarPrograma() {
     }
 }
 
+void LimparRecursos() {
+    // Destroi os menus
+    if (g_hMainMenu) DestroyMenu(g_hMainMenu);
+    //if (hHelpMenu) DestroyMenu(hHelpMenu);
+    //if (hMenuBar) DestroyMenu(hMenuBar);
+
+    // Libera qualquer memória global que tenha sido alocada
+    LimparRecursosIntermediarios();
+    // Adicione aqui outras liberações necessárias para suas estruturas globais
+}
+
+void LimparRecursosIntermediarios(){
+    countres = 0;
+    i = 0;
+    liberarPilha();
+}
+
+
 // Função para parar a execução
 void PararExecucao() {
-    printf("Programa entrou na parada de execução\n");
-    // Limpar a pilha
-    if (p != NULL) {
-        liberarPilha();
-        p = NULL;
-    }
-    printf("liberou a pilha\n");
-
-    // Limpar contadores e estados
-    countres = 0;
+    OutputDebugString("Programa entrou na parada de execução\n");
+    LimparRecursosIntermediarios();
 
     // Limpar a ListView de memória
     ListView_DeleteAllItems(g_hMemoryListView);
@@ -281,14 +320,11 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
     LPSTR lpCmdLine, int nCmdShow) {
-    setlocale(LC_ALL, "Portuguese_Brazil.1252");
-    SetConsoleOutputCP(1252);
-    AllocConsole();
-    freopen("CONOUT$", "w", stdout);
-    system("chcp 65001");  // UTF-8
+    
+    setlocale(LC_ALL, "pt_BR.UTF-8"); // Configura o idioma para português (Brasil)
     
     g_hInst = hInstance;
-
+    
     // Register window class
     WNDCLASSEX wc = {0};
     wc.cbSize = sizeof(WNDCLASSEX);
@@ -621,7 +657,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         break;
 
                     case ID_STOP_BUTTON:
-                        printf("apertou o botao de parar\n");
+                        OutputDebugString("apertou o botao de parar\n");
                         if (HIWORD(wParam) == BN_CLICKED)
                         {
                             PararExecucao();
@@ -653,7 +689,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                                 // Limpa o conteúdo anterior do EditControl
                                 SetWindowText(g_hOutputEdit, "");
                              
-                                p = inicializarPilha(8);
+                                p = inicializarPilha(PILHA_TAM_INICIAL);
                                 if(p == NULL){
                                     return 1;
                                 }
@@ -673,7 +709,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
             
         case WM_DESTROY:
-            liberarPilha();
+            LimparRecursos();
             PostQuitMessage(0);
             return 0;
     }
@@ -687,24 +723,24 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 
 Pilha* inicializarPilha(int capacidadeInicial) {
-    Pilha *p = (Pilha*)malloc(sizeof(Pilha));
+    if(capacidadeInicial <=0 || capacidadeInicial > PILHA_TAM_MAXIMO){
+        return NULL;
+    }
+
+    Pilha *p = (Pilha*)calloc(1, sizeof(Pilha));
     if (p == NULL) {
-        printf("Erro: Falha na alocação da pilha\n");
         return NULL;
     }
 
     p->M = calloc(capacidadeInicial, sizeof(int));
     if (p->M == NULL) {
         free(p);
-        printf("Erro ao alocar memória para a pilha.\n");
-        exit(1);
+        return NULL;
     }
-    /*for(int i = 0; i< capacidadeInicial; i++){
-        p->M[i] = 0;
-    }*/
+    
     p->s = -1;
     p->capacidade = capacidadeInicial;
-    AtualizarListViewMemoria();
+    p->max_capacidade = PILHA_TAM_MAXIMO;
     return p;
 }
 
@@ -713,35 +749,29 @@ int pilhaVazia() {
 }
 
 int pilhaCheia() {
-    return p->s == p->s - 1;
+    return p->s == p->capacidade - 1;
 }
 
 /// @brief s = s+1; M[s] = atributo 
-void empilhar(int atributo) {
+int empilhar(int atributo) {
+    if (!p || !p->M) return 0;
+
     if (pilhaCheia(p)) {
-        printf("Pilha cheia! Redimensionando...\n");
-        redimensionarPilha(p);
+        if(redimensionarPilha(p)){
+            return 0;
+        }
     }
 
     p->M[++(p->s)] = atributo;
-    printf("Elemento %d empilhado.\n", atributo);
-    printf("Estado atual da pilha: ");
-    for (int i = 0; i <= p->s; i++) {
-        printf("%d ", p->M[i]);
-    }
-    printf("\n");
-    //AtualizarListViewMemoria();
+    return 1;
 }
  
 /// @brief  retorna M[s] ; s = s-1
-int desempilhar() {
-    if (pilhaVazia(p)) {
-        printf("Erro: Pilha vazia!\n");
-        exit(1);
-    } else {
-        return p->M[(p->s)--];
-    }
-    //AtualizarListViewMemoria();
+int desempilhar(int *valor) {
+    if (!p || !p->M || !valor || p->s < 0) return 0;
+    
+    *valor = p->M[p->s--];
+    return 1;
 }
 
 /// @brief retorna M[s] 
@@ -754,17 +784,26 @@ int topo() {
     }
 }
 
-void redimensionarPilha() {
-    int novaCapacidade = (p->capacidade) + 1;
+int redimensionarPilha() {
+    if (!p || !p->M) return 0;
+    
+    if (p->capacidade >= p->max_capacidade) {
+        return 0; // Evita crescimento excessivo
+    }
+
+    int novaCapacidade = p->capacidade * 2;
+    if (novaCapacidade > p->max_capacidade) {
+        novaCapacidade = p->max_capacidade;
+    }
+
     int *novo_array = (int*)realloc(p->M, novaCapacidade * sizeof(int));
-   
-    if (novo_array == NULL) {
-        printf("Erro ao redimensionar a pilha.\n");
-        exit(1);
+    if (!novo_array) {
+        return 0;
     }
 
     p->M = novo_array;
     p->capacidade = novaCapacidade;
+    return 1;
 }
 
 void liberarPilha() {
@@ -833,8 +872,12 @@ int analisaInst(struct Inst *lista) {
 }
 
 void lerInstrucoes(FILE *file) {
+    if (!file) return;
+
     int count = -1;
-    while (strcmp(lista[count].instrucao, "HLT     ") != 0){
+    char buffer[256];
+
+    while (count < MAX_INST - 1){
         (count)++;
 
         // Analisa e preenche os campos da estrutura
@@ -857,9 +900,10 @@ void lerInstrucoes(FILE *file) {
 }
 
 void resolveInst(int* count){
-    printf("%8s", lista[*count].instrucao);
+    if (!count || *count < 0 || *count >= MAX_INST) return;
     int m = 0;
     int n = 0;
+    int l = 0; // temporario
     int resultado = 0;
     switch (analisaInst(&lista[*count])) {
         case 0: // NULL
@@ -874,35 +918,31 @@ void resolveInst(int* count){
             break;
 
         case 3: // ADD (Somar)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n + m; // m[s-1] + m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 4: // SUB (Subtrair)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n - m; // m[s-1] - m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 5: // MULT (Multiplicar)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n * m; // m[s-1] * m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 6: // DIVI (Dividir)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             if (m != 0){
                 resultado = n / m; // m[s-1] div m[s]
                 p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
-            }
-            else
-                printf("Erro: Divisão por zero!\n");
+            } else
+                SetWindowText(g_hOutputEdit, "Erro: Divisão por zero!");
+                return;
             break;
 
         case 7: // INV (Inverter sinal)
@@ -910,15 +950,13 @@ void resolveInst(int* count){
             break;
 
         case 8: // AND (Conjunção)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n && m; // m[s-1] and m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 9: // OR (Disjunção)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n || m; // m[s-1] OU m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
@@ -928,44 +966,38 @@ void resolveInst(int* count){
             break;
 
         case 11: // CME (Comparar menor)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n < m; // m[s-1] < m[s]
             char* teste;
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 12: // CMA (Comparar maior)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n > m; // m[s-1] > m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 13: // CEQ (Comparar igual)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n == m; // m[s-1] = m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 14: // CDIF (Comparar desigual)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n != m; // m[s-1] != m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 15: // CMEQ (Comparar menor ou igual)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n <= m; // m[s-1] <= m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 16: // CMAQ (Comparar maior ou igual)
-            m = desempilhar(); //m[s]
-            n = desempilhar(); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n >= m; // m[s-1] >= m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
@@ -984,12 +1016,14 @@ void resolveInst(int* count){
             break;
 
         case 18: // JMPF p (Desviar se falso)
-            if(desempilhar() == 0){
+            desempilhar(&l);
+            if(l == 0){
                 for (int i = -1; i < MAX_INST; i++) {
                     // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                     if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
                         // Se for igual, você pode executar a ação desejada
                         *count = i;
+                        return;
                         // Faça o que for necessário quando o rótulo for encontrado
                     }
                 }
@@ -1017,7 +1051,17 @@ void resolveInst(int* count){
             break;
 
         case 21: // PRN (Impressão)
-            printf("%d\n", desempilhar());
+            desempilhar(&l);
+            //printf("%d\n", desempilhar());
+            /*
+            wchar_t mensagem[256];
+            desempilhar();
+            for (int i = 0; i <= p->s; i++) {
+            swprintf(mensagem, 256, L"Entrou no DALLOC. Valor da variável: %d", topo);
+            // Mostrar a mensagem com a variável
+            MessageBoxW(hwnd, mensagem, L"Erro", MB_OK | MB_ICONERROR);
+            }
+            */
             break;
 
         case 23: // ALLOC (Alocar memória)
@@ -1030,10 +1074,11 @@ void resolveInst(int* count){
 
         case 24: // DALLOC m, n (Liberar memória)
             n = atoi(lista[*count].atr2);
-            int m = atoi(lista[*count].atr1);
+            m = atoi(lista[*count].atr1);
+            //MessageBoxW(hwnd, L"Entrou no DALLOC.", L"Erro", MB_OK | MB_ICONERROR);
             for (int k = (n - 1); k >= 0; k--) {
-                p->M[m+k] = p->M[p->s];
-                p->s = (p->s) - 1;                 // Decrementa o topo da pilha
+                desempilhar(&l);
+                p->M[m+k] = l;                 // Decrementa o topo da pilha
             }
             break;
 
@@ -1052,7 +1097,8 @@ void resolveInst(int* count){
             break;
 
         case 26: // Return
-            *count = desempilhar();
+            desempilhar(&l);
+            *count = l -1;
 
         default:
             printf("Instrução inválida: \n");
@@ -1070,8 +1116,7 @@ void MVD() {
             countres++;
             resolveInst(&countres);
     }
-    printf("\nHLT - FIM DO PROGRAMA");
+    MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
     
-    liberarPilha(p);
+    LimparRecursosIntermediarios();
 }
-
