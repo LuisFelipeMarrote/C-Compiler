@@ -616,6 +616,8 @@ void limpa_memoria(){
     }
 
     memset (nome_arquivo,'\0',30);
+    rotulo = 1;
+    num_var_total = 1;
     qntd_var = 0;
     qntd_rotulo = 0;
 }
