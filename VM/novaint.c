@@ -223,15 +223,93 @@ void LimparRecursosIntermediarios(){
 void execucao_normal(HWND hwnd) {
     if (strcmp(lista[0].instrucao, "START   ") != 0) {
         MessageBoxW(hwnd, L"Erro ao abrir o arquivo.", L"Erro", MB_OK | MB_ICONERROR);
+        isExecuting = FALSE;
+        EnableWindow(hExecute, TRUE);
         return;
     }
-    while (strcmp(lista[countres].instrucao, "HLT     ") != 0) {
-        countres++;
+    while (isExecuting && strcmp(lista[countres].instrucao, "HLT     ") != 0) {
         //resolveInst(&countres);
+        countres++; //teste apenas
+        UpdateMemoryView();
+        
+        // Optional: Add a small delay to show progress
+        Sleep(100);
+        
+        // Update interface
+        ListView_SetItemState(hListCode, countres, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+        ListView_EnsureVisible(hListCode, countres, FALSE);
     }
-    MessageBoxW(hwnd, L"programa rodou", L"Erro", MB_OK | MB_ICONERROR);   
+    if (isExecuting) {
+        MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
+    }
 
+    isExecuting = FALSE;
+    EnableWindow(hExecute, TRUE);
     LimparRecursosIntermediarios();
+}
+
+void ExecuteStep(HWND hwnd) {
+    if (!isExecuting) return;
+    
+    // Check if it's the first instruction
+    if (countres == 0 && strcmp(lista[0].instrucao, "START   ") != 0) {
+        MessageBoxW(hwnd, L"Erro: Programa deve começar com START", L"Erro", MB_OK | MB_ICONERROR);
+        isExecuting = FALSE;
+        EnableWindow(hExecute, TRUE);
+        return;
+    }
+
+    // Check if we've reached HLT
+    if (strcmp(lista[countres].instrucao, "HLT     ") == 0) {
+        MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
+        isExecuting = FALSE;
+        EnableWindow(hExecute, TRUE);
+        return;
+    }
+
+    // Execute single instruction
+    //resolveInst(&countres);
+    countres++ ;// teste apenas
+
+    // Update the interface
+    UpdateMemoryView();
+    
+    // Highlight current instruction in ListView
+    ListView_SetItemState(hListCode, countres, LVIS_SELECTED | LVIS_FOCUSED, LVIS_SELECTED | LVIS_FOCUSED);
+    ListView_EnsureVisible(hListCode, countres, FALSE);
+}
+
+void UpdateOutputText(const char* text) {
+    // Get current text length
+    int length = GetWindowTextLengthW(hOutput);
+    
+    // Append new text
+    SendMessageW(hOutput, EM_SETSEL, length, length);
+    SendMessageA(hOutput, EM_REPLACESEL, FALSE, (LPARAM)text);
+}
+
+void UpdateMemoryView() {
+    ListView_DeleteAllItems(hListMemory);
+    
+    if(p == NULL){
+        return;
+    }
+    // Add current stack contents to memory view
+    LVITEM lvi = {0};
+    lvi.mask = LVIF_TEXT;
+    
+    for (int i = 0; i <= (p->s); i++) {
+        char endereco[16], valor[16];
+        snprintf(endereco, sizeof(endereco), "%d", i);
+        snprintf(valor, sizeof(valor), "%d", p[i]);
+        
+        lvi.iItem = i;
+        lvi.iSubItem = 0;
+        lvi.pszText = endereco;
+        ListView_InsertItem(hListMemory, &lvi);
+        
+        ListView_SetItemText(hListMemory, i, 1, valor);
+    }
 }
 
 LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
@@ -262,8 +340,8 @@ LRESULT CALLBACK WindowProcedure(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPar
                         isExecuting = TRUE;
                         EnableWindow(hExecute, FALSE);  // Disable execute button
                         if (isStepMode) {
-                            //ExecuteStep(hwnd);
-                            MessageBoxW(hwnd, L"ainda nao implementei execucao passo a passo", L"Erro", MB_OK | MB_ICONERROR);  
+                            ExecuteStep(hwnd);
+                            //MessageBoxW(hwnd, L"ainda nao implementei execucao passo a passo", L"Erro", MB_OK | MB_ICONERROR);  
                         } else {
                             execucao_normal(hwnd);
                         }

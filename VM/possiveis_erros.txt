@@ -3,3 +3,13 @@
     > alocacao dinamica da pilha (fragmentação se for muito frequente ou falta de memoria se for muito por vez)
     > liberação de recursos
     > tentar atualizar o visual durante a execução normal (tentar evitar)
+
+para fazer amanhã:
+-> continuar seguindo ultimo chat que criei (funções sem implementação)
+-> adaptar rótulos ao carregar arquivo
+-> ver execução real ( adaptar vm para ficar mais estável)
+
+
+
+
+VER ORDEM DALLOC 
