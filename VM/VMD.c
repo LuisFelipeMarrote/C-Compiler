@@ -24,6 +24,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 HINSTANCE g_hInst;
 HWND g_hListView, g_hMemoryListView, g_hOutputEdit;
 HWND g_hNormalRadio, g_hStepByStepRadio,hGrpButtons;
+HWND hwnd;
 HWND g_hExecuteButton, g_hStopButton;
 HMENU g_hMainMenu;
 int g_executionMode  = 1;
@@ -986,7 +987,7 @@ void resolveInst(int* count){
                     // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                     if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
                         // Se for igual, você pode executar a ação desejada
-                        *count = i;
+                        *count = i - 1;
                         // Faça o que for necessário quando o rótulo for encontrado
                     }
                 }
@@ -1015,6 +1016,15 @@ void resolveInst(int* count){
 
         case 21: // PRN (Impressão)
             printf("%d\n", desempilhar());
+            /*
+            wchar_t mensagem[256];
+            desempilhar();
+            for (int i = 0; i <= p->s; i++) {
+            swprintf(mensagem, 256, L"Entrou no DALLOC. Valor da variável: %d", topo);
+            // Mostrar a mensagem com a variável
+            MessageBoxW(hwnd, mensagem, L"Erro", MB_OK | MB_ICONERROR);
+            }
+            */
             break;
 
         case 23: // ALLOC (Alocar memória)
@@ -1027,10 +1037,10 @@ void resolveInst(int* count){
 
         case 24: // DALLOC m, n (Liberar memória)
             n = atoi(lista[*count].atr2);
-            int m = atoi(lista[*count].atr1);
+            m = atoi(lista[*count].atr1);
+            MessageBoxW(hwnd, L"Entrou no DALLOC.", L"Erro", MB_OK | MB_ICONERROR);
             for (int k = (n - 1); k >= 0; k--) {
-                p->M[m+k] = p->M[p->s];
-                p->s = (p->s) - 1;                 // Decrementa o topo da pilha
+                p->M[m+k] = desempilhar();                 // Decrementa o topo da pilha
             }
             break;
 
@@ -1071,4 +1081,3 @@ void MVD() {
     
     liberarPilha(p);
 }
-
