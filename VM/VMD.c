@@ -86,6 +86,9 @@ int analisaInst(struct Inst *lista);
 void lerInstrucoes(FILE *file);
 void resolveInst(int* count);
 void MVD();
+void LimparRecursosIntermediarios();
+void LimparRecursos();
+
 
 void AddIntructionItem(const char* linha, const char* rotulo, const char* instrucao, 
                 const char* attr1, const char* attr2, const char* comentario) {
@@ -175,18 +178,28 @@ void ExecutarPrograma() {
     }
 }
 
+void LimparRecursos() {
+    // Destroi os menus
+    if (g_hMainMenu) DestroyMenu(g_hMainMenu);
+    //if (hHelpMenu) DestroyMenu(hHelpMenu);
+    //if (hMenuBar) DestroyMenu(hMenuBar);
+
+    // Libera qualquer memória global que tenha sido alocada
+    LimparRecursosIntermediarios();
+    // Adicione aqui outras liberações necessárias para suas estruturas globais
+}
+
+void LimparRecursosIntermediarios(){
+    countres = 0;
+    i = 0;
+    liberarPilha();
+}
+
+
 // Função para parar a execução
 void PararExecucao() {
     OutputDebugString("Programa entrou na parada de execução\n");
-    // Limpar a pilha
-    if (p != NULL) {
-        liberarPilha();
-        p = NULL;
-    }
-    OutputDebugString("liberou a pilha\n");
-
-    // Limpar contadores e estados
-    countres = 0;
+    LimparRecursosIntermediarios();
 
     // Limpar a ListView de memória
     ListView_DeleteAllItems(g_hMemoryListView);
@@ -696,10 +709,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
             
         case WM_DESTROY:
-            if (p != NULL) {
-                liberarPilha();
-                p = NULL;
-            }
+            LimparRecursos();
             PostQuitMessage(0);
             return 0;
     }
@@ -713,21 +723,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 
 Pilha* inicializarPilha(int capacidadeInicial) {
-    if(capacidadeInicial <=0){
+    if(capacidadeInicial <=0 || capacidadeInicial > PILHA_TAM_MAXIMO){
         return NULL;
     }
 
     Pilha *p = (Pilha*)calloc(1, sizeof(Pilha));
     if (p == NULL) {
-        printf("Erro: Falha na alocação da pilha\n");
         return NULL;
     }
 
     p->M = calloc(capacidadeInicial, sizeof(int));
     if (p->M == NULL) {
         free(p);
-        printf("Erro ao alocar memória para a pilha.\n");
-        exit(1);
+        return NULL;
     }
     
     p->s = -1;
@@ -760,7 +768,7 @@ int empilhar(int atributo) {
  
 /// @brief  retorna M[s] ; s = s-1
 int desempilhar(int *valor) {
-    if (!p || !p->M || p->s < 0) return 0;
+    if (!p || !p->M || !valor || p->s < 0) return 0;
     
     *valor = p->M[p->s--];
     return 1;
@@ -864,8 +872,12 @@ int analisaInst(struct Inst *lista) {
 }
 
 void lerInstrucoes(FILE *file) {
+    if (!file) return;
+
     int count = -1;
-    while (strcmp(lista[count].instrucao, "HLT     ") != 0){
+    char buffer[256];
+
+    while (count < MAX_INST - 1){
         (count)++;
 
         // Analisa e preenche os campos da estrutura
@@ -888,7 +900,7 @@ void lerInstrucoes(FILE *file) {
 }
 
 void resolveInst(int* count){
-    printf("%8s", lista[*count].instrucao);
+    if (!count || *count < 0 || *count >= MAX_INST) return;
     int m = 0;
     int n = 0;
     int l = 0; // temporario
@@ -906,35 +918,31 @@ void resolveInst(int* count){
             break;
 
         case 3: // ADD (Somar)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n + m; // m[s-1] + m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 4: // SUB (Subtrair)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n - m; // m[s-1] - m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 5: // MULT (Multiplicar)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n * m; // m[s-1] * m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 6: // DIVI (Dividir)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             if (m != 0){
                 resultado = n / m; // m[s-1] div m[s]
                 p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
-            }
-            else
-                printf("Erro: Divisão por zero!\n");
+            } else
+                SetWindowText(g_hOutputEdit, "Erro: Divisão por zero!");
+                return;
             break;
 
         case 7: // INV (Inverter sinal)
@@ -942,15 +950,13 @@ void resolveInst(int* count){
             break;
 
         case 8: // AND (Conjunção)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n && m; // m[s-1] and m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 9: // OR (Disjunção)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n || m; // m[s-1] OU m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
@@ -960,44 +966,38 @@ void resolveInst(int* count){
             break;
 
         case 11: // CME (Comparar menor)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n < m; // m[s-1] < m[s]
             char* teste;
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 12: // CMA (Comparar maior)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n > m; // m[s-1] > m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 13: // CEQ (Comparar igual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n == m; // m[s-1] = m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 14: // CDIF (Comparar desigual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n != m; // m[s-1] != m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 15: // CMEQ (Comparar menor ou igual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n <= m; // m[s-1] <= m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 16: // CMAQ (Comparar maior ou igual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n >= m; // m[s-1] >= m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
@@ -1116,10 +1116,7 @@ void MVD() {
             countres++;
             resolveInst(&countres);
     }
-    printf("\nHLT - FIM DO PROGRAMA");
+    MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
     
-    if (p != NULL) {
-        liberarPilha();
-        p = NULL;
-    }
+    LimparRecursosIntermediarios();
 }

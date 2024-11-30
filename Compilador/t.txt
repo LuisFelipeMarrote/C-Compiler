@@ -14,6 +14,9 @@ Incertezas:
     > ele ta fechando aleatoriamente (nao tá mtt estável acho)
 > scrolls (memoria sempre em baixo, codigo sempre na linha)
 
+nao coloquei otimizacao de ler instrucao  e jmp (rotulos)
+
+
 
 Perguntas para o Freitas:
 > precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
