@@ -1,0 +1,5 @@
+-> comecar com -1 em lerInstrucoes: 
+    > tem chance d acessar memoria inexistente
+    > alocacao dinamica da pilha (fragmentação se for muito frequente ou falta de memoria se for muito por vez)
+    > liberação de recursos
+    > tentar atualizar o visual durante a execução normal (tentar evitar)
