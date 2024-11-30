@@ -44,6 +44,7 @@ void Gera_call(char rotulo[5]);
 void Gera_return();
 void Gera_str(char rotulo[5]);
 void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]);
+void Gera_final(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]);
 void Cria_arquivo();
 
 //essa função vou implementar dps, mas ela é so para formatar
@@ -92,8 +93,6 @@ void Gera_load_variavel(char rotulo[5])
 
 void Gera_load_const(char num[5])
 {
-    printf("\n oi%d\n", strlen(num));
-    printf("\n AQUI%d\n", sizeof(str_aux_atr1) / sizeof(str_aux_atr1[0]));
     if(strlen(num) > 4){
         memcpy(str_aux_atr1, num, 4);
         Gera("    ","LDC     ",str_aux_atr1,"    ");
@@ -112,7 +111,7 @@ void Gera_start_programn()
 void Gera_end_programn()
 {
     Gera_dalloc(1);
-    Gera("    ","HLT     ","    ","    ");
+    Gera_final("    ","HLT     ","    ","    ");
 }
 
 void Gera_jmp(char rotulo[5])
@@ -162,7 +161,7 @@ void Gera_alloc(int num_var)
 // vou tirar daqui a variavel qntd_var e passar como parametro dps.
 void Gera_dalloc(int num_var)
 {
-    Gera("    ","DALLOC  ",str_rotulo(qntd_var - 1),str_rotulo2(num_var));
+    Gera("    ","DALLOC  ",str_rotulo(qntd_var - num_var),str_rotulo2(num_var));
     qntd_var = qntd_var - num_var;
 }
 
@@ -186,14 +185,13 @@ void Gera_call(char rotulo[5])
 void Gera_return()
 {
     Gera("    ","RETURN  ","    ","    ");
-}
+} 
 
 void Gera_str(char rotulo[5])
 {
     Gera("    ","STR     ",rotulo,"    ");
 }
 
- 
 void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
 
     //Seta_string(&(instrucao[strlen(instrucao)]), 9, strlen(instrucao));
@@ -209,6 +207,23 @@ void Gera(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
     strcat(linha, atr2);    
 
     strcat(linha, "\n");
+    fputs(linha, new_fp);
+}
+
+void Gera_final(char rotulo[5], char instrucao[9], char atr1[5], char atr2[5]){
+
+    //Seta_string(&(instrucao[strlen(instrucao)]), 9, strlen(instrucao));
+    // Isso daqui so nao da certo, pois eu nao posso alterar essa regiao de memoria que foraam passados por parametros, pois passei como string literal,
+    // ou seja, so da para ler.
+    // Um jeito de consetar é copiar para outra string auxiliar. 
+
+    char linha[22] = {}; //ver como inicializa a lista vazia 
+
+    strcat(linha, rotulo);
+    strcat(linha, instrucao);
+    strcat(linha, atr1);
+    strcat(linha, atr2);    
+
     fputs(linha, new_fp);
 }
 
