@@ -48,26 +48,6 @@ struct Inst {
     char atr2[6];
 };
 
-// Tabela hash para rótulos - evita busca linear
-typedef struct RotuloEntry {
-    char rotulo[5];
-    int linha;
-    struct RotuloEntry* next;
-} RotuloEntry;
-
-typedef struct {
-    RotuloEntry* table[MAX_ROTULOS];
-    int size;
-} RotuloHash;
-
-typedef struct {
-    Pilha* pilha;
-    RotuloHash* rotulos;
-    int executing;
-    int error_state;
-    char last_error[256];
-} ExecutionContext;
-
 Pilha *p;
 int i = 0;
 struct Inst lista[MAX_INST];
@@ -760,7 +740,7 @@ int empilhar(int atributo) {
  
 /// @brief  retorna M[s] ; s = s-1
 int desempilhar(int *valor) {
-    if (!p || !p->M || p->s < 0) return 0;
+    if (!p || !p->M || !valor || p->s < 0) return 0;
     
     *valor = p->M[p->s--];
     return 1;
@@ -888,7 +868,7 @@ void lerInstrucoes(FILE *file) {
 }
 
 void resolveInst(int* count){
-    printf("%8s", lista[*count].instrucao);
+    if (!count || *count < 0 || *count >= MAX_INST) return;
     int m = 0;
     int n = 0;
     int l = 0; // temporario
@@ -906,29 +886,25 @@ void resolveInst(int* count){
             break;
 
         case 3: // ADD (Somar)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n + m; // m[s-1] + m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 4: // SUB (Subtrair)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n - m; // m[s-1] - m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 5: // MULT (Multiplicar)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n * m; // m[s-1] * m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 6: // DIVI (Dividir)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             if (m != 0){
                 resultado = n / m; // m[s-1] div m[s]
                 p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
@@ -942,15 +918,13 @@ void resolveInst(int* count){
             break;
 
         case 8: // AND (Conjunção)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n && m; // m[s-1] and m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 9: // OR (Disjunção)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n || m; // m[s-1] OU m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
@@ -960,44 +934,38 @@ void resolveInst(int* count){
             break;
 
         case 11: // CME (Comparar menor)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n < m; // m[s-1] < m[s]
             char* teste;
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 12: // CMA (Comparar maior)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n > m; // m[s-1] > m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 13: // CEQ (Comparar igual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n == m; // m[s-1] = m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 14: // CDIF (Comparar desigual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n != m; // m[s-1] != m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 15: // CMEQ (Comparar menor ou igual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n <= m; // m[s-1] <= m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
 
         case 16: // CMAQ (Comparar maior ou igual)
-            desempilhar(&m); //m[s]
-            desempilhar(&n); //m[s-1]
+            if (!desempilhar(&m) || !desempilhar(&n)) return;
             resultado = n >= m; // m[s-1] >= m[s]
             p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
             break;
@@ -1109,14 +1077,14 @@ void resolveInst(int* count){
 // Início da MVD
 void MVD() {
     if (strcmp(lista[0].instrucao, "START   ") != 0) {
-        printf("Erro: A primeira instrução deve ser 'START'.\n");
+    MessageBoxW(hwnd, L"A Primeira instrução deve ser START", L"ERRO", MB_OK | MB_ICONINFORMATION);
         return;
     }
     while (strcmp(lista[countres].instrucao, "HLT     ") != 0) {
             countres++;
             resolveInst(&countres);
     }
-    printf("\nHLT - FIM DO PROGRAMA");
+    MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
     
     if (p != NULL) {
         liberarPilha();
