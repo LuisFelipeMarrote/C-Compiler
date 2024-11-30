@@ -10,6 +10,7 @@
 #define MAX_INST 256
 #define PILHA_TAM_INICIAL    64    
 #define PILHA_TAM_MAXIMO    1024 
+#define MAX_ROTULOS    256 
 
 
 #define ID_NORMAL_RADIO    201
@@ -46,6 +47,26 @@ struct Inst {
     char atr1[5];
     char atr2[6];
 };
+
+// Tabela hash para rótulos - evita busca linear
+typedef struct RotuloEntry {
+    char rotulo[5];
+    int linha;
+    struct RotuloEntry* next;
+} RotuloEntry;
+
+typedef struct {
+    RotuloEntry* table[MAX_ROTULOS];
+    int size;
+} RotuloHash;
+
+typedef struct {
+    Pilha* pilha;
+    RotuloHash* rotulos;
+    int executing;
+    int error_state;
+    char last_error[256];
+} ExecutionContext;
 
 Pilha *p;
 int i = 0;
@@ -675,7 +696,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
             
         case WM_DESTROY:
-            liberarPilha();
+            if (p != NULL) {
+                liberarPilha();
+                p = NULL;
+            }
             PostQuitMessage(0);
             return 0;
     }
@@ -1094,5 +1118,8 @@ void MVD() {
     }
     printf("\nHLT - FIM DO PROGRAMA");
     
-    liberarPilha(p);
+    if (p != NULL) {
+        liberarPilha();
+        p = NULL;
+    }
 }
