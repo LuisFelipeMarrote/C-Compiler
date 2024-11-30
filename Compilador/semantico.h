@@ -196,13 +196,19 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
                     lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
                 }
             } else {
+                if(tk->simbolo == sbooleano){
+                    if(strcmp(tk->lexema, "verdadeiro")){
+                        strcpy(tk->lexema, "0");
+                    }else{
+                        strcmp(tk->lexema, "1");
+                    }
+                }
                 Gera_load_const(lista_posfix->tk.lexema);
             }
             empilha_token(&pilha, &lista_posfix);
         
         }else if(checa_operador(lista_posfix->tk.simbolo)){ //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
             operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
-            /// guardar os 2 operadores e mandar para geracao de codigo após desempilhar (ordem ao contrario)
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
                     semantico18(linha, pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
