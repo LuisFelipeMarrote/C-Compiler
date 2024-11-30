@@ -93,8 +93,6 @@ void Gera_load_variavel(char rotulo[5])
 
 void Gera_load_const(char num[5])
 {
-    printf("\n oi%d\n", strlen(num));
-    printf("\n AQUI%d\n", sizeof(str_aux_atr1) / sizeof(str_aux_atr1[0]));
     if(strlen(num) > 4){
         memcpy(str_aux_atr1, num, 4);
         Gera("    ","LDC     ",str_aux_atr1,"    ");
@@ -251,5 +249,6 @@ void Cria_arquivo(token *tk){
     }
 
     printf("Arquivo criado com sucesso!\n");
+
 
 }
