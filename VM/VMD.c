@@ -66,6 +66,7 @@ int analisaInst(struct Inst *lista);
 void lerInstrucoes(FILE *file);
 void resolveInst(int* count);
 void MVD();
+void resetMachineState();
 
 void AddIntructionItem(const char* linha, const char* rotulo, const char* instrucao, 
                 const char* attr1, const char* attr2, const char* comentario) {
@@ -150,6 +151,28 @@ void ExecutarPrograma() {
     }
 }
 
+void resetMachineState() {
+    // Limpar a pilha
+    if (p != NULL) {
+        liberarPilha();
+        p = NULL;
+    }
+
+    // Limpar o contador de resultados
+    countres = 0;
+
+    // Limpar a lista de instruções
+    memset(lista, 0, sizeof(lista));
+
+    // Limpar as interfaces visuais
+    ListView_DeleteAllItems(g_hListView);
+    ListView_DeleteAllItems(g_hMemoryListView);
+    SetWindowText(g_hOutputEdit, "");
+
+    // Reabilitar o botão de execução
+    EnableWindow(g_hExecuteButton, TRUE);
+}
+
 // Função para parar a execução
 void PararExecucao() {
     OutputDebugString("Programa entrou na parada de execução\n");
@@ -170,6 +193,7 @@ void PararExecucao() {
 
     // Limpar a saída
     SetWindowText(g_hOutputEdit, "Execução interrompida.");
+    EnableWindow(g_hExecuteButton, TRUE);
 }
 
 LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -637,7 +661,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         ofn.hwndOwner = hwnd;
                         ofn.lpstrFile = szFile;
                         ofn.nMaxFile = sizeof(szFile);
-                        ofn.lpstrFilter = "Arquivos de Texto (*.txt)\0*.txt\0Todos os Arquivos (*.*)\0*.*\0";
+                        ofn.lpstrFilter = "Arquivos de Objeto (*.obj)\0*.obj\0Todos os Arquivos (*.*)\0*.*\0";
                         ofn.nFilterIndex = 1;
                         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
@@ -645,6 +669,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         {
                             // Aqui você pode adicionar código para processar o arquivo aberto
                             // Por exemplo, ler o conteúdo do arquivo
+                            resetMachineState();
                             FILE *file = fopen(ofn.lpstrFile, "r");
                             if (file) 
                             {
@@ -672,7 +697,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             
         case WM_DESTROY:
             if (p != NULL) {
-                liberarPilha();
+                resetMachineState();
                 p = NULL;
             }
             PostQuitMessage(0);

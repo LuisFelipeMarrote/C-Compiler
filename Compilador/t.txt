@@ -1,29 +1,45 @@
-Incertezas:
->   confirmar semantico chamada de função
->   confirmar se escreva tem que ser uma variavel, ou pode ser uma função / expressao - meche em pesquisa_declvarfunc_tabela
->   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
->   ver alocação dinâmica em instruções
->   rever jmpf e jmp
->   ver a verificação de start e hlt no passo-a-passo
->   colocar erros como pop-up
->   ver o que fazer caso o usuario cancele o input
->   ver comportamento da vm:
-    > return(1) apos inicializar pilha
-    > fechar a janela caso clique outro botao fora dela
-    > Executar varias vezes
-    > ele ta fechando aleatoriamente (nao tá mtt estável acho)
-> scrolls (memoria sempre em baixo, codigo sempre na linha)
+O que falta:
+    Funcionamento do Compilador:
+    >   confirmar semantico chamada de função
+    >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 
+    Funcionamento / Interface VM:
+    >   Arquivo concatenado
+    >   portugues
+    >   tirar saida ao iniciar passo a passo
+    >   ver a verificação de start e hlt no passo-a-passo
 
-Perguntas para o Freitas:
-> precisamos fazer uma interface/vm contand com possiveis erros humanos ou podemos assumir q ngm vai errar?
+    >   converter rotulos
+    >   rever pare (possivel crash)
+    >   colocar erros como pop-up
 
+    >   ver comportamento ou DELETAR botao de cancelar read
+    >   desabilitar botao executar am algumas ocasioes
+    >   ver o que fazer caso o usuario cancele o input
+    >   ver comportamento da vm:
+        > return(1) apos inicializar pilha
+        > fechar a janela caso clique outro botao fora dela
+        > Executar varias vezes
+        > ele ta fechando aleatoriamente (nao tá mtt estável acho)
+    > scrolls (memoria sempre em baixo, codigo sempre na linha)
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
 Melhorias opcionais:
 > especificar variaveis nos erros semânticos
+> fecahr arquivo obj sem fechar o compilador
+> perguntar se quer salvar ao abrir um arquivo em cima de outro
+> colocar formato ao salvar txt ao Compilador
+> scroll mais bonito em erro
+> redimencionar automaticamente
+> confirmar se noe de arquivo pode ter acento
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função
 
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------
+Anotações:
 allocs: 
 -> pilha
 -> memoria da pilha
@@ -44,3 +60,5 @@ call 5 -> 33
 call 4 -> 28
 call 2 -> 14
 call 5 -> 33
+
+
