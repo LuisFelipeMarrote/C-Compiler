@@ -12,7 +12,7 @@ saida
 2
 20}
 
-programa test;
+programa test_alterado;
 var a,b,s: inteiro;                 
                               
  funcao soma: inteiro;
@@ -20,6 +20,7 @@ var a,b,s: inteiro;
      z: booleano;                    
   procedimento ler;          
   inicio
+     z := falso;
      leia (c);
      leia (a);
      s:= soma;                  

@@ -126,7 +126,7 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
     node_lista_token* pilha = NULL; // topo da pilha
 
     while(lista_infix != NULL){
-        if(lista_infix->tk.simbolo == sinteiro || lista_infix->tk.simbolo == sidentificador){ //Se for ident(var ou func) ou número, copia na saída;     
+        if(lista_infix->tk.simbolo == sinteiro || lista_infix->tk.simbolo == sidentificador || lista_infix->tk.simbolo == sbooleano){ //Se for ident(var ou func) ou número, copia na saída;     
             if(lista_pos != NULL){ // se não for a primeira vez, muda o ponteiro prox e atualiza ponteiro lista
                 lista_pos->prox = lista_infix;
                 lista_pos = lista_pos->prox;
@@ -178,7 +178,7 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
     node_lista_token* pilha = NULL;
 
     while(lista_posfix != NULL){
-        if(lista_posfix->tk.simbolo == sinteiro || lista_posfix->tk.simbolo == sidentificador){ //se for variável, empilha
+        if(lista_posfix->tk.simbolo == sinteiro || lista_posfix->tk.simbolo == sidentificador || lista_posfix->tk.simbolo == sbooleano){ //se for variável, empilha
             if(lista_posfix->tk.simbolo == sidentificador){
                 //procurar tabela
                 entrada_tab_simbolos* entrada_tabela_operador;
@@ -196,14 +196,16 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
                     lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
                 }
             } else {
-                if(tk->simbolo == sbooleano){
-                    if(strcmp(tk->lexema, "verdadeiro")){
-                        strcpy(tk->lexema, "0");
+                if(lista_posfix->tk.simbolo == sbooleano){
+                    if(strcmp(lista_posfix->tk.lexema, "verdadeiro")){
+                        memset(lista_posfix->tk.lexema, '\0',30);
+                        strcpy(lista_posfix->tk.lexema, "0");
                     }else{
-                        strcmp(tk->lexema, "1");
+                        memset(lista_posfix->tk.lexema, '\0',30);
+                        strcpy(lista_posfix->tk.lexema, "1");
                     }
                 }
-                Gera_load_const(lista_posfix->tk.lexema);
+                Gera_load_const(lista_posfix->tk.lexema);                    
             }
             empilha_token(&pilha, &lista_posfix);
         
