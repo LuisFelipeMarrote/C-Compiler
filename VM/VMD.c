@@ -130,14 +130,6 @@ void ExecutarPrograma() {
         p = inicializarPilha(PILHA_TAM_INICIAL);
     }
 
-    // Zerar o contador de instruções
-    if(g_executionMode == 0){
-        countres = 0;
-    }
-
-    // Limpar a saída
-    SetWindowText(g_hOutputEdit, "");
-
     // Executar o programa
     if (g_executionMode == 1) { // Modo Passo a Passo
         // No modo passo a passo, você pode querer adicionar uma função que
@@ -149,6 +141,9 @@ void ExecutarPrograma() {
         AtualizarListViewMemoria();
         
     } else { // Modo Normal
+        countres = 0;
+        // Limpar a saída
+        SetWindowText(g_hOutputEdit, "");
         // Executar todas as instruções de uma vez
         MVD(NULL);
         AtualizarListViewMemoria();
@@ -197,7 +192,7 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
                 if (!entradaStr){
                     //SetWindowText(g_hOutputEdit, "str");
                     //char* str = buffer;
-                    SetWindowText(g_hOutputEdit, buffer);
+                    //SetWindowText(g_hOutputEdit, buffer);
                     int entrada = atoi(buffer);
                     empilhar(entrada);
                     
@@ -205,7 +200,7 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
                     //char str[30] = "--------------------";
                     //char* ajuda = "///////";
                     //strcat(str, ajuda);
-                    SetWindowText(g_hOutputEdit, "buffer");
+                    //SetWindowText(g_hOutputEdit, "buffer");
                 }
                 DestroyWindow(hDlg); // Fecha o diálogo
                 PostQuitMessage(0);  // Finaliza o loop de mensagens
@@ -1018,18 +1013,41 @@ void resolveInst(int* count){
             }
             break;
 
-        case 21: // PRN (Impressão)
+        case 21: // PRN (Impressão)                
+            char buffer[12];
+            char *currentText;
+            DWORD textLen;
+            
             desempilhar(&l);
-            //printf("%d\n", desempilhar());
-            /*
-            wchar_t mensagem[256];
-            desempilhar();
-            for (int i = 0; i <= p->s; i++) {
-            swprintf(mensagem, 256, L"Entrou no DALLOC. Valor da variável: %d", topo);
-            // Mostrar a mensagem com a variável
-            MessageBoxW(hwnd, mensagem, L"Erro", MB_OK | MB_ICONERROR);
+            itoa(l, buffer, 10);
+            
+            // Obter o tamanho do texto atual
+            textLen = GetWindowTextLength(g_hOutputEdit);
+            
+            // Alocar memória suficiente para o texto atual + nova linha + novo número + terminador nulo
+            DWORD len = textLen + strlen(buffer) + 3;
+            currentText = (char*)calloc(1, len); // +3 para \r\n e \0
+            if (currentText) {
+                // Obter o texto atual
+                GetWindowText(g_hOutputEdit, currentText, textLen + 1);
+                
+                // Se já existe texto, adicionar uma nova linha
+                if (textLen > 0) {
+                    strcat(currentText, "\r\n");
+                }
+                
+                // Adicionar o novo número
+                strcat(currentText, buffer);
+                
+                // Definir o novo texto
+                SetWindowText(g_hOutputEdit, currentText);
+                
+                // Liberar a memória alocada
+                free(currentText);
+                
+                // Rolar para mostrar a última linha
+                SendMessage(g_hOutputEdit, EM_SCROLLCARET, 0, 0);
             }
-            */
             break;
 
         case 23: // ALLOC (Alocar memória)
