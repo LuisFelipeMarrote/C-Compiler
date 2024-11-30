@@ -1027,7 +1027,9 @@ void resolveInst(int* count){
             // Alocar memória suficiente para o texto atual + nova linha + novo número + terminador nulo
             DWORD len = textLen + strlen(buffer) + 3;
             currentText = (char*)calloc(1, len); // +3 para \r\n e \0
+            MessageBoxW(hwnd, L"Entrou no PRN", L"Informação", MB_OK | MB_ICONINFORMATION);
             if (currentText) {
+                MessageBoxW(hwnd, L"Entrou no if", L"Informação", MB_OK | MB_ICONINFORMATION);
                 // Obter o texto atual
                 GetWindowText(g_hOutputEdit, currentText, textLen + 1);
                 
