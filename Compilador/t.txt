@@ -4,14 +4,12 @@ O que falta:
     >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 
     Funcionamento / Interface VM:
-    >   Arquivo concatenado
-    >   portugues
-    >   tirar saida ao iniciar passo a passo
-    >   ver a verificação de start e hlt no passo-a-passo
 
     >   converter rotulos
     >   rever pare (possivel crash)
+    >   rever erros (atualmente dá return, nao para a execução)
     >   colocar erros como pop-up
+    >   não crashar ao nao ter HLT;
 
     >   COMENTARIOS
     >   ver comportamento ou DELETAR botao de cancelar read

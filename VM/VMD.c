@@ -136,6 +136,18 @@ void ExecutarPrograma() {
         // No modo passo a passo, você pode querer adicionar uma função que
         // executa uma instrução por vez quando o usuário clica em "Próximo"
         // ou criar um mecanismo de pausa entre instruções
+        if(countres == 0){
+            SetWindowTextW(g_hOutputEdit, L"");
+            if (strcmp(lista[0].instrucao, "START   ") != 0) {
+                MessageBoxW(hwnd, L"A Primeira instrução deve ser START", L"ERRO", MB_OK | MB_ICONINFORMATION);
+                return;
+            }
+        }
+        if(strcmp(lista[countres].instrucao, "HLT     ") == 0){
+            MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
+            return;
+        }
+
         InvalidateRect(g_hListView, NULL, TRUE); // Redesenha o ListView
         countres++;
         resolveInst(&countres);
@@ -146,7 +158,7 @@ void ExecutarPrograma() {
         // Limpar a saída
         SetWindowTextW(g_hOutputEdit, L"");
         // Executar todas as instruções de uma vez
-        MVD(NULL);
+        MVD();
         AtualizarListViewMemoria();
     }
 }
@@ -632,13 +644,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     case ID_EXECUTE_BUTTON:
                         if (HIWORD(wParam) == BN_CLICKED)
                         {
-                            ExecutarPrograma();
-                            
                             // Se estiver no modo normal, desabilitar o botão após a execução
                             if (g_executionMode == 0)
                             {
                                 EnableWindow(g_hExecuteButton, FALSE);
                             }
+                            ExecutarPrograma();
+                            
                         }
                         break;
 
@@ -1122,7 +1134,7 @@ void resolveInst(int* count){
 // Início da MVD
 void MVD() {
     if (strcmp(lista[0].instrucao, "START   ") != 0) {
-    MessageBoxW(hwnd, L"A Primeira instrução deve ser START", L"ERRO", MB_OK | MB_ICONINFORMATION);
+        MessageBoxW(hwnd, L"A Primeira instrução deve ser START", L"ERRO", MB_OK | MB_ICONINFORMATION);
         return;
     }
     while (strcmp(lista[countres].instrucao, "HLT     ") != 0) {
