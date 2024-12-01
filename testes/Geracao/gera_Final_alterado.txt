@@ -22,8 +22,7 @@ var a,b,s: inteiro;
   inicio
      z := falso;
      leia (c);
-     leia (a);
-     s:= 1 div 1;                  
+     leia (a);                  
      escreva (s);
   fim;
   procedimento loop;         

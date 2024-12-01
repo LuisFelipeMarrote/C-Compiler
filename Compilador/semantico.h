@@ -173,46 +173,56 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
 }
 
 //recebe expressao pos-fixa e faz a analise semantica retornando seu tipo (sinteiro / sbooleano) - destroi a lista no processo
-enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
+enum tipos semantico_expressao(node_lista_token** lista_posfix, int linha){
     // percorre a lista empilhando os valores, e desempilhando conforme encontra operadores
     node_lista_token* pilha = NULL;
 
-    while(lista_posfix != NULL){
-        if(lista_posfix->tk.simbolo == sinteiro || lista_posfix->tk.simbolo == sidentificador || lista_posfix->tk.simbolo == sbooleano){ //se for variável, empilha
-            if(lista_posfix->tk.simbolo == sidentificador){
+    while(*lista_posfix != NULL){
+        if((*lista_posfix)->tk.simbolo == sinteiro || (*lista_posfix)->tk.simbolo == sidentificador || (*lista_posfix)->tk.simbolo == sbooleano){ //se for variável, empilha
+            if((*lista_posfix)->tk.simbolo == sidentificador){
                 //procurar tabela
                 entrada_tab_simbolos* entrada_tabela_operador;
-                entrada_tabela_operador = busca_ident(lista_posfix->tk.lexema);
+                entrada_tabela_operador = busca_ident((*lista_posfix)->tk.lexema);
                 if(entrada_tabela_operador == NULL){
                     semantic_error(17, linha);
                     return serro;
                 }
                 if(entrada_tabela_operador->tipo == fint){
-                    lista_posfix->tk.simbolo = sinteiro;
+                    (*lista_posfix)->tk.simbolo = sinteiro;
                 }else if(entrada_tabela_operador->tipo == fbool){
-                    lista_posfix->tk.simbolo = sbooleano;
+                    (*lista_posfix)->tk.simbolo = sbooleano;
                 }else{
                     Gera_load_variavel(entrada_tabela_operador->rotulo);
-                    lista_posfix->tk.simbolo = entrada_tabela_operador->tipo;
+                    (*lista_posfix)->tk.simbolo = entrada_tabela_operador->tipo;
                 }
             } else {
-                if(lista_posfix->tk.simbolo == sbooleano){
-                    if(strcmp(lista_posfix->tk.lexema, "verdadeiro")){
-                        memset(lista_posfix->tk.lexema, '\0',30);
-                        strcpy(lista_posfix->tk.lexema, "0");
+                if((*lista_posfix)->tk.simbolo == sbooleano){
+                    if(strcmp((*lista_posfix)->tk.lexema, "verdadeiro")){
+                        memset((*lista_posfix)->tk.lexema, '\0',30);
+                        strcpy((*lista_posfix)->tk.lexema, "0");
                     }else{
-                        memset(lista_posfix->tk.lexema, '\0',30);
-                        strcpy(lista_posfix->tk.lexema, "1");
+                        memset((*lista_posfix)->tk.lexema, '\0',30);
+                        strcpy((*lista_posfix)->tk.lexema, "1");
                     }
                 }
-                Gera_load_const(lista_posfix->tk.lexema);                    
+                Gera_load_const((*lista_posfix)->tk.lexema);                    
             }
-            empilha_token(&pilha, &lista_posfix);
+            empilha_token(&pilha, lista_posfix);
         
-        }else if(checa_operador(lista_posfix->tk.simbolo)){ //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
-            operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
+        }else if(checa_operador((*lista_posfix)->tk.simbolo)){ //se for operador, ver quantos desempilhar, e checa se os tipos estão corretos
+            operacao analisando = formato_operacao((*lista_posfix)->tk.simbolo);
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
+                    node_lista_token* temp;
+                    temp = pilha;
+                    printf("pilha atual:\n");
+                    while(temp!= NULL){
+                        printf("lexema: %s\tsimbolo: %d\tprox:  %p\n", temp->tk.lexema, temp->tk.simbolo, (void*)temp->prox);
+                        temp = temp->prox;
+                        getchar();
+                    }
+                    printf("Lista posfix [0]: %s | %d", (*lista_posfix)->tk.lexema, (*lista_posfix)->tk.simbolo);
+                    getchar();
                     if(pilha->tk.simbolo == sbooleano){
                         if (strcmp(pilha->tk.lexema, "0   ") == 0){
                             semantico18(linha, "falso", print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
@@ -239,8 +249,8 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
             pilha = temp_node; 
 
             //tira o operador da lista
-            temp_node = lista_posfix;
-            lista_posfix = lista_posfix->prox;
+            temp_node = *lista_posfix;
+            *lista_posfix = (*lista_posfix)->prox;
             Gera_operador(temp_node->tk.simbolo);
             free(temp_node);
         }

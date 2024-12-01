@@ -551,7 +551,7 @@ enum tipos analisa_tipo_expressao_semantica(){
     Analisa_expressao(tk);
     if(expressao_infix != NULL){
         expressao_infix = converte_inf_posfix(expressao_infix);
-        enum tipos tipo = semantico_expressao(expressao_infix, *linha);
+        enum tipos tipo = semantico_expressao(&expressao_infix, *linha);
         expressao_infix = NULL;
         return tipo;
     }else{
@@ -609,10 +609,28 @@ void limpa_memoria(){
     deleta_tabela();
     
     //libera expressao 
+    printf("expressao_infix: \n");
+    getchar();
     while(expressao_infix!=NULL){
+        printf("%s\t|%d\t|%p \n", expressao_infix->tk.lexema, expressao_infix->tk.simbolo, expressao_infix->prox);
+        getchar();
+        printf("Conferencia: \n");
+        getchar();
+        printf("Endereço do nó atual: %p\n", (void*)expressao_infix);
+        getchar();
+        printf("Endereço do próximo: %p\n", (void*)expressao_infix->prox);
+        getchar();
+        printf("Conteúdo do token: %s\n", expressao_infix->tk.lexema);
+        getchar();
+
         node_lista_token* temp = expressao_infix;
+        printf(" foi para o proximo\n");
+        getchar();
         expressao_infix = expressao_infix->prox;
+        printf(" proximo é o free\n");
+        getchar();
         free(temp);
+        printf("foi o free\n");
     }
 
     memset (nome_arquivo,'\0',30);

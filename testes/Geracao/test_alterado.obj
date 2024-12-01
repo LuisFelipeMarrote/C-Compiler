@@ -13,10 +13,6 @@
     STR     4       
     RD              
     STR     5       
-    LDC     1       
-    LDC     1       
-    DIVI            
-    STR     6       
     LDV     6       
     PRN             
     RETURN          
