@@ -23,7 +23,7 @@ var a,b,s: inteiro;
      z := falso;
      leia (c);
      leia (a);
-     s:= soma;                  
+     s:= 1 div 1;                  
      escreva (s);
   fim;
   procedimento loop;         
@@ -41,9 +41,7 @@ var a,b,s: inteiro;
                                       
 
 inicio      {corpo principal}
-  s:= soma;   
-  s:= s * a - ( b - s ) + (-3);                           
+  s := soma;   
+  s:= s * a - ( b - s ) + (-3) div (b + (-7) * (-5) div (30+b)<= (s*a+2)); 
   escreva(s)
 fim.                               
-
-

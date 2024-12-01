@@ -213,7 +213,15 @@ enum tipos semantico_expressao(node_lista_token* lista_posfix, int linha){
             operacao analisando = formato_operacao(lista_posfix->tk.simbolo);
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
-                    semantico18(linha, pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
+                    if(pilha->tk.simbolo == sbooleano){
+                        if (strcmp(pilha->tk.lexema, "0   ") == 0){
+                            semantico18(linha, "falso", print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
+                        }else{
+                            semantico18(linha, "verdadeiro", print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));  
+                        }
+                    }else{
+                        semantico18(linha, pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
+                    }
                     return serro;   
                 }else{
                     node_lista_token* temp_free = pilha;
