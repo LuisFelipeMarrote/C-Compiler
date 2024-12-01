@@ -30,6 +30,17 @@ void CloseFile(HWND hwnd);
 HWND hArquivo, hCodigo, hErros, hStatus, hCompile;
 
 int WINAPI WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR args, int ncmdshow) {
+    AllocConsole();
+    
+    // Redirect standard input/output to the console
+    FILE* pCout;
+    freopen_s(&pCout, "CONOUT$", "w", stdout);
+    FILE* pCin;
+    freopen_s(&pCin, "CONIN$", "r", stdin);
+
+    // Optional: Print a debug message
+    printf("Debug console initialized\n");
+
     LoadLibraryW(L"Msftedit.dll");
     
     WNDCLASSW wc = {0};
@@ -292,7 +303,7 @@ void Compilacao(HWND hwnd){
     char erro[1024] = {0};
     
     int linha_erro = compilar(fp, erro);;
-
+    //getchar(); // Waits for user input
     // Fechar arquivo
     fclose(fp);
 

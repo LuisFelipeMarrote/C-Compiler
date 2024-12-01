@@ -625,7 +625,8 @@ void limpa_memoria(){
 int compilar(FILE *fp, char* erro){
     atexit(limpa_memoria);
     
-    error_buffer[0] = '\0';
+    //error_buffer[0] = '\0';
+    memset (error_buffer,'\0',1024); // rever se o tamanho do error_buffer mudaar de 1024
     if (setjmp(error_jump) == 0) {
         token main_tk;
         int linha_main = 1;
