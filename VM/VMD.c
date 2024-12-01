@@ -31,7 +31,7 @@ HWND g_hNormalRadio, g_hStepByStepRadio,hGrpButtons;
 HWND hwnd;
 HWND g_hExecuteButton, g_hStopButton;
 HMENU g_hMainMenu;
-int g_executionMode  = 1;
+int g_executionMode  = 1; //normal = 0, passo = 1
 
 //pilha de dados
 typedef struct {
@@ -1042,11 +1042,19 @@ void resolveInst(int* count){
             scanf("%d", &entrada);
             printf("\n Entrada = %d", entrada);
             empilhar(entrada);*/
+            if(g_executionMode == 1){
+                EnableWindow(g_hExecuteButton, FALSE);
+                EnableWindow(g_hStopButton, FALSE);
+            }
             char entradaStr[256] = "";
             if (ShowCustomDialog(g_hInst, NULL, entradaStr)) {
                 printf("Entrada emilhada\n");
             } else {
                 printf("Entrada cancelada pelo usuário.\n");
+            }if(g_executionMode)
+            if(g_executionMode == 1){
+                EnableWindow(g_hExecuteButton, TRUE);
+                EnableWindow(g_hStopButton, TRUE);
             }
             break;
 

@@ -6,7 +6,9 @@ O que falta:
     Funcionamento / Interface VM:
 
     >   converter rotulos
+    >   resize
     >   rever pare (possivel crash)
+        > parar e read d pois sempre crash (perguntar kutkut)
     >   rever erros (atualmente dá return, nao para a execução)
     >   colocar erros como pop-up
     >   não crashar ao nao ter HLT;
