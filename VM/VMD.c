@@ -144,7 +144,7 @@ void ExecutarPrograma() {
     } else { // Modo Normal
         countres = 0;
         // Limpar a saída
-        SetWindowText(g_hOutputEdit, "");
+        SetWindowTextW(g_hOutputEdit, L"");
         // Executar todas as instruções de uma vez
         MVD(NULL);
         AtualizarListViewMemoria();
@@ -167,7 +167,7 @@ void resetMachineState() {
     // Limpar as interfaces visuais
     ListView_DeleteAllItems(g_hListView);
     ListView_DeleteAllItems(g_hMemoryListView);
-    SetWindowText(g_hOutputEdit, "");
+    SetWindowTextW(g_hOutputEdit, L"");
 
     // Reabilitar o botão de execução
     EnableWindow(g_hExecuteButton, TRUE);
@@ -192,7 +192,7 @@ void PararExecucao() {
     InvalidateRect(g_hListView, NULL, TRUE); // Redesenha o ListView
 
     // Limpar a saída
-    SetWindowText(g_hOutputEdit, "Execução interrompida.");
+    SetWindowTextW(g_hOutputEdit, L"Execução interrompida.");
     EnableWindow(g_hExecuteButton, TRUE);
 }
 
@@ -251,10 +251,10 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
     RegisterClass(&wc);
 
     // Cria a janela do diálogo
-    HWND hDlg = CreateWindowEx(
+    HWND hDlg = CreateWindowExW(
         WS_EX_DLGMODALFRAME,
-        "CustomDialog",            // Classe da janela
-        "Entrada de Dados",        // Título da janela
+        L"CustomDialog",            // Classe da janela
+        L"Entrada de Dados",        // Título da janela
         WS_POPUP | WS_CAPTION | WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT, 300, 150,  // Posição e tamanho
         hWndParent, NULL, hInst, NULL);
@@ -262,22 +262,22 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
     if (!hDlg) return 0;
 
     // Campo de texto
-    CreateWindowEx(
-        0, "EDIT", "",
+    CreateWindowExW(
+        0, L"EDIT", L"",
         WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
         20, 40, 260, 20,
         hDlg, (HMENU)IDC_INPUT_FIELD, hInst, NULL);
 
     // Botão OK
-    CreateWindowEx(
-        0, "BUTTON", "OK",
+    CreateWindowExW(
+        0, L"BUTTON", L"OK",
         WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
         50, 80, 80, 25,
         hDlg, (HMENU)IDOK, hInst, NULL);
 
     // Botão Cancelar
-    CreateWindowEx(
-        0, "BUTTON", "Cancelar",
+    CreateWindowExW(
+        0, L"BUTTON", L"Cancelar",
         WS_CHILD | WS_VISIBLE,
         150, 80, 80, 25,
         hDlg, (HMENU)IDCANCEL, hInst, NULL);
@@ -328,10 +328,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     InitCommonControlsEx(&icex);
     
     // Create main window
-    HWND hwnd = CreateWindowEx(
+    HWND hwnd = CreateWindowExW(
         0,
-        "VirtualMachineClass",
-        "Máquina Virtual",
+        L"VirtualMachineClass",
+        L"Máquina Virtual",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         800, 600,
@@ -419,10 +419,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SetMenu(hwnd, g_hMainMenu);
 
             // Create main ListView (Code table)
-            g_hListView = CreateWindowEx(
+            g_hListView = CreateWindowExW(
                 0,
-                WC_LISTVIEW,
-                "",
+                WC_LISTVIEWW,
+                L"",
                 WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_NOSORTHEADER |
                 WS_BORDER | WS_VSCROLL | WS_HSCROLL,  // Adiciona bordas e barras de rolagem
                 hlistviewX, hlistviewY,     // posição x, y
@@ -435,38 +435,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             int totalWidth = rect.right - rect.left;  // Calcula a largura total
 
             // Add columns to main ListView
-            LVCOLUMN lvc = {0};
+            LVCOLUMNW lvc = {0};
             lvc.mask = LVCF_TEXT | LVCF_WIDTH;
             
-            lvc.pszText = "Linha";
+            lvc.pszText = (LPWSTR)L"Linha";
             lvc.cx = totalWidth * 0.07;
             ListView_InsertColumn(g_hListView, 0, &lvc);
             
-            lvc.pszText = "Rótulo";
+            lvc.pszText = (LPWSTR)L"Rótulo";
             lvc.cx = totalWidth * 0.09;
             ListView_InsertColumn(g_hListView, 1, &lvc);
 
-            lvc.pszText = "Instrução";
+            lvc.pszText = (LPWSTR)L"Instrução";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 2, &lvc);
             
-            lvc.pszText = "Atributo 1";
+            lvc.pszText = (LPWSTR)L"Atributo 1";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 3, &lvc);
             
-            lvc.pszText = "Atributo 2";
+            lvc.pszText = (LPWSTR)L"Atributo 2";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 4, &lvc);
             
-            lvc.pszText = "Comentário";
+            lvc.pszText = (LPWSTR)L"Comentário";
             lvc.cx = totalWidth * 0.29;
             ListView_InsertColumn(g_hListView, 5, &lvc);
             
             // Create Memory ListView
-            g_hMemoryListView = CreateWindowEx(
+            g_hMemoryListView = CreateWindowExW(
                 0,
-                WC_LISTVIEW,
-                "",
+                WC_LISTVIEWW,
+                L"",
                 WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_NOSORTHEADER |
                 WS_BORDER | WS_VSCROLL | WS_HSCROLL,
                 memorylistX, memorylistY, memoryListWidth, hlistViewHeight,
@@ -478,19 +478,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             totalWidth = rect.right - rect.left;  // Calcula a largura total
 
             // Add columns to Memory ListView
-            lvc.pszText = "Endereço";
+            lvc.pszText = (LPWSTR)L"Endereço";
             lvc.cx = totalWidth * 0.50;
             ListView_InsertColumn(g_hMemoryListView, 0, &lvc);
             
-            lvc.pszText = "Valor";
+            lvc.pszText = (LPWSTR)L"Valor";
             lvc.cx = totalWidth * 0.51;
             ListView_InsertColumn(g_hMemoryListView, 1, &lvc);
             
             // Create Output Edit box
-            g_hOutputEdit = CreateWindowEx(
+            g_hOutputEdit = CreateWindowExW(
                 WS_EX_CLIENTEDGE,
-                "EDIT",
-                "Saída",
+                L"EDIT",
+                L"Saída",
                 WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL,
                 outputX, outputY, outputWidth, outputHeight,
                 hwnd, NULL, g_hInst, NULL
@@ -498,48 +498,48 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             
             // Create Radio buttons
             
-            hGrpButtons=CreateWindowEx(
+            hGrpButtons=CreateWindowExW(
                 WS_EX_WINDOWEDGE,
-                "BUTTON",
-                "Mode de Execução:", 
+                L"BUTTON",
+                L"Mode de Execução:", 
                 WS_VISIBLE | WS_CHILD|BS_GROUPBOX,
                 caixaX,caixaY,
                 caixaWidth,caixaHeight, 
                 hwnd, /*(HMENU)IDC_GRPBUTTONS*/ NULL, g_hInst, NULL
             );
 
-            g_hNormalRadio = CreateWindowEx(
+            g_hNormalRadio = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Normal",
+                L"BUTTON",
+                L"Normal",
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP,
                 normalX, normalY, normalWidth, normalHeight,
                 hwnd, (HMENU)ID_NORMAL_RADIO, g_hInst, NULL
             );
             
-            g_hStepByStepRadio = CreateWindowEx(
+            g_hStepByStepRadio = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Passo a Passo",
+                L"BUTTON",
+                L"Passo a Passo",
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
                 passoX, passoY, passoWidth, passoHeight,
                 hwnd, (HMENU)ID_STEP_RADIO, g_hInst, NULL
             );
             
             // Create Execute and Stop buttons
-            g_hExecuteButton = CreateWindowEx(
+            g_hExecuteButton = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Executar",
+                L"BUTTON",
+                L"Executar",
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 executarX, executarY, executarWidth, executarHeight,
                 hwnd, (HMENU)ID_EXECUTE_BUTTON, g_hInst, NULL
             );
             
-            g_hStopButton = CreateWindowEx(
+            g_hStopButton = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Parar",
+                L"BUTTON",
+                L"Parar",
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 pararX, pararY, pararWidth, pararHeight,
                 hwnd, (HMENU)ID_STOP_BUTTON, g_hInst, NULL
@@ -674,7 +674,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                             if (file) 
                             {
                                 // Limpa o conteúdo anterior do EditControl
-                                SetWindowText(g_hOutputEdit, "");
+                                SetWindowTextW(g_hOutputEdit, L"");
                              
                                 p = inicializarPilha(PILHA_TAM_INICIAL);
                                 if(p == NULL){

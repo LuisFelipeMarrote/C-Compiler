@@ -13,6 +13,7 @@ O que falta:
     >   rever pare (possivel crash)
     >   colocar erros como pop-up
 
+    >   COMENTARIOS
     >   ver comportamento ou DELETAR botao de cancelar read
     >   desabilitar botao executar am algumas ocasioes
     >   ver o que fazer caso o usuario cancele o input
