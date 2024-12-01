@@ -242,10 +242,6 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
                 PostQuitMessage(0);  // Finaliza o loop de mensagens
                 return 0;
             }
-            case IDCANCEL:
-                DestroyWindow(hDlg); // Fecha o diálogo
-                PostQuitMessage(0);  // Finaliza o loop de mensagens
-                return 0;
             }
             break;
     }
@@ -284,15 +280,8 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
     CreateWindowExW(
         0, L"BUTTON", L"OK",
         WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-        50, 80, 80, 25,
+        100, 80, 80, 25,
         hDlg, (HMENU)IDOK, hInst, NULL);
-
-    // Botão Cancelar
-    CreateWindowExW(
-        0, L"BUTTON", L"Cancelar",
-        WS_CHILD | WS_VISIBLE,
-        150, 80, 80, 25,
-        hDlg, (HMENU)IDCANCEL, hInst, NULL);
 
     // Exibe a janela do diálogo
     ShowWindow(hDlg, SW_SHOW);
