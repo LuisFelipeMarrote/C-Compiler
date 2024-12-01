@@ -32,6 +32,7 @@ HWND hwnd;
 HWND g_hExecuteButton, g_hStopButton;
 HMENU g_hMainMenu;
 int g_executionMode  = 1; //normal = 0, passo = 1
+HWND g_hInputDialog = NULL;  // Handle para a janela de diálogo de entrada
 
 //pilha de dados
 typedef struct {
@@ -187,8 +188,15 @@ void resetMachineState() {
 
 // Função para parar a execução
 void PararExecucao() {
-    OutputDebugString("Programa entrou na parada de execução\n");
-    // Limpar a pilha
+    OutputDebugString("Iniciando parada de execução\n");
+    
+    // Fecha a janela de diálogo se estiver aberta
+    if (g_hInputDialog != NULL && IsWindow(g_hInputDialog)) {
+        DestroyWindow(g_hInputDialog);
+        g_hInputDialog = NULL;
+    }
+    
+    // Limpa a pilha
     if (p != NULL) {
         liberarPilha();
         p = NULL;
@@ -201,7 +209,7 @@ void PararExecucao() {
     // Limpar a ListView de memória
     ListView_DeleteAllItems(g_hMemoryListView);
 
-    InvalidateRect(g_hListView, NULL, TRUE); // Redesenha o ListView
+    InvalidateRect(g_hListView, NULL, TRUE);
 
     // Limpar a saída
     SetWindowTextW(g_hOutputEdit, L"Execução interrompida.");
@@ -244,6 +252,13 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
             }
             }
             break;
+        case WM_CLOSE:
+            // Comportamento quando o usuário clica no X da janela
+            // Você pode adicionar aqui qualquer limpeza necessária
+            g_hInputDialog = NULL;
+            DestroyWindow(hDlg);
+            PostQuitMessage(0);
+            return TRUE;
     }
 
     return DefWindowProc(hDlg, message, wParam, lParam);
@@ -268,6 +283,8 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
         hWndParent, NULL, hInst, NULL);
 
     if (!hDlg) return 0;
+
+    g_hInputDialog = hDlg;
 
     // Campo de texto
     CreateWindowExW(
