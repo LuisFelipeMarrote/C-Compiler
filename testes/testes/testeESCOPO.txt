@@ -1,0 +1,51 @@
+{Teste OK}
+programa ricardo;
+
+var a,b,c,x: inteiro;
+
+                   {proc 1}
+          procedimento analisa1;
+          var x: inteiro;
+          z: booleano;
+
+                      procedimento analisa2;
+                      inicio
+                         leia(a);
+                         b:=1;
+                         b:= a*a+(c div b);
+                         escreva(b) 
+                     fim;
+
+			funcao func1: inteiro;
+                     inicio
+
+                        func1:= +a-(-b);
+                     fim;
+
+           inicio
+           leia(x);
+           se (x>1)
+          entao
+          inicio      
+              
+
+               escreva(x);
+          fim;
+          enquanto  ( (-a*(-b) = 1064) ou (a<= (-1000)) ou z)  {condicao de parada}
+          faca
+          inicio
+               a:= x+b;
+
+          fim;
+          escreva(a)
+fim;
+
+inicio
+inicio
+    leia(c);
+
+    se b > (c+ a*a)
+    entao escreva(b)
+    senao escreva(c)
+fim
+fim.

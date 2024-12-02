@@ -1,0 +1,6 @@
+programa marcelo;
+var x, y: booleano;
+inicio
+ x := nao y;
+ x := falso;
+fim.

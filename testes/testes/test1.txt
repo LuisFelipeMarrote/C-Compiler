@@ -1,0 +1,12 @@
+{este programa e o primeiro teste}
+programa teste;
+{tirei a chave dps dessa -->}
+var x,y,total: inteiro;
+miguel1: booleano;
+
+inicio
+soma:= x+y;
+leia(x);
+leia(y);
+escreva(total);
+fim.

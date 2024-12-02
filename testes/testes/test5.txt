@@ -1,0 +1,18 @@
+programa moduloc;
+var res: inteiro;
+	procedimento calcula;
+	var b,a, aux: inteiro;
+		funcao ler:inteiro;
+		var x: inteiro;
+		inicio
+		leia(a);
+		ler := x + 2;
+		fim;
+	inicio
+	aux := 4+(5-2);
+	res := aux * 3;
+	fim;
+inicio
+leia (res);
+escreva(res);
+fim.

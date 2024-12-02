@@ -1,0 +1,13 @@
+programa marcelo;
+var x, y: booleano;
+	procedimento kauan;
+	var a, b: inteiro;
+	inicio
+	a := b +2;
+	escreva(a);
+	fim;
+inicio
+ x := y;
+ kauan;
+ x := falso;
+fim.
