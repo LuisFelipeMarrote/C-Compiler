@@ -53,7 +53,7 @@ Pilha *p;
 int i = 0;
 struct Inst lista[MAX_INST];
 int countres = -1;
-int *rotulos;
+int labelMap[MAX_ROTULOS] = {0};  // Mapa de rótulos
 
 Pilha* inicializarPilha(int capacidadeInicial);
 int pilhaVazia(); 
@@ -70,7 +70,7 @@ void MVD();
 void resetMachineState();
 
 void AddIntructionItem(const char* linha, const char* rotulo, const char* instrucao, 
-                const char* attr1, const char* attr2) {
+                const char* attr1, const char* attr2, const char* comentario) {
     LVITEM lvi = {0};
     lvi.mask = LVIF_TEXT;
     
@@ -85,6 +85,7 @@ void AddIntructionItem(const char* linha, const char* rotulo, const char* instru
     ListView_SetItemText(g_hListView, itemCount, 2, (char*)instrucao);
     ListView_SetItemText(g_hListView, itemCount, 3, (char*)attr1);
     ListView_SetItemText(g_hListView, itemCount, 4, (char*)attr2);
+    ListView_SetItemText(g_hListView, itemCount, 5, (char*)comentario);
 }
 
 void AtualizarListViewMemoria() {
@@ -328,6 +329,17 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
     LPSTR lpCmdLine, int nCmdShow) {
+    AllocConsole();
+    
+    // Redirect standard input/output to the console
+    FILE* pCout;
+    freopen_s(&pCout, "CONOUT$", "w", stdout);
+    FILE* pCin;
+    freopen_s(&pCin, "CONIN$", "r", stdin);
+
+    // Optional: Print a debug message
+    printf("Debug console initialized\n");
+
     
     setlocale(LC_ALL, "pt_BR.UTF-8"); // Configura o idioma para português (Brasil)
     
@@ -479,6 +491,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             lvc.pszText = (LPWSTR)L"Atributo 2";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 4, &lvc);
+
+            lvc.pszText = (LPWSTR)L"Comentario";
+            lvc.cx = totalWidth * 0.29;
+            ListView_InsertColumn(g_hListView, 5, &lvc);
             
             // Create Memory ListView
             g_hMemoryListView = CreateWindowExW(
@@ -696,6 +712,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                              
                                 p = inicializarPilha(PILHA_TAM_INICIAL);
                                 if(p == NULL){
+                                    MessageBoxW(hwnd, L"Erro ao abrir o arquivo.", L"Erro", MB_OK | MB_ICONERROR);
                                     return 1;
                                 }
                                 countres = 0;
@@ -882,19 +899,54 @@ int analisaInst(struct Inst *lista) {
 }
 
 void lerInstrucoes(FILE *file) {
-    int count = -1;
+    int count = 0;
+
+    char buffer[256];
+    // Primeira passagem: mapear rótulos para linhas
+    while(fgets(buffer, sizeof(buffer), file)) {
+        buffer[strcspn(buffer, "\n")] = 0;
+        buffer[strcspn(buffer, "\r")] = 0;
+
+        char rotulo[5] = "";
+        strncpy(rotulo, buffer, 4);
+        rotulo[4] = '\0';
+        while(strlen(rotulo) > 0 && rotulo[strlen(rotulo)-1] == ' ')
+            rotulo[strlen(rotulo)-1] = '\0';
+
+        if(strlen(rotulo) > 0 && isdigit(rotulo[0])) {
+            int label = atoi(rotulo);
+            labelMap[label] = count;
+        }
+        count++;
+    }
+    rewind(file);
+    count = -1;
     while (strcmp(lista[count].instrucao, "HLT     ") != 0){
         (count)++;
+        char jmp[9] = "";
 
         // Analisa e preenche os campos da estrutura
         fgets(lista[count].rotulo, sizeof(lista[count].rotulo), file);
         fgets(lista[count].instrucao, sizeof(lista[count].instrucao), file);
         fgets(lista[count].atr1, sizeof(lista[count].atr1), file);
+        if((strcmp(lista[count].instrucao, "JMP     ") == 0) || (strcmp(lista[count].instrucao, "JMPF    ") == 0) || (strcmp(lista[count].instrucao, "CALL    ") == 0)){
+            //printf("rotulo = atoi(%s)", lista[count].atr1);
+            //getchar();
+            int rotulo = atoi(lista[count].atr1);
+            int linha = labelMap[rotulo];
+            //printf("ACHOU %s na linha %d: \trotulo original: %d\t|linha destino: %d\n",
+            // lista[count].instrucao, count, rotulo, linha);
+            //getchar();
+            sprintf(lista[count].atr1, "%d", linha); // Atualiza attr1 com o número da linha
+            //printf("novo rotulo: %s", lista[count].atr1);
+            //getchar();
+            sprintf(jmp, "{ JMP%d }", rotulo);
+        }
         fgets(lista[count].atr2, sizeof(lista[count].atr2), file);
  
         char buffer[12];
         snprintf(buffer, sizeof(buffer), "%d", count);
-        AddIntructionItem(buffer, lista[count].rotulo, lista[count].instrucao, lista[count].atr1, lista[count].atr2);
+        AddIntructionItem(buffer, lista[count].rotulo, lista[count].instrucao, lista[count].atr1, lista[count].atr2, jmp);
         // Imprime as informações lidas (opcional)
         /*printf("%4s %8s %4s %4s\n",
                lista[count].rotulo,
@@ -1009,7 +1061,7 @@ void resolveInst(int* count){
             break;
         
         case 17: // JMP p (Desviar sempre)
-            for (int i = -1; i < MAX_INST; i++) {
+            /*for (int i = -1; i < MAX_INST; i++) {
                 // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                 if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
                     printf("\n rotulo = %s, instrucao = %s, atr1 = %s",lista[i].rotulo, lista[*count].instrucao, lista[*count].atr1);
@@ -1018,13 +1070,14 @@ void resolveInst(int* count){
                     return;
                     // Faça o que for necessário quando o rótulo for encontrado
                 }
-            };
+            };*/
+            *count = atoi(lista[countres].atr1);
             break;
 
         case 18: // JMPF p (Desviar se falso)
             desempilhar(&l);
             if(l == 0){
-                for (int i = -1; i < MAX_INST; i++) {
+                /*for (int i = -1; i < MAX_INST; i++) {
                     // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                     if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
                         // Se for igual, você pode executar a ação desejada
@@ -1032,7 +1085,8 @@ void resolveInst(int* count){
                         return;
                         // Faça o que for necessário quando o rótulo for encontrado
                     }
-                }
+                }*/
+                *count = atoi(lista[countres].atr1);
             };
             break;
 
@@ -1054,7 +1108,7 @@ void resolveInst(int* count){
             }
             char entradaStr[256] = "";
             if (ShowCustomDialog(g_hInst, NULL, entradaStr)) {
-                printf("Entrada emilhada\n");
+                //printf("Entrada emilhada\n");
             } else {
                 printf("Entrada cancelada pelo usuário.\n");
             }if(g_executionMode)
@@ -1123,7 +1177,7 @@ void resolveInst(int* count){
 
         case 25: // CALL p (Chamar procedimento ou função)
             empilhar(((*count)+1));
-            for (int i = 0; i < MAX_INST; i++) {
+            /*for (int i = 0; i < MAX_INST; i++) {
                 
                 // Verifique se o rótulo da linha atual é igual a lista[count].atr1
                 if (strcmp(lista[i].rotulo, lista[*count].atr1) == 0) {
@@ -1132,7 +1186,8 @@ void resolveInst(int* count){
                     return;
                     // Faça o que for necessário quando o rótulo for encontrado
                 }
-            }
+            }*/
+            *count = atoi(lista[countres].atr1);
             break;
 
         case 26: // Return
@@ -1140,7 +1195,7 @@ void resolveInst(int* count){
             *count = l -1;
 
         default:
-            printf("Instrução inválida: \n");
+            //printf("Instrucao invalida: \n");
             break;
     }
 }
