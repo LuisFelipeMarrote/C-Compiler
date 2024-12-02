@@ -609,10 +609,10 @@ void limpa_memoria(){
     deleta_tabela();
     
     //libera expressao 
-    printf("expressao_infix: \n");
-    getchar();
+    //printf("expressao_infix: \n");
+    //getchar();
     while(expressao_infix!=NULL){
-        printf("%s\t|%d\t|%p \n", expressao_infix->tk.lexema, expressao_infix->tk.simbolo, expressao_infix->prox);
+        /*printf("%s\t|%d\t|%p \n", expressao_infix->tk.lexema, expressao_infix->tk.simbolo, expressao_infix->prox);
         getchar();
         printf("Conferencia: \n");
         getchar();
@@ -621,16 +621,16 @@ void limpa_memoria(){
         printf("Endereço do próximo: %p\n", (void*)expressao_infix->prox);
         getchar();
         printf("Conteúdo do token: %s\n", expressao_infix->tk.lexema);
-        getchar();
+        getchar();*/
 
         node_lista_token* temp = expressao_infix;
-        printf(" foi para o proximo\n");
-        getchar();
+        //printf(" foi para o proximo\n");
+        //getchar();
         expressao_infix = expressao_infix->prox;
-        printf(" proximo é o free\n");
-        getchar();
+        //printf(" proximo é o free\n");
+        //getchar();
         free(temp);
-        printf("foi o free\n");
+        //printf("foi o free\n");
     }
 
     memset (nome_arquivo,'\0',30);

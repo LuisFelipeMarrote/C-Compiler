@@ -96,7 +96,7 @@ jmp_buf error_jump;
 
 void semantico18(int line, char lexema[], char* tipo1, char* tipo2){
     snprintf(error_buffer, sizeof(error_buffer), 
-            "Erro na linha %d: Tipo de operando inválido (%s) para a operação. (encontrado %s = %s, e o tipo esperado é %s) [Código de erro - SEM18]\n",
+            "Erro na linha %d: Tipo de operando inválido (%s) para a operação. (encontrado %s = %s. O tipo esperado é %s) [Código de erro - SEM18]\n",
             line, lexema, lexema, tipo1, tipo2);
 
     // Jump back to the compilation start point

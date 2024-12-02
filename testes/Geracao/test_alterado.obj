@@ -40,10 +40,10 @@
     CALL    2       
     LDV     0       
     STR     3       
-    LDV     3       
-    LDV     1       
-    MULT            
-    LDV     2       
+    LDC     0       
+    LDC     5       
+    INV             
+    CEQ             
     LDV     3       
     SUB             
     SUB             

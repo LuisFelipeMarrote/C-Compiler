@@ -184,6 +184,11 @@ enum tipos semantico_expressao(node_lista_token** lista_posfix, int linha){
                 entrada_tab_simbolos* entrada_tabela_operador;
                 entrada_tabela_operador = busca_ident((*lista_posfix)->tk.lexema);
                 if(entrada_tabela_operador == NULL){
+                    while(pilha!=NULL){
+                        node_lista_token* liberar = pilha;
+                        pilha = pilha->prox;
+                        free(liberar);
+                    }// libera a pilha
                     semantic_error(17, linha);
                     return serro;
                 }
@@ -213,24 +218,25 @@ enum tipos semantico_expressao(node_lista_token** lista_posfix, int linha){
             operacao analisando = formato_operacao((*lista_posfix)->tk.simbolo);
             for(int i = 0; i<analisando.qtd_operadores; i++){
                 if(pilha->tk.simbolo != analisando.tipos_operadores){
-                    node_lista_token* temp;
-                    temp = pilha;
-                    printf("pilha atual:\n");
-                    while(temp!= NULL){
-                        printf("lexema: %s\tsimbolo: %d\tprox:  %p\n", temp->tk.lexema, temp->tk.simbolo, (void*)temp->prox);
-                        temp = temp->prox;
-                        getchar();
-                    }
-                    printf("Lista posfix [0]: %s | %d", (*lista_posfix)->tk.lexema, (*lista_posfix)->tk.simbolo);
-                    getchar();
-                    if(pilha->tk.simbolo == sbooleano){
-                        if (strcmp(pilha->tk.lexema, "0   ") == 0){
-                            semantico18(linha, "falso", print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
+                    char pilha_lexema[lexema_size_max] = "";
+                    enum tipos pilha_tipo = pilha->tk.simbolo;
+                    strcpy(pilha_lexema, pilha->tk.lexema);
+            
+                    while(pilha!=NULL){
+                        node_lista_token* liberar = pilha;
+                        pilha = pilha->prox;
+                        free(liberar);
+                    }// libera a pilha
+
+
+                    if(pilha_tipo == sbooleano){
+                        if (strcmp(pilha_lexema, "0   ") == 0){
+                            semantico18(linha, "falso", print_tipo_erros(pilha_tipo), print_tipo_erros(analisando.tipos_operadores));
                         }else{
-                            semantico18(linha, "verdadeiro", print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));  
+                            semantico18(linha, "verdadeiro", print_tipo_erros(pilha_tipo), print_tipo_erros(analisando.tipos_operadores));  
                         }
                     }else{
-                        semantico18(linha, pilha->tk.lexema, print_tipo_erros(pilha->tk.simbolo), print_tipo_erros(analisando.tipos_operadores));
+                        semantico18(linha, pilha_lexema, print_tipo_erros(pilha_tipo), print_tipo_erros(analisando.tipos_operadores));
                     }
                     return serro;   
                 }else{
@@ -256,6 +262,11 @@ enum tipos semantico_expressao(node_lista_token** lista_posfix, int linha){
         }
     }
     if(pilha->prox != NULL){
+        while(pilha!=NULL){
+            node_lista_token* liberar = pilha;
+            pilha = pilha->prox;
+            free(liberar);
+        }// libera a pilha
         semantic_error(19, linha);
         return serro;
     }
