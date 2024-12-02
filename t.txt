@@ -1,17 +1,16 @@
 O que falta:
     Funcionamento do Compilador:
     >   confirmar semantico chamada de função
+    >   checar entrada / saida (tem que ser var acho)
     >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 
     Funcionamento / Interface VM:
 
     >   converter rotulos
-    >   resize
     >   rever erros (atualmente dá return, nao para a execução)
     >   colocar erros como pop-up
     >   não crashar ao nao ter HLT;
 
-    >   COMENTARIOS
     >   ver comportamento ou DELETAR botao de cancelar read
     >   desabilitar botao executar am algumas ocasioes
     >   ver o que fazer caso o usuario cancele o input
@@ -24,17 +23,9 @@ O que falta:
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Melhorias opcionais:
-> especificar variaveis nos erros semânticos
-> fecahr arquivo obj sem fechar o compilador
-> perguntar se quer salvar ao abrir um arquivo em cima de outro
-> colocar formato ao salvar txt ao Compilador
-> scroll mais bonito em erro
 > redimencionar automaticamente
-> confirmar se noe de arquivo pode ter acento
+> perguntar se quer salvar ao abrir um arquivo em cima de outro
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função
-
-
---------------------------------------------------------------------------------------------------------------------------------------------------------
