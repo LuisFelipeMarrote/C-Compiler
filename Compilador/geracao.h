@@ -237,7 +237,7 @@ void Cria_arquivo(token *tk){
     if (new_fp != NULL)
     {
         remove(nome_arquivo);
-        printf("O arquivo '%s' já existe e foi bÃÃÃnidu.\n", nome_arquivo);
+        printf("O arquivo '%s' já existe e foi deletado.\n", nome_arquivo);
     }
 
     new_fp = fopen(nome_arquivo, "w");
