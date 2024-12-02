@@ -245,7 +245,7 @@ void pega_token(token *tk){
                         if(caractere == ';' || caractere == ','|| caractere == '('|| caractere == ')'|| caractere == '.'){ 
                             trata_pontuacao(tk); 
                         }else{ 
-                            lexical_error(3, *linha); 
+                            lexical_error(3, *linha);
                         } 
                     } 
                 } 
@@ -265,7 +265,7 @@ void AnalisadorLexicalN1()
 
     while (caractere != EOF)
     {
-        while ((caractere == '{' || caractere == ' ' || caractere == '\n' || caractere == '}') && caractere != EOF) 
+        while ((caractere == '{' || caractere == ' ' || caractere == '\t' || caractere == '\n' || caractere == '}') && caractere != EOF) 
         {        
             if(caractere == '{') 
             {
