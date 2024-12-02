@@ -153,6 +153,8 @@ void ExecutarPrograma() {
         resolveInst(&countres);
         ListView_EnsureVisible(g_hListView, countres, FALSE);
         AtualizarListViewMemoria();
+        int lastIndex = ListView_GetItemCount(g_hMemoryListView) - 1;
+        ListView_EnsureVisible(g_hMemoryListView, lastIndex, FALSE);
         
     } else { // Modo Normal
         countres = 0;
@@ -161,6 +163,8 @@ void ExecutarPrograma() {
         // Executar todas as instruções de uma vez
         MVD();
         AtualizarListViewMemoria();
+        int lastIndex = ListView_GetItemCount(g_hMemoryListView) - 1;
+        ListView_EnsureVisible(g_hMemoryListView, lastIndex, FALSE);
     }
 }
 
