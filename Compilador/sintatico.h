@@ -130,15 +130,20 @@ void Analisa_comando_simples(){
 }
 
 void Analisa_atrib_chprocedimento(){
-    token temp = *tk;    
-    token *temp1 = tk;
-    AnalisadorLexical(fp,linha,tk);
+    fpos_t file_pos;
+    fgetpos(fp, &file_pos);
+    int linha_aux = *linha;
+    token copia_tk = *tk;    
+
+    AnalisadorLexical(fp,linha,tk);    
     if(tk->simbolo == satribuicao){
-        Analisa_atribuicao(temp); 
+        Analisa_atribuicao(*tk); 
     }else{
-        char lex = tk->lexema[0];
-        ungetc(lex, fp);
-        Chamada_procedimento(temp);
+        file_pos--;
+        fsetpos(fp, &file_pos);
+        *linha = linha_aux;
+        *tk = copia_tk;
+        Chamada_procedimento(copia_tk); 
     }
 }
 
@@ -496,7 +501,7 @@ void Analisa_termo(){
 /// @param ident identificador lido antes do sinal de atribuição (:=) 
 void Analisa_atribuicao(token ident){
     AnalisadorLexical(fp,linha,tk);
-    entrada_tab_simbolos* destino = busca_ident(ident.lexema);
+    entrada_tab_simbolos* destino = busca_ident(tk->lexema);
     if(destino != NULL){
         enum tipos tipo = analisa_tipo_expressao_semantica();
         if(destino->tipo == fint || destino->tipo == fbool){
