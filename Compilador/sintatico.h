@@ -205,7 +205,7 @@ void Analisa_Variaveis(){
                         }
                     }
                 }else{
-                    sintax_error(0, *linha);
+                    sintax_error(32, *linha);
                 }
             }else{
                 //se encontrou duplicidade
@@ -335,10 +335,10 @@ void Analisa_se(){
             Analisa_comando_simples(tk);    
         
             int auxrot2;   
-            auxrot2 = rotulo;
-            rotulo = rotulo+1;  
 
-            if(tk->simbolo == ssenao){ //remendo para ele no colocar um jmp caso nao tenha um ssenao         
+            if(tk->simbolo == ssenao){ //remendo para ele no colocar um jmp caso nao tenha um ssenao             
+                auxrot2 = rotulo;
+                rotulo = rotulo+1;          
                 Gera_jmp(str_rotulo(auxrot2));
             }
 

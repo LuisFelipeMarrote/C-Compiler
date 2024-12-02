@@ -58,7 +58,8 @@ static const ErrorMessage sintax_errors[] = {
     {"Parêntesis não foi fechado corretamente (era esperado ')')", 28},
     {"Foi Encontrado um simbolo inesperado dentro da expressao", 29},
     {"Era Esperado ';' após o 'fim' de uma subrotina (procedimento ou função)", 30},
-    {"Era esperado um símbolo separando as palavras na declaração (se quiser declarar várias variáveis, separe-as por vírgulas. Se quiser colocar o tipo, coloque ':' antes do tipo escolhido)", 31}
+    {"Era esperado um símbolo separando as palavras na declaração (se quiser declarar várias variáveis, separe-as por vírgulas. Se quiser colocar o tipo, coloque ':' antes do tipo escolhido)", 31},
+    {"Era Esperado ',' ou ':' após um nome de uma variável", 32}
 };
 
 static const ErrorMessage semantic_errors[] = {
