@@ -180,10 +180,12 @@ enum tipos semantico_expressao(node_lista_token** lista_posfix, int linha){
     while(*lista_posfix != NULL){
         if((*lista_posfix)->tk.simbolo == sinteiro || (*lista_posfix)->tk.simbolo == sidentificador || (*lista_posfix)->tk.simbolo == sbooleano){ //se for variável, empilha
             if((*lista_posfix)->tk.simbolo == sidentificador){
+                printf("oi1");
                 //procurar tabela
                 entrada_tab_simbolos* entrada_tabela_operador;
                 entrada_tabela_operador = busca_ident((*lista_posfix)->tk.lexema);
                 if(entrada_tabela_operador == NULL){
+                    printf("oi12");
                     while(pilha!=NULL){
                         node_lista_token* liberar = pilha;
                         pilha = pilha->prox;
@@ -194,11 +196,14 @@ enum tipos semantico_expressao(node_lista_token** lista_posfix, int linha){
                 }
                 if(entrada_tabela_operador->tipo == fint){
                     (*lista_posfix)->tk.simbolo = sinteiro;
+                    printf("oi2");
                 }else if(entrada_tabela_operador->tipo == fbool){
                     (*lista_posfix)->tk.simbolo = sbooleano;
+                    printf("oi3");
                 }else{
                     Gera_load_variavel(entrada_tabela_operador->rotulo);
                     (*lista_posfix)->tk.simbolo = entrada_tabela_operador->tipo;
+                    printf("oi4");
                 }
             } else {
                 if((*lista_posfix)->tk.simbolo == sbooleano){
