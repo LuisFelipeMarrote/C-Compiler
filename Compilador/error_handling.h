@@ -78,7 +78,7 @@ static const ErrorMessage semantic_errors[] = {
     {"Tentativa falha de chamada de procedimento - o identificador chamado não é um procedimento (ao usar um identificador fora de uma expressão, o código tenta chamar este como procedimento)", 13},
     {"Tentativa falha de chamada de procedimento - o procedimento não foi declarado (nome de procedimento não encontrado no escopo)", 14},
     {"Tentando analisar uma expressão inexistente!", 15},
-    {"Variável de tipo incorreto (em 'leia()', a variável deve ser do tipo inteiro)", 16},
+    {"Identificador de tipo incorreto (em 'leia()' ou 'escreva()', o identificador deve ser uma variável do tipo inteiro)", 16},
     {"Nome não declarado encontrado durante a análise da expressão (a variável ou função deve ser declarada antes de ser utilizada)", 17},
     {"Erro na própria função (análise expressão)", 18},
     {"Expressão Incompleta (não é possível chegar a um resultado final)", 19},

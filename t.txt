@@ -8,6 +8,7 @@ O que falta:
 
     >   não crashar ao nao ter HLT;
         >ver como fazer
+        
     >   rever erros (atualmente dá return, nao para a execução)
     >   colocar erros como pop-up
 --------------------------------------------------------------------------------------------------------------------------------------------------------

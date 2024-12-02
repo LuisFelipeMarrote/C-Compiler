@@ -173,6 +173,9 @@ int pesquisa_declvarfunc_tabela(char* indent){
     while(entrada_atual->tipo != sbase){
         char* ident_tabela = entrada_atual->nome_ident;
         if(!strcmp(ident_tabela, indent)){
+            if(entrada_atual->tipo != sinteiro){
+                semantic_error(16, *linha); //achou, mas tipo errado
+            }
             return 0; // encontrou = false (0)
         }
         entrada_atual = entrada_atual->prev;
