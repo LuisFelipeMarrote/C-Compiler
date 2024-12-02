@@ -1,0 +1,29 @@
+programa prtest;
+var x, y, resultado: inteiro;
+
+inicio
+    leia(x);
+    leia(y);
+
+    se x > y entao
+        se (x div 2) * 2 = x entao
+            resultado := 1
+        senao
+            resultado := 2
+
+    senao se y > 0 entao
+            resultado := 3
+        senao 
+            resultado := 4;
+
+
+    escreva(resultado);
+fim.
+
+{resultado esperado:
+
+inputs: 
+2 1 -> 1
+3 2 -> 2
+1 2 -> 3
+-2 -1 -> 4}

@@ -257,6 +257,7 @@ void Analisa_declaracao_procedimento(){
                 int num_var = qtde_variaveis_escopo();
                 if(num_var > 0)
                     Gera_dalloc(num_var);
+                    num_var_total = num_var_total - num_var;
                 Gera_return();
             }else{
                 sintax_error(22, *linha);
@@ -295,6 +296,7 @@ void Analisa_declaracao_funcao(){
                         int num_var = qtde_variaveis_escopo();
                         if(num_var > 0)
                             Gera_dalloc(num_var);
+                            num_var_total = num_var_total - num_var;
                         Gera_return();
                     }else{
                         sintax_error(26, *linha);
@@ -584,6 +586,7 @@ void AnalisadorSintatico(FILE *fp_main, int *linha_main, token *token_main){
                         int num_var = qtde_variaveis_escopo();
                         if(num_var > 0)
                             Gera_dalloc(num_var);
+                            num_var_total = num_var_total - num_var;
                         Gera_end_programn();
                         printf("SUCESSO!\n");
                     }else{
