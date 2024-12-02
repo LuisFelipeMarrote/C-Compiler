@@ -2,7 +2,7 @@ O que falta:
     Funcionamento do Compilador:
     >   confirmar semantico chamada de função
     >   checar entrada / saida (tem que ser var acho)
-    >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)    >   colocar o nome do teste como nome do arquivo
+    >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 
     Funcionamento / Interface VM:
 

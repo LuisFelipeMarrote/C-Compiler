@@ -149,7 +149,14 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
             pilha = pilha->prox;
             free(temp_free);
 
+            if(pilha == NULL){
+                lista_pos->prox = NULL;
+            }
+
+            temp_free = lista_infix;
             lista_infix = lista_infix->prox;
+            free(temp_free);
+
         }else if(checa_operador(lista_infix->tk.simbolo)){
             /*Se for operador, empilha após percorrer desempilhando e copiando na saída todos os operadores com precedência maior ou igual ao 
             que será empilhado, isso até encontrar o primeiro operador com precedência menor, terminar a pilha ou encontrar o primeiro abreparênteses*/

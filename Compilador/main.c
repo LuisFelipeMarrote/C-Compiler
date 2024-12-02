@@ -7,7 +7,7 @@ int main(){
     atexit(limpa_memoria);
 
     FILE *fp; 
-    char* filename = "../testes/Geracao/gera_Final_alterado.txt";
+    char* filename = "../testes/Geracao/semantico-12.txt";
     token main_tk;
     int linha_main = 1;
     fp = fopen(filename, "r");
