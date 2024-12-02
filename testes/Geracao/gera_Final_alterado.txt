@@ -43,5 +43,5 @@ inicio      {corpo principal}
   s := soma;  
   s:= 1;
   {s:= s * a - ( b - s ) + (-3) div (b + (-7) * (-5) div (30+b)<= (s*a+2)); }
-  escreva(s)
+ leia(soma)
 fim.                               

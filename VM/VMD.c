@@ -7,7 +7,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#define MAX_INST 256
+#define MAX_INST 512
 #define PILHA_TAM_INICIAL    64    
 #define PILHA_TAM_MAXIMO    1024 
 #define MAX_ROTULOS    256 
