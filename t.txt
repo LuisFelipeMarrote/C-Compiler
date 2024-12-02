@@ -1,40 +1,22 @@
 O que falta:
     Funcionamento do Compilador:
     >   confirmar semantico chamada de função
+    >   checar entrada / saida (tem que ser var acho)
     >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
+    >   colocar o nome do teste como nome do arquivo
 
     Funcionamento / Interface VM:
 
+    >   não crashar ao nao ter HLT;
+        >ver como fazer
     >   converter rotulos
-    >   resize
     >   rever erros (atualmente dá return, nao para a execução)
     >   colocar erros como pop-up
-    >   não crashar ao nao ter HLT;
-
-    >   COMENTARIOS
-    >   ver comportamento ou DELETAR botao de cancelar read
-    >   desabilitar botao executar am algumas ocasioes
-    >   ver o que fazer caso o usuario cancele o input
-    >   ver comportamento da vm:
-        > return(1) apos inicializar pilha
-        > fechar a janela caso clique outro botao fora dela
-        > Executar varias vezes
-        > ele ta fechando aleatoriamente (nao tá mtt estável acho)
-    > scrolls (memoria sempre em baixo, codigo sempre na linha)
-
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Melhorias opcionais:
-> especificar variaveis nos erros semânticos
-> fecahr arquivo obj sem fechar o compilador
-> perguntar se quer salvar ao abrir um arquivo em cima de outro
-> colocar formato ao salvar txt ao Compilador
-> scroll mais bonito em erro
 > redimencionar automaticamente
-> confirmar se noe de arquivo pode ter acento
+> perguntar se quer salvar ao abrir um arquivo em cima de outro
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
 Testes:
 > declarar uma função dentro de procedimento dentro de função com o nome da função
-
-
---------------------------------------------------------------------------------------------------------------------------------------------------------

@@ -70,7 +70,7 @@ void MVD();
 void resetMachineState();
 
 void AddIntructionItem(const char* linha, const char* rotulo, const char* instrucao, 
-                const char* attr1, const char* attr2, const char* comentario) {
+                const char* attr1, const char* attr2) {
     LVITEM lvi = {0};
     lvi.mask = LVIF_TEXT;
     
@@ -85,7 +85,6 @@ void AddIntructionItem(const char* linha, const char* rotulo, const char* instru
     ListView_SetItemText(g_hListView, itemCount, 2, (char*)instrucao);
     ListView_SetItemText(g_hListView, itemCount, 3, (char*)attr1);
     ListView_SetItemText(g_hListView, itemCount, 4, (char*)attr2);
-    ListView_SetItemText(g_hListView, itemCount, 5, (char*)comentario);
 }
 
 void AtualizarListViewMemoria() {
@@ -152,7 +151,10 @@ void ExecutarPrograma() {
         InvalidateRect(g_hListView, NULL, TRUE); // Redesenha o ListView
         countres++;
         resolveInst(&countres);
+        ListView_EnsureVisible(g_hListView, countres, FALSE);
         AtualizarListViewMemoria();
+        int lastIndex = ListView_GetItemCount(g_hMemoryListView) - 1;
+        ListView_EnsureVisible(g_hMemoryListView, lastIndex, FALSE);
         
     } else { // Modo Normal
         countres = 0;
@@ -161,6 +163,8 @@ void ExecutarPrograma() {
         // Executar todas as instruções de uma vez
         MVD();
         AtualizarListViewMemoria();
+        int lastIndex = ListView_GetItemCount(g_hMemoryListView) - 1;
+        ListView_EnsureVisible(g_hMemoryListView, lastIndex, FALSE);
     }
 }
 
@@ -475,10 +479,6 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             lvc.pszText = (LPWSTR)L"Atributo 2";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 4, &lvc);
-            
-            lvc.pszText = (LPWSTR)L"Comentário";
-            lvc.cx = totalWidth * 0.29;
-            ListView_InsertColumn(g_hListView, 5, &lvc);
             
             // Create Memory ListView
             g_hMemoryListView = CreateWindowExW(
@@ -894,7 +894,7 @@ void lerInstrucoes(FILE *file) {
  
         char buffer[12];
         snprintf(buffer, sizeof(buffer), "%d", count);
-        AddIntructionItem(buffer, lista[count].rotulo, lista[count].instrucao, lista[count].atr1, lista[count].atr2, " ");
+        AddIntructionItem(buffer, lista[count].rotulo, lista[count].instrucao, lista[count].atr1, lista[count].atr2);
         // Imprime as informações lidas (opcional)
         /*printf("%4s %8s %4s %4s\n",
                lista[count].rotulo,
