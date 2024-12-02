@@ -53,7 +53,7 @@ Pilha *p;
 int i = 0;
 struct Inst lista[MAX_INST];
 int countres = -1;
-int *rotulos;
+int labelMap[MAX_ROTULOS] = {0};  // Mapa de rótulos
 
 Pilha* inicializarPilha(int capacidadeInicial);
 int pilhaVazia(); 
@@ -328,6 +328,17 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, 
     LPSTR lpCmdLine, int nCmdShow) {
+    AllocConsole();
+    
+    // Redirect standard input/output to the console
+    FILE* pCout;
+    freopen_s(&pCout, "CONOUT$", "w", stdout);
+    FILE* pCin;
+    freopen_s(&pCin, "CONIN$", "r", stdin);
+
+    // Optional: Print a debug message
+    printf("Debug console initialized\n");
+
     
     setlocale(LC_ALL, "pt_BR.UTF-8"); // Configura o idioma para português (Brasil)
     
@@ -696,6 +707,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                              
                                 p = inicializarPilha(PILHA_TAM_INICIAL);
                                 if(p == NULL){
+                                    MessageBoxW(hwnd, L"Erro ao abrir o arquivo.", L"Erro", MB_OK | MB_ICONERROR);
                                     return 1;
                                 }
                                 countres = 0;
@@ -882,13 +894,39 @@ int analisaInst(struct Inst *lista) {
 }
 
 void lerInstrucoes(FILE *file) {
-    int count = -1;
+    int count = 0;
+
+    char buffer[256];
+    // Primeira passagem: mapear rótulos para linhas
+    while(fgets(buffer, sizeof(buffer), file)) {
+        buffer[strcspn(buffer, "\n")] = 0;
+        buffer[strcspn(buffer, "\r")] = 0;
+
+        char rotulo[5] = "";
+        strncpy(rotulo, buffer, 4);
+        rotulo[4] = '\0';
+        while(strlen(rotulo) > 0 && rotulo[strlen(rotulo)-1] == ' ')
+            rotulo[strlen(rotulo)-1] = '\0';
+
+        if(strlen(rotulo) > 0 && isdigit(rotulo[0])) {
+            int label = atoi(rotulo);
+            labelMap[label] = count;
+        }
+        count++;
+    }
+    rewind(file);
+    count = -1;
     while (strcmp(lista[count].instrucao, "HLT     ") != 0){
         (count)++;
 
         // Analisa e preenche os campos da estrutura
         fgets(lista[count].rotulo, sizeof(lista[count].rotulo), file);
         fgets(lista[count].instrucao, sizeof(lista[count].instrucao), file);
+        if((strcmp(lista[count].instrucao, "JMP     ") == 0) || (strcmp(lista[count].instrucao, "JMPF    ") == 0) || (strcmp(lista[count].instrucao, "CALL    ") == 0)){
+            int rotulo = atoi(lista[count].atr1);
+            int linha = labelMap[rotulo];
+            sprintf(lista[count].atr1, "%d", linha); // Atualiza attr1 com o número da linha
+        }
         fgets(lista[count].atr1, sizeof(lista[count].atr1), file);
         fgets(lista[count].atr2, sizeof(lista[count].atr2), file);
  
