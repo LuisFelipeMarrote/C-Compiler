@@ -137,7 +137,7 @@ void Analisa_atrib_chprocedimento(){
 
     AnalisadorLexical(fp,linha,tk);    
     if(tk->simbolo == satribuicao){
-        Analisa_atribuicao(*tk); 
+        Analisa_atribuicao(copia_tk); 
     }else{
         file_pos--;
         fsetpos(fp, &file_pos);
@@ -501,7 +501,7 @@ void Analisa_termo(){
 /// @param ident identificador lido antes do sinal de atribuição (:=) 
 void Analisa_atribuicao(token ident){
     AnalisadorLexical(fp,linha,tk);
-    entrada_tab_simbolos* destino = busca_ident(tk->lexema);
+    entrada_tab_simbolos* destino = busca_ident(ident.lexema);
     if(destino != NULL){
         enum tipos tipo = analisa_tipo_expressao_semantica();
         if(destino->tipo == fint || destino->tipo == fbool){
