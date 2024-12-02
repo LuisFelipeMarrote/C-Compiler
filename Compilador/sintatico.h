@@ -100,8 +100,12 @@ void Analisa_comandos(){
         Analisa_comando_simples(tk);
         while(tk->simbolo != sfim){
             if(tk->simbolo == sponto_virgula){
+    printf("3");
+    getchar();
                 AnalisadorLexical(fp,linha,tk);
                 if(tk->simbolo != sfim)
+    printf("4");
+    getchar();
                     Analisa_comando_simples(tk);
             }else{
                 sintax_error(19, *linha);       

@@ -16,7 +16,7 @@ var a,b,c,x: inteiro;
                          escreva(b) 
                      fim;
 
-			funcao func1: inteiro;
+funcao func1: inteiro;
                      inicio
                         analisa2;
                         func1:= +a-(-b);
