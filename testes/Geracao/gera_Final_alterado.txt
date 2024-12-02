@@ -41,7 +41,7 @@ var a,b,s: inteiro;
 
 inicio      {corpo principal}
   s := soma;  
-  s:= falso = -5;
-  s:= s * a - ( b - s ) + (-3) div (b + (-7) * (-5) div (30+b)<= (s*a+2)); 
+  s:= 1;
+  {s:= s * a - ( b - s ) + (-3) div (b + (-7) * (-5) div (30+b)<= (s*a+2)); }
   escreva(s)
 fim.                               

@@ -4,15 +4,14 @@ O que falta:
     >   os erros sintaticos 16, 17 e 18 foram declarado, mas não está no código (procurar onde ele deveria estar)
 
     Funcionamento / Interface VM:
-    >   Arquivo concatenado
-    >   portugues
-    >   tirar saida ao iniciar passo a passo
-    >   ver a verificação de start e hlt no passo-a-passo
 
     >   converter rotulos
-    >   rever pare (possivel crash)
+    >   resize
+    >   rever erros (atualmente dá return, nao para a execução)
     >   colocar erros como pop-up
+    >   não crashar ao nao ter HLT;
 
+    >   COMENTARIOS
     >   ver comportamento ou DELETAR botao de cancelar read
     >   desabilitar botao executar am algumas ocasioes
     >   ver o que fazer caso o usuario cancele o input
@@ -39,26 +38,3 @@ Testes:
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------
-Anotações:
-allocs: 
--> pilha
--> memoria da pilha
--> 
-
-fontes de crash: 
-> botão parar
-> read (as vezes)
-> 
-
-
-retornos: 
-call 2 -> 41
-call 5 -> 33
-call 4 -> 28
-call 2 -> 14
-call 5 -> 33
-call 4 -> 28
-call 2 -> 14
-call 5 -> 33
-
-

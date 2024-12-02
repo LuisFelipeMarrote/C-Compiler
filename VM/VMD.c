@@ -31,7 +31,8 @@ HWND g_hNormalRadio, g_hStepByStepRadio,hGrpButtons;
 HWND hwnd;
 HWND g_hExecuteButton, g_hStopButton;
 HMENU g_hMainMenu;
-int g_executionMode  = 1;
+int g_executionMode  = 1; //normal = 0, passo = 1
+HWND g_hInputDialog = NULL;  // Handle para a janela de diálogo de entrada
 
 //pilha de dados
 typedef struct {
@@ -47,26 +48,6 @@ struct Inst {
     char atr1[5];
     char atr2[6];
 };
-
-// Tabela hash para rótulos - evita busca linear
-typedef struct RotuloEntry {
-    char rotulo[5];
-    int linha;
-    struct RotuloEntry* next;
-} RotuloEntry;
-
-typedef struct {
-    RotuloEntry* table[MAX_ROTULOS];
-    int size;
-} RotuloHash;
-
-typedef struct {
-    Pilha* pilha;
-    RotuloHash* rotulos;
-    int executing;
-    int error_state;
-    char last_error[256];
-} ExecutionContext;
 
 Pilha *p;
 int i = 0;
@@ -86,9 +67,7 @@ int analisaInst(struct Inst *lista);
 void lerInstrucoes(FILE *file);
 void resolveInst(int* count);
 void MVD();
-void LimparRecursosIntermediarios();
-void LimparRecursos();
-
+void resetMachineState();
 
 void AddIntructionItem(const char* linha, const char* rotulo, const char* instrucao, 
                 const char* attr1, const char* attr2, const char* comentario) {
@@ -153,61 +132,88 @@ void ExecutarPrograma() {
         p = inicializarPilha(PILHA_TAM_INICIAL);
     }
 
-    // Zerar o contador de instruções
-    if(g_executionMode == 0){
-        countres = 0;
-    }
-
-    // Limpar a saída
-    SetWindowText(g_hOutputEdit, "");
-
     // Executar o programa
     if (g_executionMode == 1) { // Modo Passo a Passo
         // No modo passo a passo, você pode querer adicionar uma função que
         // executa uma instrução por vez quando o usuário clica em "Próximo"
         // ou criar um mecanismo de pausa entre instruções
+        if(countres == 0){
+            SetWindowTextW(g_hOutputEdit, L"");
+            if (strcmp(lista[0].instrucao, "START   ") != 0) {
+                MessageBoxW(hwnd, L"A Primeira instrução deve ser START", L"ERRO", MB_OK | MB_ICONINFORMATION);
+                return;
+            }
+        }
+        if(strcmp(lista[countres].instrucao, "HLT     ") == 0){
+            MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
+            return;
+        }
+
         InvalidateRect(g_hListView, NULL, TRUE); // Redesenha o ListView
         countres++;
         resolveInst(&countres);
         AtualizarListViewMemoria();
         
     } else { // Modo Normal
+        countres = 0;
+        // Limpar a saída
+        SetWindowTextW(g_hOutputEdit, L"");
         // Executar todas as instruções de uma vez
-        MVD(NULL);
+        MVD();
         AtualizarListViewMemoria();
     }
 }
 
-void LimparRecursos() {
-    // Destroi os menus
-    if (g_hMainMenu) DestroyMenu(g_hMainMenu);
-    //if (hHelpMenu) DestroyMenu(hHelpMenu);
-    //if (hMenuBar) DestroyMenu(hMenuBar);
+void resetMachineState() {
+    // Limpar a pilha
+    if (p != NULL) {
+        liberarPilha();
+        p = NULL;
+    }
 
-    // Libera qualquer memória global que tenha sido alocada
-    LimparRecursosIntermediarios();
-    // Adicione aqui outras liberações necessárias para suas estruturas globais
-}
-
-void LimparRecursosIntermediarios(){
+    // Limpar o contador de resultados
     countres = 0;
-    i = 0;
-    liberarPilha();
-}
 
+    // Limpar a lista de instruções
+    memset(lista, 0, sizeof(lista));
+
+    // Limpar as interfaces visuais
+    ListView_DeleteAllItems(g_hListView);
+    ListView_DeleteAllItems(g_hMemoryListView);
+    SetWindowTextW(g_hOutputEdit, L"");
+
+    // Reabilitar o botão de execução
+    EnableWindow(g_hExecuteButton, TRUE);
+}
 
 // Função para parar a execução
 void PararExecucao() {
-    OutputDebugString("Programa entrou na parada de execução\n");
-    LimparRecursosIntermediarios();
+    OutputDebugString("Iniciando parada de execução\n");
+    
+    // Fecha a janela de diálogo se estiver aberta
+    if (g_hInputDialog != NULL && IsWindow(g_hInputDialog)) {
+        DestroyWindow(g_hInputDialog);
+        g_hInputDialog = NULL;
+    }
+    
+    // Limpa a pilha
+    if (p != NULL) {
+        liberarPilha();
+        p = NULL;
+    }
+    OutputDebugString("liberou a pilha\n");
+
+    // Limpar contadores e estados
+    countres = 0;
 
     // Limpar a ListView de memória
     ListView_DeleteAllItems(g_hMemoryListView);
 
-    InvalidateRect(g_hListView, NULL, TRUE); // Redesenha o ListView
+    InvalidateRect(g_hListView, NULL, TRUE);
 
     // Limpar a saída
-    SetWindowText(g_hOutputEdit, "Execução interrompida.");
+    SetWindowTextW(g_hOutputEdit, L"Execução interrompida.");
+    EnableWindow(g_hExecuteButton, TRUE);
 }
 
 LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -230,7 +236,7 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
                 if (!entradaStr){
                     //SetWindowText(g_hOutputEdit, "str");
                     //char* str = buffer;
-                    SetWindowText(g_hOutputEdit, buffer);
+                    //SetWindowText(g_hOutputEdit, buffer);
                     int entrada = atoi(buffer);
                     empilhar(entrada);
                     
@@ -238,18 +244,21 @@ LRESULT CALLBACK CustomDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM
                     //char str[30] = "--------------------";
                     //char* ajuda = "///////";
                     //strcat(str, ajuda);
-                    SetWindowText(g_hOutputEdit, "buffer");
+                    //SetWindowText(g_hOutputEdit, "buffer");
                 }
                 DestroyWindow(hDlg); // Fecha o diálogo
                 PostQuitMessage(0);  // Finaliza o loop de mensagens
                 return 0;
             }
-            case IDCANCEL:
-                DestroyWindow(hDlg); // Fecha o diálogo
-                PostQuitMessage(0);  // Finaliza o loop de mensagens
-                return 0;
             }
             break;
+        case WM_CLOSE:
+            // Comportamento quando o usuário clica no X da janela
+            // Você pode adicionar aqui qualquer limpeza necessária
+            g_hInputDialog = NULL;
+            DestroyWindow(hDlg);
+            PostQuitMessage(0);
+            return TRUE;
     }
 
     return DefWindowProc(hDlg, message, wParam, lParam);
@@ -265,36 +274,31 @@ int ShowCustomDialog(HINSTANCE hInst, HWND hWndParent, char* entradaStr) {
     RegisterClass(&wc);
 
     // Cria a janela do diálogo
-    HWND hDlg = CreateWindowEx(
+    HWND hDlg = CreateWindowExW(
         WS_EX_DLGMODALFRAME,
-        "CustomDialog",            // Classe da janela
-        "Entrada de Dados",        // Título da janela
+        L"CustomDialog",            // Classe da janela
+        L"Entrada de Dados",        // Título da janela
         WS_POPUP | WS_CAPTION | WS_SYSMENU,
         CW_USEDEFAULT, CW_USEDEFAULT, 300, 150,  // Posição e tamanho
         hWndParent, NULL, hInst, NULL);
 
     if (!hDlg) return 0;
 
+    g_hInputDialog = hDlg;
+
     // Campo de texto
-    CreateWindowEx(
-        0, "EDIT", "",
+    CreateWindowExW(
+        0, L"EDIT", L"",
         WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
         20, 40, 260, 20,
         hDlg, (HMENU)IDC_INPUT_FIELD, hInst, NULL);
 
     // Botão OK
-    CreateWindowEx(
-        0, "BUTTON", "OK",
+    CreateWindowExW(
+        0, L"BUTTON", L"OK",
         WS_CHILD | WS_VISIBLE | BS_DEFPUSHBUTTON,
-        50, 80, 80, 25,
+        100, 80, 80, 25,
         hDlg, (HMENU)IDOK, hInst, NULL);
-
-    // Botão Cancelar
-    CreateWindowEx(
-        0, "BUTTON", "Cancelar",
-        WS_CHILD | WS_VISIBLE,
-        150, 80, 80, 25,
-        hDlg, (HMENU)IDCANCEL, hInst, NULL);
 
     // Exibe a janela do diálogo
     ShowWindow(hDlg, SW_SHOW);
@@ -342,10 +346,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     InitCommonControlsEx(&icex);
     
     // Create main window
-    HWND hwnd = CreateWindowEx(
+    HWND hwnd = CreateWindowExW(
         0,
-        "VirtualMachineClass",
-        "Máquina Virtual",
+        L"VirtualMachineClass",
+        L"Máquina Virtual",
         WS_OVERLAPPEDWINDOW,
         CW_USEDEFAULT, CW_USEDEFAULT,
         800, 600,
@@ -433,10 +437,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SetMenu(hwnd, g_hMainMenu);
 
             // Create main ListView (Code table)
-            g_hListView = CreateWindowEx(
+            g_hListView = CreateWindowExW(
                 0,
-                WC_LISTVIEW,
-                "",
+                WC_LISTVIEWW,
+                L"",
                 WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_NOSORTHEADER |
                 WS_BORDER | WS_VSCROLL | WS_HSCROLL,  // Adiciona bordas e barras de rolagem
                 hlistviewX, hlistviewY,     // posição x, y
@@ -449,38 +453,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             int totalWidth = rect.right - rect.left;  // Calcula a largura total
 
             // Add columns to main ListView
-            LVCOLUMN lvc = {0};
+            LVCOLUMNW lvc = {0};
             lvc.mask = LVCF_TEXT | LVCF_WIDTH;
             
-            lvc.pszText = "Linha";
+            lvc.pszText = (LPWSTR)L"Linha";
             lvc.cx = totalWidth * 0.07;
             ListView_InsertColumn(g_hListView, 0, &lvc);
             
-            lvc.pszText = "Rótulo";
+            lvc.pszText = (LPWSTR)L"Rótulo";
             lvc.cx = totalWidth * 0.09;
             ListView_InsertColumn(g_hListView, 1, &lvc);
 
-            lvc.pszText = "Instrução";
+            lvc.pszText = (LPWSTR)L"Instrução";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 2, &lvc);
             
-            lvc.pszText = "Atributo 1";
+            lvc.pszText = (LPWSTR)L"Atributo 1";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 3, &lvc);
             
-            lvc.pszText = "Atributo 2";
+            lvc.pszText = (LPWSTR)L"Atributo 2";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 4, &lvc);
             
-            lvc.pszText = "Comentário";
+            lvc.pszText = (LPWSTR)L"Comentário";
             lvc.cx = totalWidth * 0.29;
             ListView_InsertColumn(g_hListView, 5, &lvc);
             
             // Create Memory ListView
-            g_hMemoryListView = CreateWindowEx(
+            g_hMemoryListView = CreateWindowExW(
                 0,
-                WC_LISTVIEW,
-                "",
+                WC_LISTVIEWW,
+                L"",
                 WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_NOSORTHEADER |
                 WS_BORDER | WS_VSCROLL | WS_HSCROLL,
                 memorylistX, memorylistY, memoryListWidth, hlistViewHeight,
@@ -492,19 +496,19 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             totalWidth = rect.right - rect.left;  // Calcula a largura total
 
             // Add columns to Memory ListView
-            lvc.pszText = "Endereço";
+            lvc.pszText = (LPWSTR)L"Endereço";
             lvc.cx = totalWidth * 0.50;
             ListView_InsertColumn(g_hMemoryListView, 0, &lvc);
             
-            lvc.pszText = "Valor";
+            lvc.pszText = (LPWSTR)L"Valor";
             lvc.cx = totalWidth * 0.51;
             ListView_InsertColumn(g_hMemoryListView, 1, &lvc);
             
             // Create Output Edit box
-            g_hOutputEdit = CreateWindowEx(
+            g_hOutputEdit = CreateWindowExW(
                 WS_EX_CLIENTEDGE,
-                "EDIT",
-                "Saída",
+                L"EDIT",
+                L"Saída",
                 WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL,
                 outputX, outputY, outputWidth, outputHeight,
                 hwnd, NULL, g_hInst, NULL
@@ -512,48 +516,48 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             
             // Create Radio buttons
             
-            hGrpButtons=CreateWindowEx(
+            hGrpButtons=CreateWindowExW(
                 WS_EX_WINDOWEDGE,
-                "BUTTON",
-                "Mode de Execução:", 
+                L"BUTTON",
+                L"Mode de Execução:", 
                 WS_VISIBLE | WS_CHILD|BS_GROUPBOX,
                 caixaX,caixaY,
                 caixaWidth,caixaHeight, 
                 hwnd, /*(HMENU)IDC_GRPBUTTONS*/ NULL, g_hInst, NULL
             );
 
-            g_hNormalRadio = CreateWindowEx(
+            g_hNormalRadio = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Normal",
+                L"BUTTON",
+                L"Normal",
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON | WS_GROUP,
                 normalX, normalY, normalWidth, normalHeight,
                 hwnd, (HMENU)ID_NORMAL_RADIO, g_hInst, NULL
             );
             
-            g_hStepByStepRadio = CreateWindowEx(
+            g_hStepByStepRadio = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Passo a Passo",
+                L"BUTTON",
+                L"Passo a Passo",
                 WS_CHILD | WS_VISIBLE | BS_AUTORADIOBUTTON,
                 passoX, passoY, passoWidth, passoHeight,
                 hwnd, (HMENU)ID_STEP_RADIO, g_hInst, NULL
             );
             
             // Create Execute and Stop buttons
-            g_hExecuteButton = CreateWindowEx(
+            g_hExecuteButton = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Executar",
+                L"BUTTON",
+                L"Executar",
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 executarX, executarY, executarWidth, executarHeight,
                 hwnd, (HMENU)ID_EXECUTE_BUTTON, g_hInst, NULL
             );
             
-            g_hStopButton = CreateWindowEx(
+            g_hStopButton = CreateWindowExW(
                 0,
-                "BUTTON",
-                "Parar",
+                L"BUTTON",
+                L"Parar",
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 pararX, pararY, pararWidth, pararHeight,
                 hwnd, (HMENU)ID_STOP_BUTTON, g_hInst, NULL
@@ -646,13 +650,13 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     case ID_EXECUTE_BUTTON:
                         if (HIWORD(wParam) == BN_CLICKED)
                         {
-                            ExecutarPrograma();
-                            
                             // Se estiver no modo normal, desabilitar o botão após a execução
                             if (g_executionMode == 0)
                             {
                                 EnableWindow(g_hExecuteButton, FALSE);
                             }
+                            ExecutarPrograma();
+                            
                         }
                         break;
 
@@ -675,7 +679,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         ofn.hwndOwner = hwnd;
                         ofn.lpstrFile = szFile;
                         ofn.nMaxFile = sizeof(szFile);
-                        ofn.lpstrFilter = "Arquivos de Texto (*.txt)\0*.txt\0Todos os Arquivos (*.*)\0*.*\0";
+                        ofn.lpstrFilter = "Arquivos de Objeto (*.obj)\0*.obj\0Todos os Arquivos (*.*)\0*.*\0";
                         ofn.nFilterIndex = 1;
                         ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
 
@@ -683,11 +687,12 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                         {
                             // Aqui você pode adicionar código para processar o arquivo aberto
                             // Por exemplo, ler o conteúdo do arquivo
+                            resetMachineState();
                             FILE *file = fopen(ofn.lpstrFile, "r");
                             if (file) 
                             {
                                 // Limpa o conteúdo anterior do EditControl
-                                SetWindowText(g_hOutputEdit, "");
+                                SetWindowTextW(g_hOutputEdit, L"");
                              
                                 p = inicializarPilha(PILHA_TAM_INICIAL);
                                 if(p == NULL){
@@ -709,7 +714,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             break;
             
         case WM_DESTROY:
-            LimparRecursos();
+            if (p != NULL) {
+                resetMachineState();
+                p = NULL;
+            }
             PostQuitMessage(0);
             return 0;
     }
@@ -723,19 +731,21 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 
 
 Pilha* inicializarPilha(int capacidadeInicial) {
-    if(capacidadeInicial <=0 || capacidadeInicial > PILHA_TAM_MAXIMO){
+    if(capacidadeInicial <=0){
         return NULL;
     }
 
     Pilha *p = (Pilha*)calloc(1, sizeof(Pilha));
     if (p == NULL) {
+        printf("Erro: Falha na alocação da pilha\n");
         return NULL;
     }
 
     p->M = calloc(capacidadeInicial, sizeof(int));
     if (p->M == NULL) {
         free(p);
-        return NULL;
+        printf("Erro ao alocar memória para a pilha.\n");
+        exit(1);
     }
     
     p->s = -1;
@@ -872,12 +882,8 @@ int analisaInst(struct Inst *lista) {
 }
 
 void lerInstrucoes(FILE *file) {
-    if (!file) return;
-
     int count = -1;
-    char buffer[256];
-
-    while (count < MAX_INST - 1){
+    while (strcmp(lista[count].instrucao, "HLT     ") != 0){
         (count)++;
 
         // Analisa e preenche os campos da estrutura
@@ -940,9 +946,9 @@ void resolveInst(int* count){
             if (m != 0){
                 resultado = n / m; // m[s-1] div m[s]
                 p->M[++(p->s)] = resultado; //m[s-1] = res; s = s-1
-            } else
-                SetWindowText(g_hOutputEdit, "Erro: Divisão por zero!");
-                return;
+            }
+            else
+                printf("Erro: Divisão por zero!\n");
             break;
 
         case 7: // INV (Inverter sinal)
@@ -1042,26 +1048,59 @@ void resolveInst(int* count){
             scanf("%d", &entrada);
             printf("\n Entrada = %d", entrada);
             empilhar(entrada);*/
+            if(g_executionMode == 1){
+                EnableWindow(g_hExecuteButton, FALSE);
+                EnableWindow(g_hStopButton, FALSE);
+            }
             char entradaStr[256] = "";
             if (ShowCustomDialog(g_hInst, NULL, entradaStr)) {
                 printf("Entrada emilhada\n");
             } else {
                 printf("Entrada cancelada pelo usuário.\n");
+            }if(g_executionMode)
+            if(g_executionMode == 1){
+                EnableWindow(g_hExecuteButton, TRUE);
+                EnableWindow(g_hStopButton, TRUE);
             }
             break;
 
-        case 21: // PRN (Impressão)
+        case 21: // PRN (Impressão)                
+            char buffer[12];
+            char *currentText;
+            DWORD textLen;
+            
             desempilhar(&l);
-            //printf("%d\n", desempilhar());
-            /*
-            wchar_t mensagem[256];
-            desempilhar();
-            for (int i = 0; i <= p->s; i++) {
-            swprintf(mensagem, 256, L"Entrou no DALLOC. Valor da variável: %d", topo);
-            // Mostrar a mensagem com a variável
-            MessageBoxW(hwnd, mensagem, L"Erro", MB_OK | MB_ICONERROR);
+            itoa(l, buffer, 10);
+            
+            // Obter o tamanho do texto atual
+            textLen = GetWindowTextLength(g_hOutputEdit);
+            
+            // Alocar memória suficiente para o texto atual + nova linha + novo número + terminador nulo
+            DWORD len = textLen + strlen(buffer) + 3;
+            currentText = (char*)calloc(1, len); // +3 para \r\n e \0
+            //MessageBoxW(hwnd, L"Entrou no PRN", L"Informação", MB_OK | MB_ICONINFORMATION);
+            if (currentText) {
+                //MessageBoxW(hwnd, L"Entrou no if", L"Informação", MB_OK | MB_ICONINFORMATION);
+                // Obter o texto atual
+                GetWindowText(g_hOutputEdit, currentText, textLen + 1);
+                
+                // Se já existe texto, adicionar uma nova linha
+                if (textLen > 0) {
+                    strcat(currentText, "\r\n");
+                }
+                
+                // Adicionar o novo número
+                strcat(currentText, buffer);
+                
+                // Definir o novo texto
+                SetWindowText(g_hOutputEdit, currentText);
+                
+                // Liberar a memória alocada
+                free(currentText);
+                
+                // Rolar para mostrar a última linha
+                SendMessage(g_hOutputEdit, EM_SCROLLCARET, 0, 0);
             }
-            */
             break;
 
         case 23: // ALLOC (Alocar memória)
@@ -1109,7 +1148,7 @@ void resolveInst(int* count){
 // Início da MVD
 void MVD() {
     if (strcmp(lista[0].instrucao, "START   ") != 0) {
-        printf("Erro: A primeira instrução deve ser 'START'.\n");
+        MessageBoxW(hwnd, L"A Primeira instrução deve ser START", L"ERRO", MB_OK | MB_ICONINFORMATION);
         return;
     }
     while (strcmp(lista[countres].instrucao, "HLT     ") != 0) {
@@ -1118,5 +1157,8 @@ void MVD() {
     }
     MessageBoxW(hwnd, L"Programa finalizado", L"Informação", MB_OK | MB_ICONINFORMATION);
     
-    LimparRecursosIntermediarios();
+    if (p != NULL) {
+        liberarPilha();
+        p = NULL;
+    }
 }
