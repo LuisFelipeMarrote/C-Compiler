@@ -453,10 +453,10 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             SetMenu(hwnd, g_hMainMenu);
 
             // Create main ListView (Code table)
-            g_hListView = CreateWindowExW(
+            g_hListView = CreateWindowEx(
                 0,
-                WC_LISTVIEWW,
-                L"",
+                "SysListView32",
+                "",
                 WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_NOSORTHEADER |
                 WS_BORDER | WS_VSCROLL | WS_HSCROLL,  // Adiciona bordas e barras de rolagem
                 hlistviewX, hlistviewY,     // posição x, y
@@ -469,38 +469,38 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             int totalWidth = rect.right - rect.left;  // Calcula a largura total
 
             // Add columns to main ListView
-            LVCOLUMNW lvc = {0};
+            LVCOLUMN lvc = {0};
             lvc.mask = LVCF_TEXT | LVCF_WIDTH;
             
-            lvc.pszText = (LPWSTR)L"Linha";
+            lvc.pszText = "Linha";
             lvc.cx = totalWidth * 0.07;
             ListView_InsertColumn(g_hListView, 0, &lvc);
             
-            lvc.pszText = (LPWSTR)L"Rótulo";
+            lvc.pszText = "Rotulo";
             lvc.cx = totalWidth * 0.09;
             ListView_InsertColumn(g_hListView, 1, &lvc);
 
-            lvc.pszText = (LPWSTR)L"Instrução";
+            lvc.pszText = "Instrucao";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 2, &lvc);
             
-            lvc.pszText = (LPWSTR)L"Atributo 1";
+            lvc.pszText = "Atributo 1";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 3, &lvc);
             
-            lvc.pszText = (LPWSTR)L"Atributo 2";
+            lvc.pszText = "Atributo 2";
             lvc.cx = totalWidth * 0.18;
             ListView_InsertColumn(g_hListView, 4, &lvc);
 
-            lvc.pszText = (LPWSTR)L"Comentario";
+            lvc.pszText = "Comentario";
             lvc.cx = totalWidth * 0.29;
             ListView_InsertColumn(g_hListView, 5, &lvc);
             
             // Create Memory ListView
-            g_hMemoryListView = CreateWindowExW(
+            g_hMemoryListView = CreateWindowEx(
                 0,
-                WC_LISTVIEWW,
-                L"",
+                "SysListView32",
+                "",
                 WS_CHILD | WS_VISIBLE | LVS_REPORT | LVS_NOSORTHEADER |
                 WS_BORDER | WS_VSCROLL | WS_HSCROLL,
                 memorylistX, memorylistY, memoryListWidth, hlistViewHeight,
@@ -512,11 +512,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             totalWidth = rect.right - rect.left;  // Calcula a largura total
 
             // Add columns to Memory ListView
-            lvc.pszText = (LPWSTR)L"Endereço";
+            lvc.pszText = "Endereco";
             lvc.cx = totalWidth * 0.50;
             ListView_InsertColumn(g_hMemoryListView, 0, &lvc);
             
-            lvc.pszText = (LPWSTR)L"Valor";
+            lvc.pszText = "Valor";
             lvc.cx = totalWidth * 0.51;
             ListView_InsertColumn(g_hMemoryListView, 1, &lvc);
             
