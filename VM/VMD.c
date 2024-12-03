@@ -525,7 +525,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                 WS_EX_CLIENTEDGE,
                 L"EDIT",
                 L"Saída",
-                WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL,
+                WS_CHILD | WS_VISIBLE | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL,
                 outputX, outputY, outputWidth, outputHeight,
                 hwnd, NULL, g_hInst, NULL
             );
