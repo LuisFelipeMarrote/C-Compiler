@@ -293,7 +293,7 @@ void AnalisadorLexicalN1()
                 return;
             }
 
-            while(caractere == ' ' || caractere == '\n')
+            while(caractere == ' ' || caractere == '\n' || caractere == '\t')
             {
                 if(caractere == '\n'){
                     (*linha)++;

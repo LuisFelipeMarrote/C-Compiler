@@ -1,0 +1,8 @@
+{Teste OK}
+programa ricardo;
+
+var a,b,c,x: inteiro;
+	z, l: booleano;
+inicio
+ l := nao nao nao nao nao ( (-a*(-b) = 1064) ou (a<= (-1000)) ou z)  
+fim

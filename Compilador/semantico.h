@@ -161,6 +161,9 @@ node_lista_token* converte_inf_posfix(node_lista_token* lista_infix){
             /*Se for operador, empilha após percorrer desempilhando e copiando na saída todos os operadores com precedência maior ou igual ao 
             que será empilhado, isso até encontrar o primeiro operador com precedência menor, terminar a pilha ou encontrar o primeiro abreparênteses*/
             while(pilha != NULL && pilha->tk.simbolo != sabre_parenteses && (prioridade(lista_infix->tk.simbolo) <= prioridade(pilha->tk.simbolo))){
+                if(lista_infix->tk.simbolo == snao && pilha->tk.simbolo == snao ){
+                    break;                    
+                }
                 lista_pos->prox = pilha;
                 lista_pos = lista_pos->prox;
                 pilha = pilha->prox;
